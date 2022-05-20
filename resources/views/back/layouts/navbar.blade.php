@@ -61,7 +61,7 @@
                                         <a href="/validasi/{{ $data->id }}" class="clearfix">
                                             <figure class="image">
                                                 @if($data->user->photo_profile)
-                                                <img src="{{  url('/storage/'. $data->user->photo_profile)}}" alt="{{$data->user->name}}" class="img-circle">
+                                                <img src="{{  url('/storage/photo/'. $data->user->photo_profile)}}" alt="{{$data->user->name}}" style="width: 4rem" class="img-circle">
                                                 @else
                                                 <img src="https://ui-avatars.com/api/?name={{$data->user->name}}" style="width: 4rem" alt="" class="img-circle">
                                                 @endif
@@ -112,7 +112,7 @@
                     <a href="#" data-toggle="dropdown">
                         <figure class="profile-picture">
                             @if(Auth::user()->photo_profile)
-                            <img src="{{  url('/storage/'. Auth::user()->photo_profile)}}" alt="{{Auth::user()->name}}" class="img-rounded" />
+                            <img src="{{  url('/storage/photo/'. Auth::user()->photo_profile)}}" alt="{{Auth::user()->name}}" class="img-rounded" />
                             @else
                             <img src="https://ui-avatars.com/api/?name={{Auth::user()->name}}" alt="{{Auth::user()->name}}" class="img-circle" />
                             @endif

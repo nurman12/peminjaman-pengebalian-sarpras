@@ -84,7 +84,7 @@
                             <a id="delete" data-validasi_id="{{ $data->id }}" style="width: 34px;" class="mr-xs mt-xs btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"> <i class="fa fa-trash-o"></i></a>
                             @endif
                             @if($data->status == 0 && $data->tanggal_finish >= date("Y-m-d h:i:s"))
-                            <a id="ambil" data-validasi_id="{{ $data->id }}" data-user_id="{{ $data->user_id }}" class="mt-xs btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ambil"> <i class="fa fa-truck"></i></a>
+                            <a id="ambil" data-validasi_id="{{ $data->id }}" data-user_id="{{ $data->user_id }}" data-nama="{{ $data->user->name }}" class="mt-xs btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ambil"> <i class="fa fa-truck"></i></a>
                             @endif
                         </td>
                     </tr>
@@ -162,6 +162,7 @@
     $(document).on('click', '#ambil', function() {
         var validasi_id = $(this).data('validasi_id');
         var user_id = $(this).data('user_id');
+        var nama = $(this).data('nama');
 
         $.ajaxSetup({
             headers: {
@@ -170,7 +171,7 @@
         });
         swal.fire({
             title: 'Apa kamu yakin?',
-            text: "Peminjam mengambil sarpras peminjaman!",
+            text: nama + " mengambil peminjaman!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

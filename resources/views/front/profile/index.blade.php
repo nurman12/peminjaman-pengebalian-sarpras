@@ -8,7 +8,7 @@
         <div class="profile-header">
             <div class="profile-img">
                 @if(Auth::user()->photo_profile)
-                <img src="{{  url('/storage/'. Auth::user()->photo_profile)}}" width="200" alt="">
+                <img src="{{  url('/storage/photo/'. Auth::user()->photo_profile)}}" width="200" alt="">
                 @else
                 <img src="https://ui-avatars.com/api/?name={{ Auth::user()->name }}" width="200" alt="">
                 @endif
@@ -208,7 +208,7 @@
                                         <form action="/draft/print" method="post" target="_blank" rel="noopener noreferrer">
                                             @csrf
                                             <input type="hidden" name="id" value="{{$data->id}}">
-                                            <button type="submit" class="btn btn-success btn-sm">Print</button>
+                                            <button type="submit" class="btn btn-success btn-sm" data-toggle="tooltip" title="cetak"><i class="fa fa-print" aria-hidden="true"></i></button>
                                         </form>
                                         @endif
                                         @if($data->validasi_ktu == 0)
@@ -257,7 +257,7 @@
                                     </td>
                                     <td class="text-center display-inline">
                                         @if($data->status == 2)
-                                        <a href="/storage/tanggungan/SURAT%20PERBAIKAN%20ALAT.docx" class="btn btn-success btn-sm" target="_blank" rel="noopener noreferrer">Unduh</a>
+                                        <a href="storage/surat/SURAT%20PERGANTIAN.docx" class="btn btn-success btn-sm" target="_blank" rel="noopener noreferrer">Unduh</a>
                                         @endif
                                     </td>
                                 </tr>
@@ -355,7 +355,7 @@
                             <div class="gallery-lb">
                                 <div class="wrap-pic-w pos-relative">
                                     @if(Auth::user()->photo_profile)
-                                    <img src="{{ url('/storage/'. Auth::user()->photo_profile) }}" id="preview_photo" alt="IMG-PRODUCT">
+                                    <img src="{{ url('/storage/photo/'. Auth::user()->photo_profile) }}" id="preview_photo" alt="IMG-PRODUCT">
                                     <a class="flex-c-m size-108 m-l-20 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04 zoom-picture" href="{{ url('/storage/'. Auth::user()->photo_profile)}}">
                                         <i class="fa fa-expand"></i>
                                     </a>

@@ -9,7 +9,6 @@ use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -53,7 +52,7 @@ class ProfileController extends Controller
 
             $cek_email = User::where('email', $email)->whereNotIn('id', [$id])->first();
             $cek_telp = User::where('no_telp', $no_telp)->whereNotIn('id', [$id])->first();
-            // dd($cek_telp);
+
             if (is_null($nama) && is_null($email) && is_null($no_telp)) {
                 return response()->json(
                     [
@@ -119,12 +118,14 @@ class ProfileController extends Controller
                 ]);
 
             if ($request->file('photo')) {
+                $filename = time() . '.' . request()->photo->getClientOriginalExtension();
+                request()->photo->move(public_path('storage/photo'), $filename);
                 if ($request->old_photo) {
-                    Storage::delete($request->old_photo);
+                    unlink(public_path('storage/photo/' . $request->old_photo));
                 }
                 User::where('id', $id)
                     ->update([
-                        'photo_profile' => $request->file('photo')->store('photo')
+                        'photo_profile' => $filename
                     ]);
             }
 
@@ -150,10 +151,14 @@ class ProfileController extends Controller
                     'no_telp' => $request->no_telp
                 ]);
             if ($request->file('photo_profile')) {
-                Storage::delete($request->old_photo);
+                $filename = time() . '.' . request()->photo_profile->getClientOriginalExtension();
+                request()->photo_profile->move(public_path('storage/photo'), $filename);
+                if ($request->old_photo) {
+                    unlink(public_path('storage/photo/' . $request->old_photo));
+                }
                 User::where('id', $id)
                     ->update([
-                        'photo_profile' => $request->file('photo_profile')->store('photo')
+                        'photo_profile' => $filename
                     ]);
             }
             return redirect('/edit');

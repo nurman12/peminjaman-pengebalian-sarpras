@@ -49,7 +49,7 @@
                         </div>
                         <div class="size-209">
                             <span class="mtext-115 cl2">
-                                {{ date('H:i d F Y', strtotime( $pengembalian->validasi->tanggal_start )) }}
+                                {{ date('l, d F Y', strtotime( $pengembalian->validasi->tanggal_start )) }}
                             </span>
                         </div>
                         <div class="size-208">
@@ -59,7 +59,7 @@
                         </div>
                         <div class="size-209">
                             <span class="mtext-115 cl2">
-                                {{ date('H:i d F Y', strtotime( $pengembalian->validasi->tanggal_finish )) }}
+                                {{ date('l, d F Y', strtotime( $pengembalian->validasi->tanggal_finish )) }}
                             </span>
                         </div>
                         <div class="size-208">

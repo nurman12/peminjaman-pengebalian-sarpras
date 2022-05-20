@@ -26,7 +26,7 @@
                 <div class="panel-body">
                     <div class="thumb-info mb-md">
                         @if($validasi->user->photo_profile)
-                        <img src="{{  url('/storage/'. $validasi->user->photo_profile) }}" id="preview_pengguna" class="rounded img-responsive" style="width: 35vh;">
+                        <img src="{{  url('/storage/photo/'. $validasi->user->photo_profile) }}" id="preview_pengguna" class="rounded img-responsive" style="width: 35vh;">
                         @else
                         <img src="https://ui-avatars.com/api/?name={{$validasi->user->name}}" id="preview_pengguna" class="rounded img-responsive" style="width: 35vh;">
                         @endif
@@ -155,7 +155,7 @@
                                 </div>
                                 <div class="size-209">
                                     <span class="stext-115 cl2">
-                                        <a href="/storage/{{ $validasi->proposal }}" target="_blank" rel="noopener noreferrer">
+                                        <a href="/storage/proposal/{{ $validasi->proposal }}" target="_blank" rel="noopener noreferrer">
                                             <span class="mb-xs mt-xs btn btn-success btn-xs c-default" style="cursor: pointer;"> <i class="fa fa-download"></i> Download</span>
                                         </a>
                                     </span>
@@ -181,7 +181,7 @@
                                 </div>
                                 <div class="size-209">
                                     <span class="stext-115 cl2">
-                                        {{ date('d F Y H:i', strtotime( $validasi->tanggal_start )) }}
+                                        {{ date('d F Y', strtotime( $validasi->tanggal_start )) }}
                                     </span>
                                 </div>
                                 <div class="size-208">
@@ -191,7 +191,7 @@
                                 </div>
                                 <div class="size-209">
                                     <span class="stext-115 cl2">
-                                        {{ date('d F Y H:i', strtotime( $validasi->tanggal_finish )) }}
+                                        {{ date('d F Y', strtotime( $validasi->tanggal_finish )) }}
                                     </span>
                                 </div>
                                 <div class="size-208">
@@ -390,7 +390,7 @@
         var desc = $(this).data('desc');
 
         $('.panel-title').text(nama);
-        $('#img').attr("src", '/storage/' + img);
+        $('#img').attr("src", '/storage/sarpras/' + img);
         $('p#deskripsi').text(desc);
     });
     $(document).on('click', '#ambil', function() {

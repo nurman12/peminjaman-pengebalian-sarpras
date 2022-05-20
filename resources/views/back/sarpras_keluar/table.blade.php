@@ -13,7 +13,7 @@
         <tr>
             <th>{{$loop->iteration}}</th>
             <td>{{$data->sarpras->nama}}</td>
-            <td>{{date('d F Y', strtotime($data->tanggal_keluar))}}</td>
+            <td>{{date('l, d F Y', strtotime($data->tanggal_keluar))}}</td>
             <td class="center">{{$data->jumlah}}</td>
             <th width="120px">
                 <a href="{{ route('sarpras_keluar.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>

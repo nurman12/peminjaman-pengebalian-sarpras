@@ -61,11 +61,11 @@
                     <div class="bill-data text-right">
                         <p class="mb-none">
                             <span class="text-dark">Mulai Tanggal:</span>
-                            <span class="value">{{ date('H:i d/m/Y', strtotime( $validasi->tanggal_start))}}</span>
+                            <span class="value">{{ date('d/m/Y', strtotime( $validasi->tanggal_start))}}</span>
                         </p>
                         <p class="mb-none">
                             <span class="text-dark">Sampai Tanggal:</span>
-                            <span class="value">{{ date('H:i d/m/Y', strtotime( $validasi->tanggal_finish))}}</span>
+                            <span class="value">{{ date('d/m/Y', strtotime( $validasi->tanggal_finish))}}</span>
                         </p>
                     </div>
                 </div>

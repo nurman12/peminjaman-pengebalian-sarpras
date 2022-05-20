@@ -9,7 +9,6 @@ use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PenggunaController extends Controller
@@ -50,7 +49,9 @@ class PenggunaController extends Controller
         $user->kota = $request->kota;
         $user->no_telp = $request->no_telp;
         if ($request->file('photo_profile')) {
-            $user->photo_profile = $request->file('photo_profile')->store('photo');
+            $filename = time() . '.' . request()->photo_profile->getClientOriginalExtension();
+            request()->photo_profile->move(public_path('storage/photo'), $filename);
+            $user->photo_profile = $filename;
         }
         $user->save();
 
@@ -111,17 +112,23 @@ class PenggunaController extends Controller
                 'no_telp' => $request->no_telp,
             ]);
         if ($request->file('photo_profile')) {
-            Storage::delete($request->old_photo);
+            $filename = time() . '.' . request()->photo_profile->getClientOriginalExtension();
+            request()->photo_profile->move(public_path('storage/photo'), $filename);
+            if ($request->old_photo) {
+                unlink(public_path('storage/photo/' . $request->old_photo));
+            }
             User::where('id', $id)
                 ->update([
-                    'photo_profile' => $request->file('photo_profile')->store('photo')
+                    'photo_profile' => $filename
                 ]);
         }
         return redirect('/pengguna');
     }
     public function destroy(Request $request, $id)
     {
-        Storage::delete($request->old_photo);
+        if ($request->old_photo) {
+            unlink(public_path('storage/photo/' . $request->old_photo));
+        }
         User::destroy($id);
 
         return redirect('/pengguna');

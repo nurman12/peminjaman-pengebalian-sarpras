@@ -61,13 +61,13 @@ Route::resource('sarpras_masuk', SarprasMasukController::class);
 
 Route::resource('sarpras_keluar', SarprasKeluarController::class);
 
+Route::get('/expired_validasi', [ValidasiController::class, 'expired_validasi'])->name('expired_validasi');
 Route::resource('validasi', ValidasiController::class);
 Route::put('/validasi_update/{id}', [ValidasiController::class, 'update_lanjut']);
 Route::get('/validasi_edit/{id}', [ValidasiController::class, 'add_sarpras'])->name('validasi_edit.add');
 Route::post('/validasi_edit', [ValidasiController::class, 'store_add_sarpras'])->name('validasi_edit.store');
 Route::put('/validasi_edit/{id}', [ValidasiController::class, 'update_peminjaman'])->name('validasi_edit.update');
 Route::delete('/validasi_edit/{id}', [ValidasiController::class, 'destroy_sarpras'])->name('validasi_edit.destroy');
-Route::get('/expired_validasi', [ValidasiController::class, 'expired_validasi'])->name('expired_validasi');
 
 Route::resource('peminjaman', PeminjamanController::class);
 

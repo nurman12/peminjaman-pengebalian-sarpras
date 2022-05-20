@@ -8,7 +8,7 @@
 <tr class="table_row">
     <td class="text-center p-l-30">
         <div class="how-itemcart1" style="width: 90px;" onclick="draft_destroy_update({{$data->id}})">
-            <img src="{{ url('/storage/'. $data->sarpras->photo) }}" alt="IMG">
+            <img src="{{ url('/storage/sarpras/'. $data->sarpras->photo) }}" alt="IMG">
         </div>
     </td>
     <td>{{$data->sarpras->nama}}</td>

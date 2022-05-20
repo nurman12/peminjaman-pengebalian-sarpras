@@ -136,7 +136,7 @@
             var tanggal = $(this).data('tanggal');
 
             $('.modal-title').text("Edit " + nama_sarpras);
-            $('#img').attr('src', '/storage/' + img_sarpras);
+            $('#img').attr('src', '/storage/sarpras/' + img_sarpras);
             $('.keterangan').val(keterangan_draf);
             $('.id').val(id);
             $('.sarpras_id').val(sarpras_id);

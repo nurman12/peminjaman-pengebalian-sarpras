@@ -7,7 +7,6 @@ use App\Models\SarprasDetail;
 use App\Models\SarprasKeluar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class SarprasController extends Controller
 {
@@ -29,6 +28,10 @@ class SarprasController extends Controller
             'deskripsi' => ['required', 'string'],
             'photo' => 'required|image|file|max:8192'
         ]);
+
+        $filename = time() . '.' . request()->photo->getClientOriginalExtension();
+        request()->photo->move(public_path('storage/sarpras'), $filename);
+
         $sarpras = new Sarpras();
         $sarpras->jenis = $request->jenis;
         if ($request->jenis == 'Ruangan') {
@@ -39,7 +42,7 @@ class SarprasController extends Controller
         $sarpras->nama = $request->nama;
         $sarpras->jumlah = 0;
         $sarpras->deskripsi = $request->deskripsi;
-        $sarpras->photo =  $request->file('photo')->store('sarpras');
+        $sarpras->photo =  $filename;
         $sarpras->save();
 
         return redirect('/sarpras');
@@ -92,17 +95,22 @@ class SarprasController extends Controller
                 ]);
         }
         if ($request->file('photo')) {
-            Storage::delete($request->old_photo);
+
+            $filename = time() . '.' . request()->photo->getClientOriginalExtension();
+            request()->photo->move(public_path('storage/sarpras'), $filename);
+
+            unlink(public_path('storage/sarpras/' . $request->old_photo));
+
             Sarpras::where('id', $id)
                 ->update([
-                    'photo' => $request->file('photo')->store('sarpras')
+                    'photo' => $filename
                 ]);
         }
         return redirect('/sarpras');
     }
     public function destroy(Request $request, $id)
     {
-        Storage::delete($request->old_photo);
+        unlink(public_path('storage/sarpras/' . $request->old_photo));
         Sarpras::destroy($id);
 
         return redirect('/sarpras');

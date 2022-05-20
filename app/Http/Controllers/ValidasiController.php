@@ -29,8 +29,8 @@ class ValidasiController extends Controller
         $request->validate([
             'keperluan' => 'required',
             'proposal' => 'required|mimes:pdf,doc,docx',
-            'tanggal' => 'required|date_format:Y-m-d H:i',
-            'sampai'  => 'required|date_format:Y-m-d H:i'
+            'tanggal' => 'required|date_format:Y-m-d',
+            'sampai'  => 'required|date_format:Y-m-d'
         ]);
 
         $draft = Draft::where('user_id', $request->user_id)->where('validasi_id', 0)->get();
@@ -48,13 +48,15 @@ class ValidasiController extends Controller
                     return redirect('/draft')->with('error', "Jumlah " . $sarpras->nama . " yang tersedia berjumlah " . $sarpras->jumlah);
                 }
             }
+            $filename = time() . '.' . request()->proposal->getClientOriginalExtension();
+            request()->proposal->move(public_path('storage/proposal'), $filename);
 
             $validasi = new Validasi();
             $validasi->user_id = $request->user_id;
             $validasi->keperluan = $request->keperluan;
-            $validasi->proposal = $request->file('proposal')->store('proposal');
-            $validasi->tanggal_start = $request->tanggal . date(':s');
-            $validasi->tanggal_finish = $request->sampai . date(':s');
+            $validasi->proposal = $filename;
+            $validasi->tanggal_start = $request->tanggal;
+            $validasi->tanggal_finish = $request->sampai;
 
             $validasi->save();
 
@@ -69,11 +71,10 @@ class ValidasiController extends Controller
 
             // mengurangi jumlah sarpras yang akan di pinjam 
             foreach ($draft as $item) {
-                $sarpras = Sarpras::where('id', $item->sarpras_id)->first();
 
                 Sarpras::where('id', $item->sarpras_id)
                     ->update([
-                        'jumlah' => $sarpras->jumlah - $item->qty
+                        'jumlah' => $item->sarpras->jumlah - $item->qty
                     ]);
 
                 $sarpras_keluar =  new SarprasKeluar();
@@ -83,55 +84,7 @@ class ValidasiController extends Controller
                 $sarpras_keluar->tanggal_keluar = date('Y-m-d');
                 $sarpras_keluar->jumlah = $item->qty;
                 $sarpras_keluar->save();
-
-                // $sarpras_keluar_id = SarprasKeluar::all()->max();
-
-                // $sarpras_detail =  new SarprasDetail();
-                // $sarpras_detail->sarpras_id = $item->sarpras_id;
-                // $sarpras_detail->sarpras_keluar_id = $sarpras_keluar_id->id;
-                // $sarpras_detail->save();
             }
-
-            $user = User::where('id', $request->user_id)->first();
-            $ktu = User::where('roles', 'KTU')->first();
-
-            $payload = [
-                "data" => [
-                    [
-                        'phone' => $user->no_telp,
-                        'message' => 'Yea! Permohonan peminjaman sarpras berhasil \n \n Nama : ' . $user->name . '\n Keperluan : ' . $request->keperluan . '\n Mulai tgl : ' . $request->tanggal . '\n Sampai tgl : ' . $request->sampai . '\n Info lebih lanjut \n  https://127.0.0.1:8000/validasi/' . $id->id,
-                        'secret' => false, // or true
-                        'priority' => false, // or true
-                    ],
-                    [
-                        'phone' => $ktu->no_telp,
-                        'message' => 'try message 2',
-                        'secret' => false, // or true
-                        'priority' => false, // or true
-                    ]
-                ]
-            ];
-
-            $curl = curl_init();
-            $token = env('WABLAS_API_WHATSAPP');
-            $domain = env('SERVER_WABLAS');
-
-            curl_setopt(
-                $curl,
-                CURLOPT_HTTPHEADER,
-                array(
-                    "Authorization: $token",
-                    "Content-Type: application/json"
-                )
-            );
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
-            curl_setopt($curl, CURLOPT_URL, "$domain/api/v2/send-bulk/text");
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-            $result = curl_exec($curl);
-            curl_close($curl);
 
             return redirect('/draft')->with('success', 'Berhasil mengirim permohonan pinjaman!');
         }
@@ -239,58 +192,26 @@ class ValidasiController extends Controller
             $request->validate([
                 'keperluan' => 'required',
                 'proposal' => 'mimes:pdf,doc,docx',
-                'tanggal' => 'required|date_format:Y-m-d H:i',
-                'sampai' => 'required|date_format:Y-m-d H:i'
+                'tanggal' => 'required|date_format:Y-m-d',
+                'sampai' => 'required|date_format:Y-m-d'
             ]);
-
-
 
             Validasi::where('id', $id)
                 ->update([
                     'keperluan' => $request->keperluan,
-                    'tanggal_start' => $request->tanggal . date(':s'),
-                    'tanggal_finish' => $request->sampai . date(':s')
+                    'tanggal_start' => $request->tanggal,
+                    'tanggal_finish' => $request->sampai
                 ]);
 
             if ($request->file('proposal')) {
-                Storage::delete($request->old_proposal);
+                $filename = time() . '.' . request()->proposal->getClientOriginalExtension();
+                request()->proposal->move(public_path('storage/proposal'), $filename);
+                unlink(public_path('storage/proposal/' . $request->old_proposal));
                 Validasi::where('id', $id)
                     ->update([
-                        'proposal' => $request->file('proposal')->store('proposal')
+                        'proposal' => $filename
                     ]);
             }
-
-            $payload = [
-                "data" => [
-                    [
-                        'phone' => Auth::user()->no_telp,
-                        'message' => 'Yea! Ubah peminjaman sarpras berhasil \n \n Nama : ' . Auth::user()->name . '\n Keperluan : ' . $request->keperluan . '\n Mulai tgl : ' . $request->tanggal . '\n Sampai tgl : ' . $request->sampai . '\n Info lebih lanjut \n https://127.0.0.1:8000/validasi/' . $id,
-                        'secret' => false, // or true
-                        'priority' => false, // or true
-                    ]
-                ]
-            ];
-
-            $curl = curl_init();
-            $token = env('WABLAS_API_WHATSAPP');
-            $domain = env('SERVER_WABLAS');
-
-            curl_setopt(
-                $curl,
-                CURLOPT_HTTPHEADER,
-                array(
-                    "Authorization: $token",
-                    "Content-Type: application/json"
-                )
-            );
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
-            curl_setopt($curl, CURLOPT_URL, "$domain/api/v2/send-bulk/text");
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-            $result = curl_exec($curl);
-            curl_close($curl);
 
             return redirect('/profile')->with(['status' => 'Berhasil mengubah data']);
         } elseif ($request->sebelum_ktu) {
@@ -539,8 +460,8 @@ class ValidasiController extends Controller
             $request->validate([
                 'keperluan' => 'required',
                 'proposal' => 'mimes:pdf,doc,docx',
-                'tanggal' => 'required|date_format:Y-m-d H:i',
-                'sampai' => 'required|date_format:Y-m-d H:i'
+                'tanggal' => 'required|date_format:Y-m-d',
+                'sampai' => 'required|date_format:Y-m-d'
             ]);
 
             $draft_new = Draft::where('user_id', $request->user_id)->where('validasi_id', 0)->get();
@@ -605,13 +526,6 @@ class ValidasiController extends Controller
                         $sarpras_keluar->tanggal_keluar = date('Y-m-d');
                         $sarpras_keluar->jumlah = $item->qty;
                         $sarpras_keluar->save();
-
-                        // $sarpras_keluar_id = SarprasKeluar::all()->max();
-
-                        // $sarpras_detail = new SarprasDetail();
-                        // $sarpras_detail->sarpras_id = $item->sarpras_id;
-                        // $sarpras_detail->sarpras_keluar_id = $sarpras_keluar_id->id;
-                        // $sarpras_detail->save();
                     }
                 }
 
@@ -633,49 +547,21 @@ class ValidasiController extends Controller
                 Validasi::where('id', $id)
                     ->update([
                         'keperluan' => $request->keperluan,
-                        'tanggal_start' => $request->tanggal . date(':s'),
-                        'tanggal_finish' => $request->sampai . date(':s')
+                        'tanggal_start' => $request->tanggal,
+                        'tanggal_finish' => $request->sampai
                     ]);
 
                 if ($request->file('proposal')) {
-                    Storage::delete($request->old_proposal);
+
+                    $filename = time() . '.' . request()->proposal->getClientOriginalExtension();
+                    request()->proposal->move(public_path('storage/proposal'), $filename);
+                    unlink(public_path('storage/proposal/' . $request->old_proposal));
+
                     Validasi::where('id', $id)
                         ->update([
                             'proposal' => $request->file('proposal')->store('proposal')
                         ]);
                 }
-
-                $payload = [
-                    "data" => [
-                        [
-                            'phone' => Auth::user()->no_telp,
-                            'message' => 'Yea! Ubah peminjaman sarpras berhasil \n \n Nama : ' . Auth::user()->name . '\n Keperluan : ' . $request->keperluan . '\n Mulai tgl : ' . $request->tanggal . '\n Sampai tgl : ' . $request->sampai . '\n Info lebih lanjut \n https://127.0.0.1:8000/validasi/' . $id,
-                            'secret' => false, // or true
-                            'priority' => false, // or true
-                        ]
-                    ]
-                ];
-
-                $curl = curl_init();
-                $token = env('WABLAS_API_WHATSAPP');
-                $domain = env('SERVER_WABLAS');
-
-                curl_setopt(
-                    $curl,
-                    CURLOPT_HTTPHEADER,
-                    array(
-                        "Authorization: $token",
-                        "Content-Type: application/json"
-                    )
-                );
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
-                curl_setopt($curl, CURLOPT_URL, "$domain/api/v2/send-bulk/text");
-                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-                $result = curl_exec($curl);
-                curl_close($curl);
 
                 return redirect('/profile')->with(['status' => 'Berhasil mengubah data']);
             }
@@ -686,8 +572,8 @@ class ValidasiController extends Controller
         $request->validate([
             'keperluan' => 'required',
             'proposal' => 'mimes:pdf,doc,docx',
-            'mulai' => 'required|date_format:Y-m-d H:i',
-            'sampai'  => 'required|date_format:Y-m-d H:i'
+            'mulai' => 'required|date_format:Y-m-d',
+            'sampai'  => 'required|date_format:Y-m-d'
         ]);
 
         $draft_qty = $request->qty;
@@ -711,15 +597,19 @@ class ValidasiController extends Controller
         Validasi::where('id', $id)
             ->update([
                 'keperluan' => $request->keperluan,
-                'tanggal_start' => $request->mulai . date(':s'),
-                'tanggal_finish' => $request->sampai . date(':s')
+                'tanggal_start' => $request->mulai,
+                'tanggal_finish' => $request->sampai
             ]);
 
         if ($request->file('proposal')) {
-            Storage::delete($request->old_proposal);
+            $filename = time() . '.' . request()->proposal->getClientOriginalExtension();
+            request()->proposal->move(public_path('storage/proposal'), $filename);
+            if ($request->old_proposal) {
+                unlink(public_path('storage/proposal/' . $request->old_proposal));
+            }
             Validasi::where('id', $id)
                 ->update([
-                    'proposal' => $request->file('proposal')->store('proposal')
+                    'proposal' => $filename
                 ]);
         }
         return redirect('/validasi/' . $id . '/edit');
@@ -731,14 +621,13 @@ class ValidasiController extends Controller
             $draft = Draft::where('validasi_id', $id)->get();
 
             foreach ($draft as $data) {
-                $sarpras = Sarpras::where('id', $data->sarpras_id)->first();
-
                 Sarpras::where('id', $data->sarpras_id)
                     ->update([
-                        'jumlah' => $sarpras->jumlah + $data->qty
+                        'jumlah' => $data->sarpras->jumlah + $data->qty
                     ]);
             }
-            Storage::delete($request->proposal);
+            Draft::where('validasi_id', $id)->delete();
+            unlink(public_path('storage/proposal/' . $request->proposal));
             Validasi::where('id', $id)->delete();
 
             return redirect('/profile')->with(['status' => 'Berhasil menghapus data']);
@@ -752,8 +641,7 @@ class ValidasiController extends Controller
                             ->orWhere('validasi_koor', 2)
                             ->orWhere('validasi_bmn', 2);
                     }
-                )
-                ->first();
+                )->first();
 
             $draft = Draft::where('validasi_id', $id)->get();
             // jika pinjaman dengan kondisi disetujui/pending (disetujui/pending = masih memiliki qty | ditolak = tidak memiliki qty)
@@ -772,6 +660,9 @@ class ValidasiController extends Controller
                 DB::table('sarpras_keluar')->where('draft_id', $item->id)->delete();
                 // DB::table('sarpras_detail')->where('sarpras_keluar_id', $item->sarpras_keluar->id)->delete();
             }
+            $validasi = Validasi::where('id', $id)->first();
+
+            unlink(public_path('storage/proposal/' . $validasi->proposal));
 
             DB::table('validasi')->where('id', $id)->delete();
 
@@ -825,7 +716,7 @@ class ValidasiController extends Controller
     }
     public function expired_validasi()
     {
-        $date_now = date("Y-m-d h:i:s");
+        $date_now = date("Y-m-d");
 
         $expired = Validasi::where('tanggal_finish', '<=', $date_now)
             ->where('status', '!=', 1)

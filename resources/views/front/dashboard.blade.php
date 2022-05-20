@@ -196,7 +196,7 @@
                                 <!-- Block2 -->
                                 <div class="block2">
                                     <div class="block2-pic hov-img0">
-                                        <img src="{{ url('/storage/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
 
                                         <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                             Lihat Sekilas
@@ -211,15 +211,6 @@
 
                                             <span class="stext-105 cl3">
                                                 {{$data->jumlah}}
-                                            </span>
-                                        </div>
-                                        <div class="block2-txt-child2 flex-r p-t-3">
-                                            <span class="dis-flex fs-18 cl11">
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star-half">(7)</i>
                                             </span>
                                         </div>
                                     </div>
@@ -238,7 +229,7 @@
                                 <!-- Block2 -->
                                 <div class="block2">
                                     <div class="block2-pic hov-img0">
-                                        <img src="{{ url('/storage/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
 
                                         <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                             Lihat Sekilas
@@ -253,15 +244,6 @@
 
                                             <span class="stext-105 cl3">
                                                 {{$data->jumlah}}
-                                            </span>
-                                        </div>
-                                        <div class="block2-txt-child2 flex-r p-t-3">
-                                            <span class="dis-flex fs-18 cl11">
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star-half">(7)</i>
                                             </span>
                                         </div>
                                     </div>
@@ -280,7 +262,7 @@
                                 <!-- Block2 -->
                                 <div class="block2">
                                     <div class="block2-pic hov-img0">
-                                        <img src="{{ url('/storage/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
 
                                         <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                             Lihat Sekilas
@@ -297,15 +279,6 @@
                                                 {{$data->jumlah}}
                                             </span>
                                         </div>
-                                        <div class="block2-txt-child2 flex-r p-t-3">
-                                            <span class="dis-flex fs-18 cl11">
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star"></i>
-                                                <i class="zmdi zmdi-star-half">(7)</i>
-                                            </span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -320,7 +293,7 @@
                             @foreach($sarpras_lain as $data)
                             <div class="block2">
                                 <div class="block2-pic hov-img0">
-                                    <img src="{{ url('/storage/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                    <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
 
                                     <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                         Lihat Sekilas
@@ -335,15 +308,6 @@
 
                                         <span class="stext-105 cl3">
                                             {{$data->jumlah}}
-                                        </span>
-                                    </div>
-                                    <div class="block2-txt-child2 flex-r p-t-3">
-                                        <span class="dis-flex fs-18 cl11">
-                                            <i class="zmdi zmdi-star"></i>
-                                            <i class="zmdi zmdi-star"></i>
-                                            <i class="zmdi zmdi-star"></i>
-                                            <i class="zmdi zmdi-star"></i>
-                                            <i class="zmdi zmdi-star-half">(7)</i>
                                         </span>
                                     </div>
                                 </div>
@@ -498,8 +462,8 @@
         //set pada view
         $('#sarpras_id').val(id);
         $('#nama_item').text(nama);
-        $('#img').attr('src', '/storage/' + img);
-        $('.zoom-picture').attr('href', '/storage/' + img);
+        $('#img').attr('src', '/storage/sarpras/' + img);
+        $('.zoom-picture').attr('href', '/storage/sarpras/' + img);
         $('#jumlah').text(jumlah);
         $('#max_qty').val(jumlah);
         $('#keterangan').text(keterangan);

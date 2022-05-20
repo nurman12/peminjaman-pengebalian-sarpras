@@ -18,8 +18,8 @@ class CreateValidasiTable extends Migration
             $table->integer('user_id');
             $table->string('keperluan');
             $table->string('proposal');
-            $table->datetime('tanggal_start');
-            $table->datetime('tanggal_finish');
+            $table->date('tanggal_start');
+            $table->date('tanggal_finish');
             $table->integer('validasi_ktu')->default(0);
             $table->integer('validasi_koor')->default(0);
             $table->integer('validasi_bmn')->default(0);

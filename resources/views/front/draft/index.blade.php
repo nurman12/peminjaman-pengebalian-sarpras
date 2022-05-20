@@ -244,12 +244,12 @@
                                             Tanggal
                                         </span>
                                     </div>
-                                    <div class="row" id="picker">
+                                    <div class="row" id="pickers">
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control @error('tanggal') is-invalid @enderror" name="tanggal" id="start" value="{{ date('Y-m-d H:i', strtotime($item->tanggal_start)) }}" autocomplete="off">
+                                            <input type="text" class="form-control @error('tanggal') is-invalid @enderror" name="tanggal" id="starts" value="{{ date('Y-m-d', strtotime($item->tanggal_start)) }}" autocomplete="off">
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control @error('sampai') is-invalid @enderror" name="sampai" id="end" value="{{ date('Y-m-d H:i', strtotime($item->tanggal_finish)) }}" autocomplete="off">
+                                            <input type="text" class="form-control @error('sampai') is-invalid @enderror" name="sampai" id="ends" value="{{ date('Y-m-d', strtotime($item->tanggal_finish)) }}" autocomplete="off">
                                         </div>
                                     </div>
                                     @error('tanggal')
@@ -287,19 +287,34 @@
 
     var dateToday = new Date();
     $('#picker').daterangepicker({
-        numberOfMonths: 3,
-        showButtonPanel: true,
+        // numberOfMonths: 3,
+        // showButtonPanel: true,
         minDate: dateToday,
         opens: 'left',
-        timePicker: true,
+        // timePicker: true,
         startDate: moment().startOf('hour'),
         endDate: moment().startOf('hour').add(32, 'hour'),
         locale: {
-            format: 'YYYY-MM-DD hh:mm'
+            format: 'YYYY-MM-DD'
         }
     }, function(start, end, label) {
-        $('#start').val(start.format('YYYY-MM-DD hh:mm'))
-        $('#end').val(end.format('YYYY-MM-DD hh:mm'))
+        $('#start').val(start.format('YYYY-MM-DD'))
+        $('#end').val(end.format('YYYY-MM-DD'))
+    });
+    $('#pickers').daterangepicker({
+        // numberOfMonths: 3,
+        // showButtonPanel: true,
+        minDate: dateToday,
+        opens: 'left',
+        // timePicker: true,
+        startDate: moment().startOf('hour'),
+        endDate: moment().startOf('hour').add(32, 'hour'),
+        locale: {
+            format: 'YYYY-MM-DD'
+        }
+    }, function(start, end, label) {
+        $('#starts').val(start.format('YYYY-MM-DD'))
+        $('#ends').val(end.format('YYYY-MM-DD'))
     });
 </script>
 @endpush

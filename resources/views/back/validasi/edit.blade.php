@@ -26,7 +26,7 @@
                 <div class="panel-body">
                     <div class="thumb-info mb-md">
                         @if($validasi->user->photo_profile)
-                        <img src="{{  url('/storage/'. $validasi->user->photo_profile) }}" id="preview_pengguna" class="rounded img-responsive" style="width: 35vh;">
+                        <img src="{{  url('/storage/photo/'. $validasi->user->photo_profile) }}" id="preview_pengguna" class="rounded img-responsive" style="width: 35vh;">
                         @else
                         <img src="https://ui-avatars.com/api/?name={{$validasi->user->name}}" id="preview_pengguna" class="rounded img-responsive" style="width: 35vh;">
                         @endif
@@ -135,7 +135,7 @@
                                     <div class="size-209">
                                         <span class="stext-115 cl2">
                                             <input type="hidden" name="old_proposal" value="{{ $validasi->proposal }}">
-                                            <a href="/storage/{{ $validasi->proposal }}" target="_blank" rel="noopener noreferrer">
+                                            <a href="/storage/proposal/{{ $validasi->proposal }}" target="_blank" rel="noopener noreferrer">
                                                 <span class="mb-xs mt-xs btn btn-success btn-xs c-default" style="cursor: pointer;"> <i class="fa fa-download"></i> Download</span>
                                             </a>
                                         </span>
@@ -178,7 +178,7 @@
                                     </div>
                                     <div class="size-209">
                                         <span class="stext-115 cl2">
-                                            <input type="text" class="form-control @error('mulai') has-error @enderror" name="mulai" id="start" value="{{ date('Y-m-d H:i', strtotime($validasi->tanggal_start)) }}" autocomplete="off">
+                                            <input type="text" class="form-control @error('mulai') has-error @enderror" name="mulai" id="start" value="{{ date('Y-m-d', strtotime($validasi->tanggal_start)) }}" autocomplete="off">
                                         </span>
                                     </div>
                                     @error('mulai')
@@ -191,7 +191,7 @@
                                     </div>
                                     <div class="size-209">
                                         <span class="stext-115 cl2">
-                                            <input type="text" class="form-control @error('sampai') has-error @enderror" name="sampai" id="end" value="{{ date('Y-m-d H:i', strtotime($validasi->tanggal_finish)) }}" autocomplete="off">
+                                            <input type="text" class="form-control @error('sampai') has-error @enderror" name="sampai" id="end" value="{{ date('Y-m-d', strtotime($validasi->tanggal_finish)) }}" autocomplete="off">
                                         </span>
                                     </div>
                                     @error('sampai')
@@ -329,17 +329,18 @@
 <script src="{{ asset('/front') }}/vendor/daterangepicker/daterangepicker.js"></script>
 <script>
     // daterangepicker 
+    var dateToday = new Date();
     $('#picker').daterangepicker({
+        minDate: dateToday,
         opens: 'left',
-        timePicker: true,
         startDate: moment().startOf('hour'),
         endDate: moment().startOf('hour').add(32, 'hour'),
         locale: {
-            format: 'YYYY-MM-DD hh:mm'
+            format: 'YYYY-MM-DD'
         }
     }, function(start, end, label) {
-        $('#start').val(start.format('YYYY-MM-DD hh:mm'))
-        $('#end').val(end.format('YYYY-MM-DD hh:mm'))
+        $('#start').val(start.format('YYYY-MM-DD'))
+        $('#end').val(end.format('YYYY-MM-DD'))
     });
 
     $(document).on('click', '#picker', function() {
@@ -412,7 +413,7 @@
             var desc = $(this).data('desc');
 
             $('.panel-title').text(nama);
-            $('#img').attr("src", '/storage/' + img);
+            $('#img').attr("src", '/storage/sarpras/' + img);
             $('p#deskripsi').text(desc);
         });
     });

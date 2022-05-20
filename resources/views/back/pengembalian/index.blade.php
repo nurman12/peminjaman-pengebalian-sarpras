@@ -91,7 +91,7 @@
                             <a href="{{ route('pengembalian.show', $data->id) }}" class="mr-xs mt-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
                             <a href="{{ route('pengembalian.edit', $data->id) }}" class="mt-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Validasi"><i class="fa fa-file-text"></i></a>
                             <a id="delete" data-validasi_id="{{ $data->validasi->id }}" style="width: 34px;" class="mr-xs mt-xs btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash-o"></i></i></a>
-                            <a id="rating" data-pengambilan_id="{{ $data->id }}" @if($data->rating) data-penilaian="{{ $data->rating->penilaian }}" @endif class="mt-xs btn btn-success btn-sm" data-toggle="modal" data-target="#modal-ratings" data-toggle="tooltip" data-placement="top" title="Penilaian"><i class="fa fa-star-half-o"></i></i></a>
+                            <a id="rating" data-pengambilan_id="{{ $data->id }}" @if($data->rating) data-penilaian="{{ $data->rating->penilaian }}" data-keterangan="{{ $data->rating->keterangan }}" @endif class="mt-xs btn btn-success btn-sm" data-toggle="modal" data-target="#modal-ratings" data-toggle="tooltip" data-placement="top" title="Penilaian"><i class="fa fa-star-half-o"></i></i></a>
                         </th>
                     </tr>
                     @endforeach
@@ -302,6 +302,7 @@
     $(document).on('click', '#rating', function() {
         var id = $(this).data('pengambilan_id');
         var penilaian = $(this).data('penilaian');
+        var keterangan = $(this).data('keterangan');
 
         $('#kembali_id').val(id);
         if (penilaian == 1) {
@@ -315,6 +316,7 @@
         } else if (penilaian == 5) {
             $('#rating-5').attr('checked', 'checked')
         }
+        $('#textareaAutosize').val(keterangan);
     });
 
     // simpan rating
