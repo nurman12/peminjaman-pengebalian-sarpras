@@ -200,28 +200,30 @@
                                     </span>
                                 </div>
                                 <div class="size-209">
-                                    @if( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 1 && $validasi->status == 0 )
-                                    <span class="mb-xs mt-xs btn btn-success btn-xs c-default">Disetujui <i class="fa fa-check-circle"></i></span>
-                                    @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 0 )
-                                    <span class="mb-xs mt-xs btn btn-primary btn-xs c-default">Seleksi BMN <i class="fa fa-spinner"></i></span>
-                                    @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 0 && $validasi->validasi_bmn == 0 )
-                                    <span class="mb-xs mt-xs btn btn-primary btn-xs c-default">Seleksi Koordinator <i class="fa fa-spinner"></i></span>
-                                    @elseif( $validasi->validasi_ktu == 0 && $validasi->validasi_koor == 0 && $validasi->validasi_bmn == 0 )
-                                    <span class="mb-xs mt-xs btn btn-primary btn-xs c-default">Seleksi TU <i class="fa fa-spinner"></i></span>
-                                    @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 2 )
-                                    <span class="mb-xs mt-xs btn btn-danger btn-xs c-default">Tolak BMN <i class="fa fa-times-circle"></i></span>
-                                    @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 2 && $validasi->validasi_bmn == 0 )
-                                    <span class="mb-xs mt-xs btn btn-danger btn-xs c-default">Tolak Koordinator <i class="fa fa-times-circle"></i></span>
-                                    @elseif( $validasi->validasi_ktu == 2 && $validasi->validasi_koor == 0 && $validasi->validasi_bmn == 0 )
-                                    <span class="mb-xs mt-xs btn btn-danger btn-xs c-default">Tolak TU <i class="fa fa-times-circle"></i></span>
-                                    @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 1 && $validasi->status == 1 )
-                                    <span class="mb-xs mt-xs btn btn-info btn-xs c-default">Diambil <i class="fa fa-fax"></i></span>
-                                    @endif
+                                    @if($validasi->tanggal_finish < date('Y-m-d')) <span class="mb-xs mt-xs btn btn-dark btn-xs c-default">Kedaluwarsa <i class="fa fa-check-circle"></i></span>
+                                        @elseif( $validasi->status == 0 )
+                                        <span class="mb-xs mt-xs btn btn-success btn-xs c-default">Disetujui <i class="fa fa-check-circle"></i></span>
+                                        @elseif( $validasi->status == 1 )
+                                        <span class="mb-xs mt-xs btn btn-info btn-xs c-default">Diambil <i class="fa fa-fax"></i></span>
+                                        @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 0 )
+                                        <span class="mb-xs mt-xs btn btn-primary btn-xs c-default">Seleksi BMN <i class="fa fa-spinner"></i></span>
+                                        @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 0 && $validasi->validasi_bmn == 0 )
+                                        <span class="mb-xs mt-xs btn btn-primary btn-xs c-default">Seleksi Koordinator <i class="fa fa-spinner"></i></span>
+                                        @elseif( $validasi->validasi_ktu == 0 && $validasi->validasi_koor == 0 && $validasi->validasi_bmn == 0 )
+                                        <span class="mb-xs mt-xs btn btn-primary btn-xs c-default">Seleksi TU <i class="fa fa-spinner"></i></span>
+                                        @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 2 )
+                                        <span class="mb-xs mt-xs btn btn-danger btn-xs c-default">Tolak BMN <i class="fa fa-times-circle"></i></span>
+                                        @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 2 && $validasi->validasi_bmn == 0 )
+                                        <span class="mb-xs mt-xs btn btn-danger btn-xs c-default">Tolak Koordinator <i class="fa fa-times-circle"></i></span>
+                                        @elseif( $validasi->validasi_ktu == 2 && $validasi->validasi_koor == 0 && $validasi->validasi_bmn == 0 )
+                                        <span class="mb-xs mt-xs btn btn-danger btn-xs c-default">Tolak TU <i class="fa fa-times-circle"></i></span>
+                                        @endif
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="mb-xl">
+                        @if($validasi->tanggal_finish >= now()->format('Y-m-d'))
                         @if(Auth::user()->roles == 'KTU' && $validasi->validasi_ktu == 0 && $validasi->validasi_koor == 0 || Auth::user()->roles == 'KTU' && $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 0 || Auth::user()->roles == 'KTU' && $validasi->validasi_ktu == 2 && $validasi->validasi_koor == 0)
                         @if($validasi->validasi_ktu == 0)
                         <form action="/validasi/{{$validasi->id}}" method="post" style="display: inline;">
@@ -310,8 +312,9 @@
                         </form>
                         @endif
                         @endif
+                        @endif
                     </div>
-                    @if($validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 1 && $validasi->status == 0)
+                    @if($validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 1 && $validasi->status == 0 && $validasi->tanggal_finish >= now()->format('Y-m-d'))
                     <a id="ambil" data-validasi_id="{{ $validasi->id }}" data-user_id="{{ $validasi->user_id }}" class="mb-xl btn btn-success btn-xs" data-toggle="tooltip" data-placement="top" title="Ambil"> <i class="fa fa-truck"></i> Ambil</a>
                     @endif
                     <table class="table table-bordered table-striped mb-none" id="datatable-default">

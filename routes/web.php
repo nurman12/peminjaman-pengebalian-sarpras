@@ -16,8 +16,8 @@ use App\Http\Controllers\SarprasController;
 use App\Http\Controllers\SarprasKeluarController;
 use App\Http\Controllers\SarprasMasukController;
 use App\Http\Controllers\ValidasiController;
-use App\Http\Controllers\WhatsAppController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
@@ -91,19 +91,12 @@ Route::post('/changePassword', [ProfileController::class, 'password'])->name('ch
 
 Route::post('/bot', [BotController::class, 'response'])->name('bot');
 
-Route::get('/perangkat', [WhatsAppController::class, 'perangkat']);
-Route::put('/perangkat', [WhatsAppController::class, 'update_sender']);
-Route::put('/perangkats', [WhatsAppController::class, 'restart']);
-
-Route::get('/message', [WhatsAppController::class, 'message']);
-Route::get('/schedule', [WhatsAppController::class, 'schedule']);
-
 
 /*
 |--------------------------------------------------------------------------
 | Note
 |--------------------------------------------------------------------------
-| - Disni saya menggunakan layanan WhatsApp Gateway dari wablas
+| - Disni saya menggunakan Whatsapp API menggunakan Node.js
 |
 |
 */

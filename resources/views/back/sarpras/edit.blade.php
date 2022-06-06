@@ -57,6 +57,7 @@
                                 <select class="form-control" multiple="multiple" name="kategori_brg[]" data-plugin-multiselect id="ms_example0">
                                     <option value="elektronik" @foreach($pecah_string as $data) {{ $data == 'elektronik' ? 'selected' : null }} @endforeach>Elektronik</option>
                                     <option value="mebel" @foreach($pecah_string as $data) {{ $data == 'mebel' ? 'selected' : null }} @endforeach>Mebel</option>
+                                    <option value="kain" @foreach($pecah_string as $data) {{ $data == 'kain' ? 'selected' : null }} @endforeach>Kain</option>
                                     <option value="lainnya" @foreach($pecah_string as $data) {{ $data == 'lainnya' ? 'selected' : null }} @endforeach>Lainnya</option>
                                 </select>
                             </div>
@@ -66,6 +67,8 @@
                             <div class="col-md-6">
                                 <select class="form-control" multiple="multiple" name="kategori_rgn[]" data-plugin-multiselect id="ms_example0">
                                     <option value="kelas" @foreach($pecah_string as $data) {{ $data == 'kelas' ? 'selected' : null }} @endforeach>Kelas</option>
+                                    <option value="laboratorium" @foreach($pecah_string as $data) {{ $data == 'laboratorium' ? 'selected' : null }} @endforeach>Laboratorium</option>
+                                    <option value="rapat" @foreach($pecah_string as $data) {{ $data == 'rapat' ? 'selected' : null }} @endforeach>rapat</option>
                                     <option value="lainnya" @foreach($pecah_string as $data) {{ $data == 'lainnya' ? 'selected' : null }} @endforeach>Lainnya</option>
                                 </select>
                             </div>

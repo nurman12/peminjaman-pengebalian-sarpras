@@ -157,7 +157,7 @@
             </div>
             <div class="chat suggestion">
                 <div class="details">
-                    <button id="sugest">Getting started with Zoom</button>
+                    <button id="sugest" onclick="responseBot(this)">Getting started with Zoom</button>
                 </div>
             </div>
             <div class="chat suggestion">
@@ -184,6 +184,7 @@
 <script src="{{ asset('/front') }}/vendor/jquery/jquery-3.2.1.min.js"></script>
 <script>
     $(document).ready(function() {
+        // click kirim
         $('.chat_icon').click(function(event) {
             $('.chat_box').toggleClass('active');
         });
@@ -211,39 +212,46 @@
                     success: function(response) {
                         $replay = `<div class="chat incoming"><img src="{{ asset('/front') }}/images/avatar-01.jpg" alt="" class="rounded-circle"><div class="details"><p>` + response.send + `</p></div></div>`;
                         $(".chat-box").append($replay);
-                        // when chat goes down the scroll bar automatically comes to the bottom
                         $(".chat-box").scrollTop($(".chat-box")[0].scrollHeight);
                     }
                 });
             }
         });
-        $(".suggestion").on("click", function() {
-            value = $(this).attr("id", "sugest").text();
-            $(".suggestion").remove()
-            $msg = '<div class="chat outgoing"><div class="details"><p>' + value + '</p></div></div>';
-            $(".chat-box").append($msg);
+    });
+    // click tombol
+    function responseBot(obj) {
+        var question = $(obj).text();
+        $(".suggestion").remove()
+        $msg = '<div class="chat outgoing"><div class="details"><p>' + question + '</p></div></div>';
+        $(".chat-box").append($msg);
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            $.ajax({
-                url: '/bot',
-                type: 'POST',
-                data: {
-                    'received': value,
-                },
-                success: function(response) {
-                    $replay = `<div class="chat incoming"><img src="{{ asset('/front') }}/images/avatar-01.jpg" alt="" class="rounded-circle"><div class="details"><p>` + response.send + `</p></div></div>`;
-                    $(".chat-box").append($replay);
-                    // when chat goes down the scroll bar automatically comes to the bottom
-                    $(".chat-box").scrollTop($(".chat-box")[0].scrollHeight);
-                }
-            });
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
         });
-    })
+
+        $.ajax({
+            url: '/bot',
+            type: 'POST',
+            data: {
+                'received': question,
+            },
+            success: function(res) {
+                if (res.send) {
+                    $.each(res.send, function(key, value) {
+                        $(".chat-box").append(`<div class="chat incoming"><img src="{{ asset('/front') }}/images/avatar-01.jpg" alt="" class="rounded-circle"><div class="details"><p>` + value + `</p></div></div>`);
+                    });
+                }
+                if (res.suggestion) {
+                    $.each(res.suggestion, function(key, value) {
+                        $(".chat-box").append(`<div class="chat suggestion"><div class="details"><button id="sugest"onclick="responseBot(this)">` + value + `</button></div></div>`);
+                    });
+                }
+                $(".chat-box").scrollTop($(".chat-box")[0].scrollHeight);
+            }
+        });
+    }
 </script>
 @auth
 <script>

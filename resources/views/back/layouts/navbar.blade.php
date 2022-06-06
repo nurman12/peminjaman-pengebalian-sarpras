@@ -14,7 +14,7 @@
             <!-- start: search & user box -->
             <div class="header-right">
 
-                <form class="search nav-form">
+                <!-- <form class="search nav-form">
                     <div class="input-group input-search">
                         <input type="text" class="form-control" name="q" id="q" placeholder="Search...">
                         <span class="input-group-btn">
@@ -22,7 +22,7 @@
                         </span>
                     </div>
                 </form>
-                <span class="separator"></span>
+                <span class="separator"></span> -->
                 <?php
 
                 use Illuminate\Support\Facades\Auth;

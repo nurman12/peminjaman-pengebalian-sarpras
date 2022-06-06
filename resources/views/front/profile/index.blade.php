@@ -187,7 +187,9 @@
                                     <td>{{ count($data->draft) }}</td>
                                     <td>{{ date('d F', strtotime( $data->tanggal_start )) }} sd. {{ date('d F Y', strtotime( $data->tanggal_finish )) }}</td>
                                     <td>
-                                        @if( $data->validasi_ktu == 1 && $data->validasi_koor == 1 && $data->validasi_bmn == 1 && $data->status == 0 )
+                                        @if( $data->status == 3 )
+                                        <label class="badge badge-danger shadow">Kadaluarsa</label>
+                                        @elseif( $data->validasi_ktu == 1 && $data->validasi_koor == 1 && $data->validasi_bmn == 1 && $data->status == 0 )
                                         <label class="badge badge-success shadow">Disetujui</label>
                                         @elseif( $data->validasi_ktu == 1 && $data->validasi_koor == 1 && $data->validasi_bmn == 0 )
                                         <label class="badge badge-light shadow">Seleksi BMN</label>

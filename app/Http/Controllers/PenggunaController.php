@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Exports\UsersExport;
 use App\Imports\UsersImport;
+use App\Models\Pengembalian;
 use App\Models\Rating;
+use App\Models\Validasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -60,6 +62,9 @@ class PenggunaController extends Controller
     public function show($id)
     {
         $user = User::where('id', $id)->first();
+        $permohonan = Validasi::where('user_id', $id)->where('status', 0)->get();
+        $peminjaman = Pengembalian::where('user_id', $id)->whereIn('status', [0, 2])->get();
+        $pengembalian = Pengembalian::where('user_id', $id)->where('status', 1)->get();
         $rating = Rating::where('user_id', $id)->first();
         if ($rating) {
 
@@ -75,7 +80,7 @@ class PenggunaController extends Controller
             $rate = 0;
         }
 
-        return view('back.pengguna.show', ['user' => $user, 'rate' => $rate, 'jumlah' => $jumlah]);
+        return view('back.pengguna.show', compact('user', 'permohonan', 'peminjaman', 'pengembalian', 'jumlah', 'rate'));
     }
     public function edit($id)
     {

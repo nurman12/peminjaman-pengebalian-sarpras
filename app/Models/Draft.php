@@ -28,11 +28,11 @@ class Draft extends Model
 
     public function sarpras_keluar()
     {
-        return $this->hasOne(SarprasKeluar::class);
+        return $this->hasOne(SarprasDetail::class);
     }
 
     public function sarpras_masuk()
     {
-        return $this->hasOne(SarprasMasuk::class);
+        return $this->hasOne(SarprasDetail::class);
     }
 }

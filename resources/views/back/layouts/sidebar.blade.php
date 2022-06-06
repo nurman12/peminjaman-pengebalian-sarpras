@@ -167,52 +167,19 @@
                             </ul>
                         </li>
                         @if(Auth::user()->roles == 'BMN')
-                        <hr class="sparator" separator>
-                        <div class="sidebar-widget widget-tasks">
-                            <div class="widget-header">
-                                <h6 style="color: white;">MASTER DATA</h6>
-                                <div class="widget-toggle" style="color: white;">+</div>
-                            </div>
-                            <div class="widget-content">
-                                <ul class="list-unstyled m-none">
-                                    <li class="nav-active">
-                                        <a href="{{ route('peminjaman.index') }}">Peminjaman</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('pengembalian.index') }}">Pengembalian</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <hr class="sparator" separator>
-                        @if(request()->is('perangkat') )
-                        <li class="nav-parent nav-expanded nav-active">
-                            @elseif(request()->is('schedule') )
-                        <li class="nav-parent nav-expanded nav-active">
-                            @else
-                        <li class="nav-parent">
-                            @endif
-                            <a>
-                                <i class="fa fa-send" aria-hidden="true"></i>
-                                <span>WhatsApp</span>
+                        <li class="{{ request()->is('peminjaman*') ? 'nav-active' : '' }}">
+                            <a href="{{ route('peminjaman.index') }}">
+                                <span class="pull-right label label-primary">{{ count(App\Models\Pengembalian::whereIn('status', [0, 2])->get()) }}</span>
+                                <i class="fa fa-plane" aria-hidden="true"></i>
+                                <span>Peminjaman</span>
                             </a>
-                            <ul class="nav nav-children">
-                                <li class="{{ request()->is('perangkat') ? 'nav-active' : '' }}">
-                                    <a href="/perangkat">
-                                        Perangkat
-                                    </a>
-                                </li>
-                                <li class="{{ request()->is('message') ? 'nav-active' : '' }}">
-                                    <a href="/message">
-                                        Message
-                                    </a>
-                                </li>
-                                <li class="{{ request()->is('schedule') ? 'nav-active' : '' }}">
-                                    <a href="/schedule">
-                                        Schedule
-                                    </a>
-                                </li>
-                            </ul>
+                        </li>
+                        <li class="{{ request()->is('pengembalian*') ? 'nav-active' : '' }}">
+                            <a href="{{ route('pengembalian.index') }}">
+                                <span class="pull-right label label-primary">{{ count(App\Models\Pengembalian::where('status', 1)->get()) }}</span>
+                                <i class="fa fa-rocket" aria-hidden="true"></i>
+                                <span>Pengembalian</span>
+                            </a>
                         </li>
                         @endif
                     </ul>

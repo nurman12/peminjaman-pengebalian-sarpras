@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sarpras;
-use App\Models\SarprasKeluar;
+use App\Models\SarprasDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,7 +28,7 @@ class LaporanController extends Controller
             return view('/');
         }
 
-        $rusak = SarprasKeluar::whereNotIn('hilang', [0])->get();
+        $rusak = SarprasDetail::whereNotIn('hilang', [0])->where('jenis', 'keluar')->get();
 
         return view('back.laporan.kerusakan', compact('rusak'));
     }

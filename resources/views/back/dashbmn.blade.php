@@ -21,91 +21,141 @@
     <!-- Start page -->
     <div class="row">
         <div class="col-md-6 col-lg-12 col-xl-6">
-            <section class="panel">
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <div class="chart-data-selector" id="salesSelectorWrapper">
-                                <h2>
-                                    Grafik:
-                                    <strong>
-                                        <select class="form-control" id="salesSelector">
-                                            <option value="JSOFT Admin" selected>Peminjaman</option>
-                                            <option value="JSOFT Drupal">Sarpras Dipinjam</option>
-                                            <option value="JSOFT Wordpress">Sarpras Dikembalikan</option>
-                                        </select>
-                                    </strong>
-                                </h2>
-
-                                <div id="salesSelectorItems" class="chart-data-selector-items mt-sm">
-                                    <!-- Flot: Sales JSOFT Admin -->
-                                    <div class="chart chart-sm" data-sales-rel="JSOFT Admin" id="flotDashSales1" class="chart-active"></div>
-                                    <script>
-                                        var months = ["Jan", "Feb", 'Mar', "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"];
-                                        var flotDashSales1Data = [{
-                                            data: [
-                                                <?php
-                                                foreach ($pinjam as $data) {
-                                                ?>[months[<?= $data->bulan ?> - 1], <?= $data->jumlah ?>, ],
-                                                <?php } ?>
-                                            ],
-                                            color: "#0088cc"
-                                        }];
-
-                                        // See: assets/javascripts/dashboard/examples.dashboard.js for more settings.
-                                    </script>
-
-                                    <!-- Flot: Sales JSOFT Drupal -->
-                                    <div class="chart chart-sm" data-sales-rel="JSOFT Drupal" id="flotDashSales2" class="chart-hidden"></div>
-                                    <script>
-                                        var months = ["Jan", "Feb", 'Mar', "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"];
-                                        var flotDashSales2Data = [{
-                                            data: [
-                                                <?php
-                                                foreach ($peminjaman as $data) {
-                                                ?>[months[<?= $data->bulan ?> - 1], <?= $data->jumlah ?>],
-                                                <?php } ?>
-                                            ],
-                                            color: "#2baab1"
-                                        }];
-
-                                        // See: assets/javascripts/dashboard/examples.dashboard.js for more settings.
-                                    </script>
-
-                                    <!-- Flot: Sales JSOFT Wordpress -->
-                                    <div class="chart chart-sm" data-sales-rel="JSOFT Wordpress" id="flotDashSales3" class="chart-hidden"></div>
-                                    <script>
-                                        var flotDashSales3Data = [{
-                                            data: [
-                                                <?php
-                                                foreach ($pengembalian as $data) {
-                                                ?>[months[<?= $data->bulan ?> - 1], <?= $data->jumlah ?>],
-                                                <?php } ?>
-                                            ],
-                                            color: "#734ba9"
-                                        }];
-
-                                        // See: assets/javascripts/dashboard/examples.dashboard.js for more settings.
-                                    </script>
-                                </div>
-
+            <div class="row">
+                <div class="col-md-6">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            <div class="panel-actions">
+                                <a href="#" class="fa fa-caret-down"></a>
+                                <a href="#" class="fa fa-times"></a>
                             </div>
+                            <h2 class="panel-title">Pengambilan & Pengembalian</h2>
+                            <p class="panel-subtitle">Perbandingan data peminjaman dengan data pengembalian pada sistem</p>
+                        </header>
+                        <div class="panel-body" style="height: 23rem;">
+                            <!-- chart.js -->
+                            <div id="peminjaman_pengembalian"></div>
+
                         </div>
-                        <div class="col-lg-4 text-center">
-                            <h2 class="panel-title mt-md">Perbandingan</h2>
-                            <div class="liquid-meter-wrapper liquid-meter-sm mt-lg">
-                                <div class="liquid-meter">
-                                    <meter min="0" max="100" value="35" id="meterSales"></meter>
-                                </div>
-                                <!-- <div class="liquid-meter-selector" id="meterSalesSel">
-                                    <a href="#" data-val="35" class="active">Monthly Goal</a>
-                                    <a href="#" data-val="28">Annual Goal</a>
-                                </div> -->
-                            </div>
-                        </div>
-                    </div>
+                    </section>
                 </div>
-            </section>
+                <div class="col-md-6">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            <div class="panel-actions">
+                                <a href="#" class="fa fa-caret-down"></a>
+                                <a href="#" class="fa fa-times"></a>
+                            </div>
+                            <h2 class="panel-title">Pengambilan & Pengembalian Sarpras</h2>
+                            <p class="panel-subtitle">Perbandingan jumlah sarpras yang dipinjam dengan jumlah sarpras yang dikembalikan.</p>
+                        </header>
+                        <div class="panel-body" style="height: 23rem;">
+                            <!-- chart.js -->
+                            <canvas id="stok_peminjaman_pengembalian"></canvas>
+
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <section class="panel panel-featured-left panel-featured-primary">
+                        <div class="panel-body">
+                            <div class="widget-summary">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-life-ring"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Support Questions</h4>
+                                        <div class="info">
+                                            <strong class="amount">1281</strong>
+                                            <span class="text-primary">(14 unread)</span>
+                                        </div>
+                                    </div>
+                                    <div class="summary-footer">
+                                        <a class="text-muted text-uppercase">(view all)</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <section class="panel panel-featured-left panel-featured-secondary">
+                        <div class="panel-body">
+                            <div class="widget-summary">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-secondary">
+                                        <i class="fa fa-usd"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Total Profit</h4>
+                                        <div class="info">
+                                            <strong class="amount">$ 14,890.30</strong>
+                                        </div>
+                                    </div>
+                                    <div class="summary-footer">
+                                        <a class="text-muted text-uppercase">(withdraw)</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <section class="panel panel-featured-left panel-featured-tertiary">
+                        <div class="panel-body">
+                            <div class="widget-summary">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-tertiary">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Today's Orders</h4>
+                                        <div class="info">
+                                            <strong class="amount">38</strong>
+                                        </div>
+                                    </div>
+                                    <div class="summary-footer">
+                                        <a class="text-muted text-uppercase">(statement)</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <section class="panel panel-featured-left panel-featured-quartenary">
+                        <div class="panel-body">
+                            <div class="widget-summary">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-quartenary">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Today's Visitors</h4>
+                                        <div class="info">
+                                            <strong class="amount">3765</strong>
+                                        </div>
+                                    </div>
+                                    <div class="summary-footer">
+                                        <a class="text-muted text-uppercase">(report)</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
         </div>
     </div>
     <!-- End page -->
@@ -115,40 +165,113 @@
 
 @push('style')
 <!-- Specific Page Vendor CSS -->
-<link rel="stylesheet" href="{{ asset('/back') }}/vendor/jquery-ui/css/ui-lightness/jquery-ui-1.10.4.custom.css" />
-<link rel="stylesheet" href="{{ asset('/back') }}/vendor/bootstrap-multiselect/bootstrap-multiselect.css" />
-<link rel="stylesheet" href="{{ asset('/back') }}/vendor/morris/morris.css" />
+
 @endpush
 
 @push('script')
 <!-- Specific Page Vendor -->
-<script src="{{ asset('/back') }}/vendor/jquery-ui/js/jquery-ui-1.10.4.custom.js"></script>
-<script src="{{ asset('/back') }}/vendor/jquery-ui-touch-punch/jquery.ui.touch-punch.js"></script>
-<script src="{{ asset('/back') }}/vendor/jquery-appear/jquery.appear.js"></script>
-<script src="{{ asset('/back') }}/vendor/bootstrap-multiselect/bootstrap-multiselect.js"></script>
-<script src="{{ asset('/back') }}/vendor/jquery-easypiechart/jquery.easypiechart.js"></script>
-<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.js"></script>
-<script src="{{ asset('/back') }}/vendor/flot-tooltip/jquery.flot.tooltip.js"></script>
-<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.pie.js"></script>
-<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.categories.js"></script>
-<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.resize.js"></script>
-<script src="{{ asset('/back') }}/vendor/jquery-sparkline/jquery.sparkline.js"></script>
-<script src="{{ asset('/back') }}/vendor/raphael/raphael.js"></script>
-<script src="{{ asset('/back') }}/vendor/morris/morris.js"></script>
-<script src="{{ asset('/back') }}/vendor/gauge/gauge.js"></script>
-<script src="{{ asset('/back') }}/vendor/snap-svg/snap.svg.js"></script>
-<script src="{{ asset('/back') }}/vendor/liquid-meter/liquid.meter.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/jquery.vmap.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/data/jquery.vmap.sampledata.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/jquery.vmap.world.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.africa.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.asia.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.australia.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.europe.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.north-america.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.south-america.js"></script>
+
 @endpush
 @push('last_script')
-<!-- Examples -->
-<script src="{{ asset('/back') }}/javascripts/dashboard/examples.dashboard.js"></script>
+<script type="text/javascript" src="{{ asset('/back') }}/vendor/chart-js/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {
+        'packages': ['corechart']
+    });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var months = ['Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        var data = google.visualization.arrayToDataTable([
+            ['Bulan', 'Peminjaman', 'Pengembalian'],
+            <?php foreach ($perbandingan as $item) : ?>[months[<?= $item['bulan']; ?> - 1], <?= $item['jumlah_pinjam']; ?>, <?= $item['jumlah_kembali']; ?>],
+            <?php endforeach; ?>
+        ]);
+
+        var options = {
+            title: 'Perbandingan',
+            curveType: 'function',
+            legend: {
+                position: 'bottom'
+            }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('peminjaman_pengembalian'));
+
+        chart.draw(data, options);
+    }
+</script>
+<script type="text/javascript" src="{{ asset('/back') }}/vendor/chart-js/chart.js"></script>
+<script>
+    // setup 
+    const months = ['Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    const data = {
+        labels: [<?php foreach ($perbandingan_sarpras as $item) : ?>months[<?= $item['bulan']; ?> - 1], <?php endforeach; ?>],
+        datasets: [{
+            label: 'Pengembalian',
+            data: [<?php foreach ($perbandingan_sarpras as $item) : ?><?= $item['masuk']; ?>, <?php endforeach; ?>],
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+
+        }, {
+            label: 'Peminjaman',
+            data: [<?php foreach ($perbandingan_sarpras as $item) : ?><?= $item['keluar']; ?>, <?php endforeach; ?>],
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+
+        }]
+    };
+
+    // customLegend
+    const customLegend = {
+        id: 'customLegend',
+        afterDraw: (chart, args, options) => {
+            const {
+                _metasets,
+                ctx
+            } = chart;
+            ctx.save();
+
+            _metasets.forEach((meta) => {
+                ctx.font = 'bolder 12px Arial';
+                ctx.fillStyle = meta._dataset.borderColor;
+                ctx.textBaseLine = 'middle';
+                ctx.fillText(meta._dataset.label, meta.data[meta.data.length - 1].x + 6, meta.data[meta.data.length - 1].y)
+            })
+        }
+    }
+
+    // config 
+    const config = {
+        type: 'line',
+        data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    right: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            tension: 0.4,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        },
+        plugins: [customLegend]
+    };
+
+    // render init block
+    const myChart = new Chart(
+        document.getElementById('stok_peminjaman_pengembalian'),
+        config
+    );
+</script>
 @endpush

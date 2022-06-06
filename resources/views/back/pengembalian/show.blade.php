@@ -272,7 +272,9 @@
                                 <td>
                                     <?php
 
-                                    $sarpras_keluar = App\Models\SarprasKeluar::where('draft_id', $data->id)->first();
+                                    $sarpras_keluar = App\Models\SarprasDetail::where('draft_id', $data->id)
+                                        ->where('jenis', 'keluar')
+                                        ->first();
 
                                     ?>
                                     @if( $sarpras_keluar->hilang > 0 )

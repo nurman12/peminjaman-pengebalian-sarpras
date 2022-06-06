@@ -15,9 +15,14 @@ class CreateSarprasDetailTable extends Migration
     {
         Schema::create('sarpras_detail', function (Blueprint $table) {
             $table->id();
+            $table->integer('user_id');
+            $table->integer('draft_id')->nullable();
             $table->integer('sarpras_id');
-            $table->integer('sarpras_masuk_id')->nullable();
-            $table->integer('sarpras_keluar_id')->nullable();
+            $table->date('tanggal');
+            $table->string('jenis');
+            $table->integer('jumlah');
+            $table->integer('hilang')->default(0);
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

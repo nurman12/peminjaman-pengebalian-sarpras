@@ -13,142 +13,33 @@
                     </a>
                 </li>
                 <li><span>Pages</span></li>
-                <li><span>Beranda</span></li>
+                <li><span style="margin-right: 20px;">Beranda</span></li>
             </ol>
-            <!-- <a class="sidebar-right-toggle" data-open="sidebar-right"><i class="fa fa-chevron-left"></i></a> -->
+
         </div>
     </header>
-
     <!-- Start page -->
     <div class="row">
-        <!-- Start Chat -->
-        <!-- <div id="Chat">
-        <section class="panel panel-featured">
-            <header class="panel-heading">
-                <div class="panel-actions">
-                    <a href="#" class="fa fa-caret-down"></a>
-                    <a href="#" onclick="ShowChat()" style="font-weight: bold">x</a>
-                </div>
-                <h2 class="panel-title">Asep Chan</h2>
-            </header>
-            <div class="panel-body">
-                <div class="list-group list-group-flush m-t-10 h-250">
-                    <blockquote class="primary rounded b-thin">
-                        <p>Lorem, ipsum, dolor sit amet consectetur adipisicing elit. Est, cum.
-                        </p>
-                        <small>[12 Feb 2022 17:41]</small>
-                    </blockquote>
-                    <blockquote class="primary rounded b-thin blockquote-reverse">
-                        <p>Learn from yesterday, live for today, hope for tomorrow. The important thing is not to stop questioning.</p>
-                        <small>[12 Feb 2022 18:01]</small>
-                    </blockquote> 
-                </div>
-                <div style="display: flex;">
-                    <input type="text" class="form-control m-r-10" placeholder="Messages...">
-                    <button class="btn btn-primary">Send</button>
+        <div class="col-md-6 col-lg-12 col-xl-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            <div class="panel-actions">
+                                <a href="#" class="fa fa-caret-down"></a>
+                                <a href="#" class="fa fa-times"></a>
+                            </div>
+                            <h2 class="panel-title">Pengambilan & Pengembalian</h2>
+                            <p class="panel-subtitle">Perbandingan data peminjaman dengan data pengembalian pada sistem</p>
+                        </header>
+                        <div class="panel-body" style="height: 23rem;">
+                            <!-- chart.js -->
+                            <div id="peminjaman_pengembalian"></div>
+
+                        </div>
+                    </section>
                 </div>
             </div>
-        </section> 
-    </div> -->
-        <!-- End Chat -->
-        <div class="col-md-6 col-lg-12 col-xl-6">
-            <section class="panel">
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <div class="chart-data-selector" id="salesSelectorWrapper">
-                                <h2>
-                                    Sales:
-                                    <strong>
-                                        <select class="form-control" id="salesSelector">
-                                            <option value="JSOFT Admin" selected>JSOFT Admin</option>
-                                            <option value="JSOFT Drupal">JSOFT Drupal</option>
-                                            <option value="JSOFT Wordpress">JSOFT Wordpress</option>
-                                        </select>
-                                    </strong>
-                                </h2>
-
-                                <div id="salesSelectorItems" class="chart-data-selector-items mt-sm">
-                                    <!-- Flot: Sales JSOFT Admin -->
-                                    <div class="chart chart-sm" data-sales-rel="JSOFT Admin" id="flotDashSales1" class="chart-active"></div>
-                                    <script>
-                                        var flotDashSales1Data = [{
-                                            data: [
-                                                ["Jan", 140],
-                                                ["Feb", 240],
-                                                ["Mar", 190],
-                                                ["Apr", 140],
-                                                ["May", 180],
-                                                ["Jun", 320],
-                                                ["Jul", 270],
-                                                ["Aug", 180]
-                                            ],
-                                            color: "#0088cc"
-                                        }];
-
-                                        // See: assets/javascripts/dashboard/examples.dashboard.js for more settings.
-                                    </script>
-
-                                    <!-- Flot: Sales JSOFT Drupal -->
-                                    <div class="chart chart-sm" data-sales-rel="JSOFT Drupal" id="flotDashSales2" class="chart-hidden"></div>
-                                    <script>
-                                        var flotDashSales2Data = [{
-                                            data: [
-                                                ["Jan", 240],
-                                                ["Feb", 240],
-                                                ["Mar", 290],
-                                                ["Apr", 540],
-                                                ["May", 480],
-                                                ["Jun", 220],
-                                                ["Jul", 170],
-                                                ["Aug", 190]
-                                            ],
-                                            color: "#2baab1"
-                                        }];
-
-                                        // See: assets/javascripts/dashboard/examples.dashboard.js for more settings.
-                                    </script>
-
-                                    <!-- Flot: Sales JSOFT Wordpress -->
-                                    <div class="chart chart-sm" data-sales-rel="JSOFT Wordpress" id="flotDashSales3" class="chart-hidden"></div>
-                                    <script>
-                                        var flotDashSales3Data = [{
-                                            data: [
-                                                ["Jan", 840],
-                                                ["Feb", 740],
-                                                ["Mar", 690],
-                                                ["Apr", 940],
-                                                ["May", 1180],
-                                                ["Jun", 820],
-                                                ["Jul", 570],
-                                                ["Aug", 780]
-                                            ],
-                                            color: "#734ba9"
-                                        }];
-
-                                        // See: assets/javascripts/dashboard/examples.dashboard.js for more settings.
-                                    </script>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="col-lg-4 text-center">
-                            <h2 class="panel-title mt-md">Sales Goal</h2>
-                            <div class="liquid-meter-wrapper liquid-meter-sm mt-lg">
-                                <div class="liquid-meter">
-                                    <meter min="0" max="100" value="35" id="meterSales"></meter>
-                                </div>
-                                <div class="liquid-meter-selector" id="meterSalesSel">
-                                    <a href="#" data-val="35" class="active">Monthly Goal</a>
-                                    <a href="#" data-val="28">Annual Goal</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        <div class="col-md-6 col-lg-12 col-xl-6">
             <div class="row">
                 <div class="col-md-12 col-lg-6 col-xl-6">
                     <section class="panel panel-featured-left panel-featured-primary">
@@ -257,44 +148,40 @@
 
 @push('style')
 <!-- Specific Page Vendor CSS -->
-<link rel="stylesheet" href="{{ asset('/back') }}/vendor/jquery-ui/css/ui-lightness/jquery-ui-1.10.4.custom.css" />
-<link rel="stylesheet" href="{{ asset('/back') }}/vendor/bootstrap-multiselect/bootstrap-multiselect.css" />
-<link rel="stylesheet" href="{{ asset('/back') }}/vendor/morris/morris.css" />
-<link rel="stylesheet" href="{{ asset('/back') }}/custom/style.css" />
+
 @endpush
 
 @push('script')
 <!-- Specific Page Vendor -->
-<script src="{{ asset('/back') }}/custom/script.js"></script>
-<script src="{{ asset('/back') }}/vendor/jquery-ui/js/jquery-ui-1.10.4.custom.js"></script>
-<script src="{{ asset('/back') }}/vendor/jquery-ui-touch-punch/jquery.ui.touch-punch.js"></script>
-<script src="{{ asset('/back') }}/vendor/jquery-appear/jquery.appear.js"></script>
-<script src="{{ asset('/back') }}/vendor/bootstrap-multiselect/bootstrap-multiselect.js"></script>
-<script src="{{ asset('/back') }}/vendor/jquery-easypiechart/jquery.easypiechart.js"></script>
-<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.js"></script>
-<script src="{{ asset('/back') }}/vendor/flot-tooltip/jquery.flot.tooltip.js"></script>
-<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.pie.js"></script>
-<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.categories.js"></script>
-<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.resize.js"></script>
-<script src="{{ asset('/back') }}/vendor/jquery-sparkline/jquery.sparkline.js"></script>
-<script src="{{ asset('/back') }}/vendor/raphael/raphael.js"></script>
-<script src="{{ asset('/back') }}/vendor/morris/morris.js"></script>
-<script src="{{ asset('/back') }}/vendor/gauge/gauge.js"></script>
-<script src="{{ asset('/back') }}/vendor/snap-svg/snap.svg.js"></script>
-<script src="{{ asset('/back') }}/vendor/liquid-meter/liquid.meter.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/jquery.vmap.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/data/jquery.vmap.sampledata.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/jquery.vmap.world.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.africa.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.asia.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.australia.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.europe.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.north-america.js"></script>
-<script src="{{ asset('/back') }}/vendor/jqvmap/maps/continents/jquery.vmap.south-america.js"></script>
+
 @endpush
-
 @push('last_script')
-<!-- Examples -->
-<script src="{{ asset('/back') }}/javascripts/dashboard/examples.dashboard.js"></script>
+<script type="text/javascript" src="{{ asset('/back') }}/vendor/chart-js/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {
+        'packages': ['corechart']
+    });
+    google.charts.setOnLoadCallback(drawChart);
 
+    function drawChart() {
+        var months = ['Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        var data = google.visualization.arrayToDataTable([
+            ['Bulan', 'Peminjaman', 'Pengembalian'],
+            <?php foreach ($perbandingan as $item) : ?>[months[<?= $item['bulan']; ?> - 1], <?= $item['jumlah_pinjam']; ?>, <?= $item['jumlah_kembali']; ?>],
+            <?php endforeach; ?>
+        ]);
+
+        var options = {
+            title: 'Perbandingan',
+            curveType: 'function',
+            legend: {
+                position: 'bottom'
+            }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('peminjaman_pengembalian'));
+
+        chart.draw(data, options);
+    }
+</script>
 @endpush

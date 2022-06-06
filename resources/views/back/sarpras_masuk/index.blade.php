@@ -122,7 +122,8 @@
                     keterangan: keterangan,
                 },
                 success: function(data) {
-                    $('#content').html(data);
+                    // $('#content').html(data);
+                    location.reload();
                 }
             })
         });

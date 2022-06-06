@@ -264,8 +264,8 @@
                                     @endif
                                 </td>
                                 <?php
-                                $sarpras_keluar = App\Models\SarprasKeluar::where('draft_id', $data->id)->first();
-                                $sarpras_masuk = App\Models\SarprasMasuk::where('draft_id', $data->id)->first();
+                                $sarpras_keluar = App\Models\SarprasDetail::where('draft_id', $data->id)->where('jenis', 'keluar')->first();
+                                $sarpras_masuk = App\Models\SarprasDetail::where('draft_id', $data->id)->where('jenis', 'masuk')->first();
                                 if ($sarpras_masuk == null) {
                                     $jumlah_kembali = 0;
                                 } else {
@@ -282,7 +282,7 @@
                                         <i class="fa fa-picture-o"></i>
                                         Photo
                                     </a>
-                                    <a href="#varifikasi" id="validasi" data-id="{{$data->id}}" data-pengembalian_id="{{$pengembalian->id}}" data-title="{{$data->sarpras->nama}}" data-img_sarpras="{{$data->sarpras->photo}}" data-jumlah_pinjam="{{ App\Models\SarprasKeluar::where('draft_id', $data->id)->sum('jumlah') }}" data-jumlah_kembali="{{ $jumlah_kembali }}" data-jumlah_tanggungan="{{ $data->qty }}" data-jumlah_hilang="{{  App\Models\SarprasKeluar::where('draft_id', $data->id)->first()->hilang }}" class="mr-xs btn btn-warning btn-xs modal-with-zoom-anim">
+                                    <a href="#varifikasi" id="validasi" data-id="{{$data->id}}" data-pengembalian_id="{{$pengembalian->id}}" data-title="{{$data->sarpras->nama}}" data-img_sarpras="{{$data->sarpras->photo}}" data-jumlah_pinjam="{{ App\Models\SarprasDetail::where('draft_id', $data->id)->where('jenis', 'keluar')->sum('jumlah') }}" data-jumlah_kembali="{{ $jumlah_kembali }}" data-jumlah_tanggungan="{{ $data->qty }}" data-jumlah_hilang="{{  App\Models\SarprasDetail::where('draft_id', $data->id)->where('jenis', 'keluar')->first()->hilang }}" class="mr-xs btn btn-warning btn-xs modal-with-zoom-anim">
                                         <i class="fa fa-pencil-square-o"></i>
                                         Validasi
                                     </a>
@@ -677,7 +677,7 @@
                             location.reload();
                         }
                     })
-                } else {
+                } else if (response.success_message_other) {
                     location.reload();
                 }
             },

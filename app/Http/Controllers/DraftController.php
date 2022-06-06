@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Draft;
 use App\Models\Pengembalian;
 use App\Models\Sarpras;
-use App\Models\SarprasKeluar;
+use App\Models\SarprasDetail;
 use App\Models\Validasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -78,7 +78,7 @@ class DraftController extends Controller
             ]);
 
         if ($draft_old->validasi_id != 0) {
-            SarprasKeluar::where('draft_id', $id)
+            SarprasDetail::where('draft_id', $id)
                 ->update([
                     'jumlah' => $request->input('qty')
                 ]);
@@ -112,7 +112,7 @@ class DraftController extends Controller
                     'jumlah' => $sarpras->jumlah + $draft->qty
                 ]);
 
-            SarprasKeluar::where('draft_id', $id)->delete();
+            SarprasDetail::where('draft_id', $id)->where('jenis', 'keluar')->delete();
         }
 
         Draft::where('id', $id)->delete();
@@ -144,7 +144,7 @@ class DraftController extends Controller
             Draft::where('id', $id)->delete();
 
             if ($draft->validasi_id != 0) {
-                SarprasKeluar::where('draft_id', $id)->delete();
+                SarprasDetail::where('draft_id', $id)->where('jenis', 'keluar')->delete();
 
                 Sarpras::where('id', $draft->sarpras_id)
                     ->update([

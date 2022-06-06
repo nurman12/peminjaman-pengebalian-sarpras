@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Sarpras;
 use App\Models\SarprasDetail;
-use App\Models\SarprasKeluar;
-use App\Models\SarprasMasuk;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -15,8 +13,10 @@ class SarprasKeluarController extends Controller
     {
         // $user = User::where('roles', 'Mahasiswa')->orWhere('roles', 'Dosen')->get();
         // dd($user);
-        $sarpras_keluar = SarprasKeluar::whereNotIn('user_id', User::where('roles', 'Mahasiswa')->orWhere('roles', 'Dosen')->get('id'))
-            ->whereNotIn('sarpras_id', [0])->get();
+        $sarpras_keluar = SarprasDetail::whereNotIn('user_id', User::where('roles', 'Mahasiswa')
+            ->orWhere('roles', 'Dosen')->get('id'))
+            ->where('jenis', 'keluar')
+            ->get();
 
         return view('back.sarpras_keluar.index', compact('sarpras_keluar'));
     }
@@ -29,7 +29,7 @@ class SarprasKeluarController extends Controller
     }
     public function show($id)
     {
-        $sarpras_keluar = SarprasKeluar::where('id', $id)->first();
+        $sarpras_keluar = SarprasDetail::where('id', $id)->first();
 
         return view('back.sarpras_keluar.show', compact('sarpras_keluar'));
     }
@@ -42,10 +42,11 @@ class SarprasKeluarController extends Controller
             'jumlah' => 'required|numeric',
             'keterangan' => 'required'
         ]);
-        $sarpras_keluar = new SarprasKeluar();
+        $sarpras_keluar = new SarprasDetail();
         $sarpras_keluar->user_id = $request->user_id;
         $sarpras_keluar->sarpras_id = $request->sarpras;
-        $sarpras_keluar->tanggal_keluar = $request->tanggal;
+        $sarpras_keluar->tanggal = $request->tanggal;
+        $sarpras_keluar->jenis = "keluar";
         $sarpras_keluar->jumlah = $request->jumlah;
         $sarpras_keluar->keterangan = $request->keterangan;
         $sarpras_keluar->save();
@@ -55,27 +56,6 @@ class SarprasKeluarController extends Controller
             ->update([
                 'jumlah' => $sarpras->jumlah - $request->jumlah
             ]);
-
-        $sarpras_keluar_id = SarprasKeluar::all()->max();
-
-        $sarpras_detail = new SarprasDetail();
-        $sarpras_detail->sarpras_id = $request->sarpras;
-        $sarpras_detail->sarpras_masuk_id = 10;
-        $sarpras_detail->sarpras_keluar_id = $sarpras_keluar_id->id;
-        $sarpras_detail->save();
-
-        $cek = SarprasMasuk::where('id', 10)->where('keterangan', 'untuk grafik')->first();
-        if (is_null($cek)) {
-            $sarpras_masuk = new SarprasMasuk();
-            $sarpras_masuk->id = 10;
-            $sarpras_masuk->user_id = 0;
-            $sarpras_masuk->draft_id = 0;
-            $sarpras_masuk->sarpras_id = 0;
-            $sarpras_masuk->tanggal_masuk = date('y-m-d');
-            $sarpras_masuk->jumlah = 0;
-            $sarpras_masuk->keterangan = 'untuk grafik';
-            $sarpras_masuk->save();
-        }
 
         return redirect('/sarpras_keluar');
     }
@@ -88,27 +68,28 @@ class SarprasKeluarController extends Controller
         $keterangan = $request->input('keterangan');
 
         $sarpras = Sarpras::where('id', $sarpras_id)->first();
-        $jumlah_a = $sarpras->jumlah - $old_jumlah;
-        $jumlah_c = $jumlah_a + $jumlah_b;
+        $jumlah_a = $sarpras->jumlah + $old_jumlah;
+        $jumlah_c = $jumlah_a - $jumlah_b;
 
         Sarpras::where('id', $sarpras_id)
             ->update([
                 'jumlah' => $jumlah_c
             ]);
 
-        SarprasKeluar::where('id', $id)
+        SarprasDetail::where('id', $id)
             ->update([
-                'tanggal_keluar' => $tanggal,
-                'jumlah' => $jumlah_b
+                'tanggal' => $tanggal,
+                'jumlah' => $jumlah_b,
+                'keterangan' => $keterangan
             ]);
 
-        $sarpras_keluar = SarprasKeluar::whereNotIn('user_id', User::where('roles', 'Mahasiswa')->orWhere('roles', 'Dosen')->get('id'))->get();
+        // $sarpras_keluar = SarprasKeluar::whereNotIn('user_id', User::where('roles', 'Mahasiswa')->orWhere('roles', 'Dosen')->get('id'))->get();
 
-        return view('back.sarpras_keluar.table', compact('sarpras_keluar'));
+        // return view('back.sarpras_keluar.table', compact('sarpras_keluar'));
     }
     public function destroy($id)
     {
-        $sarpras_keluar = SarprasKeluar::where('id', $id)->first();
+        $sarpras_keluar = SarprasDetail::where('id', $id)->first();
         $sarpras = Sarpras::where('id', $sarpras_keluar->sarpras_id)->first();
         $jumlah = $sarpras->jumlah + $sarpras_keluar->jumlah;
 
@@ -117,9 +98,7 @@ class SarprasKeluarController extends Controller
                 'jumlah' => $jumlah
             ]);
 
-        SarprasKeluar::destroy($id);
-
-        SarprasDetail::where('sarpras_keluar_id', $sarpras_keluar->id)->delete();
+        SarprasDetail::destroy($id);
 
         return redirect('/sarpras_keluar');
     }

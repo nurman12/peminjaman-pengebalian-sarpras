@@ -15,12 +15,8 @@ class SarprasDetail extends Model
     {
         return $this->belongsTo(Sarpras::class);
     }
-    public function sarpras_keluar()
+    public function user()
     {
-        return $this->belongsTo(Sarpras_Keluar::class);
-    }
-    public function sarpras_masuk()
-    {
-        return $this->belongsTo(Sarpras_Masuk::class);
+        return $this->belongsTo(User::class);
     }
 }

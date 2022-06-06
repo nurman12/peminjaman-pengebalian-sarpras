@@ -25,6 +25,10 @@
                     Mebel
                 </button>
 
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".kain">
+                    Kain
+                </button>
+
                 <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".lainnya">
                     Lainnya
                 </button>
@@ -32,8 +36,16 @@
                 <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
                     Semua
                 </button>
+
                 <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".kelas">
                     Kelas
+                </button>
+
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".laboratorium">
+                    Laboratorium
+                </button>
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".rapat">
+                    Rapat
                 </button>
 
                 <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".lainnya">
@@ -80,7 +92,7 @@
 
                     <div class="block2-txt flex-w flex-t p-t-14">
                         <div class="block2-txt-child1 flex-col-l ">
-                            <a href="/sarpras_detail" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                            <a href="/sarpras_detail/{{$data->id}}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                 {{$data->nama}}
                             </a>
 
@@ -93,13 +105,6 @@
             </div>
             @endforeach
         </div>
-
-        <!-- Load more -->
-        <!-- <div class="flex-c-m flex-w w-full p-t-45">
-            <a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-                Load More
-            </a>
-        </div> -->
     </div>
 </div>
 

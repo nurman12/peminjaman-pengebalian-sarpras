@@ -53,6 +53,7 @@
                         <td>{{ count($data->draft) }}</td>
                         <th width="130px">
                             <a href="{{ route('validasi.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
+                            @if($data->tanggal_finish >= now()->format('Y-m-d'))
                             @if(Auth::user()->roles == 'KTU')
                             <form action="/validasi/{{$data->id}}" method="post" style="display: inline;">
                                 @csrf
@@ -93,12 +94,7 @@
                                 <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Tolak"><i class="fa fa-times"></i></button>
                             </form>
                             @endif
-                            <!-- <a class="mr-xs btn btn-warning btn-xs"><i class="fa fa-pencil-square-o"></i> Setuju</a> -->
-                            <!-- <a href="#notif" class="mr-xs btn btn-info btn-xs modal-with-zoom-anim" id="showModal" data-nama="{{$data->user->name}}" data-keperluan="{{$data->keperluan}}" data-mulai="{{ date('D, d F Y', strtotime( $data->tanggal_start )) }}" data-sampai="{{ date('D, d F Y', strtotime( $data->tanggal_finish )) }}">
-                                <i class="fa fa-comments-o"></i>
-                                Notif
-                            </a> -->
-                            <!-- <a class="mr-xs btn btn-danger btn-xs"><i class="fa fa-times"></i> Tolak</a> -->
+                            @endif
                         </th>
                     </tr>
                     @endforeach

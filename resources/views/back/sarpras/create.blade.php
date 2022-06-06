@@ -54,6 +54,7 @@
                                 <select class="form-control" multiple="multiple" name="kategori_brg[]" data-plugin-multiselect id="ms_example0">
                                     <option value="elektronik">Elektronik</option>
                                     <option value="mebel">Mebel</option>
+                                    <option value="kain">Kain</option>
                                     <option value="lainnya">Lainnya</option>
                                 </select>
                             </div>
@@ -63,6 +64,8 @@
                             <div class="col-md-6">
                                 <select class="form-control" multiple="multiple" name="kategori_rgn[]" data-plugin-multiselect id="ms_example0">
                                     <option value="kelas">Kelas</option>
+                                    <option value="laboratorium">Laboratorium</option>
+                                    <option value="rapat">Rapat</option>
                                     <option value="lainnya">Lainnya</option>
                                 </select>
                             </div>

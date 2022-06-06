@@ -13,11 +13,11 @@
         <tr>
             <th>{{$loop->iteration}}</th>
             <td>{{$data->sarpras->nama}}</td>
-            <td>{{date('l, d F Y', strtotime($data->tanggal_masuk))}}</td>
+            <td>{{date('l, d F Y', strtotime($data->tanggal))}}</td>
             <td class="center">{{$data->jumlah}}</td>
             <th width="120px">
                 <a href="{{ route('sarpras_masuk.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
-                <a id="edit" data-id="{{$data->id}}" data-tanggal="{{$data->tanggal_masuk}}" data-jumlah="{{$data->jumlah}}" data-keterangan="{{$data->keterangan}}" data-sarpras_id="{{ $data->sarpras_id }}" data-nama="{{ $data->sarpras->nama }}" data-img="{{ $data->sarpras->photo }}" data-toggle="modal" data-target="#exampleModal" class="mr-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>
+                <a id="edit" data-id="{{$data->id}}" data-tanggal="{{$data->tanggal}}" data-jumlah="{{$data->jumlah}}" data-keterangan="{{$data->keterangan}}" data-sarpras_id="{{ $data->sarpras_id }}" data-nama="{{ $data->sarpras->nama }}" data-img="{{ $data->sarpras->photo }}" data-toggle="modal" data-target="#exampleModal" class="mr-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>
                 <form onclick="return confirm('Yakin ingin hapus ini?')" action="{{ route('sarpras_masuk.destroy', $data->id) }}" method="post" style="display: inline;">
                     @csrf
                     @method('delete')

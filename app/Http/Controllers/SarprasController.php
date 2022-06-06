@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sarpras;
-use App\Models\SarprasDetail;
-use App\Models\SarprasKeluar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -50,17 +48,7 @@ class SarprasController extends Controller
     public function show($id)
     {
         $sarpras = Sarpras::where('id', $id)->first();
-        // $sarpras_detail = DB::table('sarpras_detail')
-        //     // $sarpras_detail = SarprasDetail::whereNull('draft_id')
-        //     ->join('sarpras_masuk', 'sarpras_masuk.id', '=', 'sarpras_detail.sarpras_masuk_id')->where('sarpras_masuk.draft_id', '=', NULL)
-        //     // ->join('sarpras_keluar', 'sarpras_keluar.id', '=', 'sarpras_detail.sarpras_keluar_id')->where('sarpras_keluar.draft_id', '=', NULL)
-        //     ->select([
-        //         // DB::raw('sum(sarpras_keluar.jumlah) as jumlah_k'),
-        //         DB::raw('sum(sarpras_masuk.jumlah) as jumlah_m'),
-        //         DB::raw('MONTH(sarpras_detail.created_at) as bulan'),
-        //         DB::raw('YEAR(sarpras_detail.created_at) as tahun')
-        //     ])->groupBy(['bulan', 'tahun'])->get()->toArray();
-        // dd($sarpras_detail);
+
         return view('back.sarpras.show', compact('sarpras'));
     }
     public function edit($id)
