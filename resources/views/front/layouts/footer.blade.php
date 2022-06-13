@@ -124,18 +124,16 @@
     </div>
 </footer>
 <!-- Bot -->
-<div class="chat_icon">
+<!-- <div class="chat_icon">
     <span class="iconify" data-icon="clarity:chat-bubble-outline-badged"></span>
 </div>
 
 <div class="chat_box">
     <section class="chat-area">
         <header>
-            <a href="#" class="back-icon"><span class="iconify" data-icon="eva:flash-fill"></span></i></a>
-            <!-- <img src="{{ asset('/front') }}/images/avatar-01.jpg" alt="" class="rounded-circle"> -->
+            <a href="#" class="back-icon"><span class="iconify" data-icon="eva:flash-fill"></span></i></a> 
             <div class="details">
-                <span>Bolt</span>
-                <!-- <p>Active now</p> -->
+                <span>Bolt</span> 
             </div>
         </header>
         <div class="chat-box">
@@ -171,20 +169,20 @@
             <button id="send-btn"><span class="iconify" data-icon="akar-icons:send"></span></button>
         </form>
     </section>
-</div>
+</div> -->
 
 <!-- Back to top-->
-<!-- <div class="btn-back-to-top" id="myBtn">
+<div class="btn-back-to-top" id="myBtn">
     <span class="symbol-btn-back-to-top">
         <i class="zmdi zmdi-chevron-up"></i>
     </span>
-</div>  -->
+</div>
 <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
 <!--===============================================================================================-->
 <script src="{{ asset('/front') }}/vendor/jquery/jquery-3.2.1.min.js"></script>
-<script>
+<!-- <script>
     $(document).ready(function() {
-        // click kirim
+        
         $('.chat_icon').click(function(event) {
             $('.chat_box').toggleClass('active');
         });
@@ -218,7 +216,7 @@
             }
         });
     });
-    // click tombol
+
     function responseBot(obj) {
         var question = $(obj).text();
         $(".suggestion").remove()
@@ -252,7 +250,7 @@
             }
         });
     }
-</script>
+</script> -->
 @auth
 <script>
     function totalDraf() {
@@ -340,6 +338,7 @@
     })
 </script>
 @stack('script')
+@stack('last_script')
 <!--===============================================================================================-->
 <script src="{{ asset('/front') }}/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script>

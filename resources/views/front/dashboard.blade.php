@@ -5,80 +5,34 @@
 <section class="section-slide">
     <div class="wrap-slick1 rs2-slick1">
         <div class="slick1">
-            <div class="item-slick1 bg-overlay1" style="background-image: url({{ asset('/front') }}/images/slide-05.jpg);" data-thumb="{{ asset('/front') }}/images/thumb-01.jpg" data-caption="Women’s Wear">
+            <div class="item-slick1 bg-overlay1" style="background-image: url({{ asset('/front') }}/images/gedung-b.jpg);" data-thumb="{{ asset('/front') }}/images/thumb-01.jpg" data-caption="Women’s Wear">
                 <div class="container h-full">
-                    <div class="flex-col-l-m h-full p-t-100 p-b-30">
-                        <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
-                            <span class="ltext-202 cl2 respon2 text-white">
-                                Men Collection 2018
+                    <div class="flex-col-c-m h-full p-t-100 p-b-60 respon5">
+                        <!-- <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
+                            <span class="ltext-202 txt-center cl0 respon2">
+                                BMN
                             </span>
-                        </div>
+                        </div> -->
 
                         <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
-                            <h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1 text-white">
-                                New arrivals
+                            <h2 class="ltext-104 txt-center cl0 p-t-22 p-b-20 respon1">
+                                POLINEMA
+                            </h2>
+                            <h2 class="ltext-104 txt-center cl0 p-t-12 p-b-40 respon1">
+                                PSDKU KEDIRI
                             </h2>
                         </div>
 
                         <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-                            <a href="#!" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 text-white">
-                                Shop Now
+                            <a href="#sarpras" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn2 p-lr-15 trans-04">
+                                BMN
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="item-slick1 bg-overlay1" style="background-image: url({{ asset('/front') }}/images/slide-06.jpg);" data-thumb="{{ asset('/front') }}/images/thumb-02.jpg" data-caption="Men’s Wear">
-                <div class="container h-full">
-                    <div class="flex-col-l-m h-full p-t-100 p-b-30">
-                        <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
-                            <span class="ltext-202 cl2 respon2 text-white">
-                                Men Collection 2018
-                            </span>
-                        </div>
-
-                        <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
-                            <h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1 text-white">
-                                New arrivals
-                            </h2>
-                        </div>
-
-                        <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-                            <a href="#!" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 text-white">
-                                Shop Now
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="item-slick1 bg-overlay1" style="background-image: url({{ asset('/front') }}/images/slide-07.jpg);" data-thumb="{{ asset('/front') }}/images/thumb-03.jpg" data-caption="Men’s Wear">
-                <div class="container h-full">
-                    <div class="flex-col-l-m h-full p-t-100 p-b-30">
-                        <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
-                            <span class="ltext-202 cl2 respon2 text-white">
-                                Men Collection 2018
-                            </span>
-                        </div>
-
-                        <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
-                            <h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1 text-white">
-                                New arrivals
-                            </h2>
-                        </div>
-
-                        <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-                            <a href="#!" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 text-white">
-                                Shop Now
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <div class="wrap-slick1-dots p-lr-10"></div>
     </div>
 </section>
 
@@ -141,11 +95,11 @@
 </div>
 
 
-<section class="sec-product bg0 p-t-10 p-b-50">
+<section class="sec-product bg0 p-t-10 p-b-50" id="sarpras">
     <div class="container">
         <div class="p-b-32">
             <h3 class="ltext-105 cl5 txt-center respon1">
-                Gambaran Sarpras
+                Daftar Sarpras
             </h3>
         </div>
 
@@ -194,7 +148,32 @@
                     <div class="wrap-slick2">
                         <div class="slick2">
                             <!-- Kosong jek an -->
+                            @foreach($sarpras_alls as $data)
+                            <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
+                                <!-- Block2 -->
+                                <div class="block2">
+                                    <div class="block2-pic hov-img0">
+                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 15rem;" alt="IMG-PRODUCT">
 
+                                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
+                                            Lihat Sekilas
+                                        </a>
+                                    </div>
+
+                                    <div class="block2-txt flex-w flex-t p-t-14">
+                                        <div class="block2-txt-child1 flex-col-l ">
+                                            <a href="/sarpras_detail/{{ $data->id }}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                                {{$data->nama}}
+                                            </a>
+
+                                            <span class="stext-105 cl3">
+                                                {{$data->jumlah}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
                             <!-- End Kosong jek an -->
                         </div>
                     </div>
@@ -208,7 +187,7 @@
                                 <!-- Block2 -->
                                 <div class="block2">
                                     <div class="block2-pic hov-img0">
-                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 15rem;" alt="IMG-PRODUCT">
 
                                         <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                             Lihat Sekilas
@@ -241,7 +220,7 @@
                                 <!-- Block2 -->
                                 <div class="block2">
                                     <div class="block2-pic hov-img0">
-                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 15rem;" alt="IMG-PRODUCT">
 
                                         <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                             Lihat Sekilas
@@ -274,7 +253,7 @@
                                 <!-- Block2 -->
                                 <div class="block2">
                                     <div class="block2-pic hov-img0">
-                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 15rem;" alt="IMG-PRODUCT">
 
                                         <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                             Lihat Sekilas
@@ -307,7 +286,7 @@
                                 <!-- Block2 -->
                                 <div class="block2">
                                     <div class="block2-pic hov-img0">
-                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 15rem;" alt="IMG-PRODUCT">
 
                                         <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                             Lihat Sekilas
@@ -331,7 +310,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="labo" role="tabpanel">
+                <div class="tab-pane fade" id="laboratorium" role="tabpanel">
                     <!-- Slide2 -->
                     <div class="wrap-slick2">
                         <div class="slick2">
@@ -340,7 +319,7 @@
                                 <!-- Block2 -->
                                 <div class="block2">
                                     <div class="block2-pic hov-img0">
-                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 15rem;" alt="IMG-PRODUCT">
 
                                         <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                             Lihat Sekilas
@@ -373,7 +352,7 @@
                                 <!-- Block2 -->
                                 <div class="block2">
                                     <div class="block2-pic hov-img0">
-                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 15rem;" alt="IMG-PRODUCT">
 
                                         <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                             Lihat Sekilas
@@ -404,7 +383,7 @@
                             @foreach($sarpras_lain as $data)
                             <div class="block2">
                                 <div class="block2-pic hov-img0">
-                                    <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                                    <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 15rem;" alt="IMG-PRODUCT">
 
                                     <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                                         Lihat Sekilas

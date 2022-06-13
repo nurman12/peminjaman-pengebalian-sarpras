@@ -4,11 +4,20 @@ namespace App\Imports;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\SkipsErrors;
+use Maatwebsite\Excel\Concerns\SkipsFailures;
+use Maatwebsite\Excel\Concerns\SkipsOnError;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Validators\Failure;
+use Throwable;
 
-class UsersImport implements ToModel, WithHeadingRow
+class UsersImport implements ToModel, WithHeadingRow, SkipsOnError, WithValidation, SkipsOnFailure
 {
+    use Importable, SkipsErrors, SkipsFailures;
     /**
      * @param array $row
      *
@@ -32,5 +41,11 @@ class UsersImport implements ToModel, WithHeadingRow
             'kota' => $row['kota'],
             'no_telp' => $row['nomer_telpon'],
         ]);
+    }
+    public function rules(): array
+    {
+        return [
+            '*.email' => ['email', 'unique:users,email']
+        ];
     }
 }

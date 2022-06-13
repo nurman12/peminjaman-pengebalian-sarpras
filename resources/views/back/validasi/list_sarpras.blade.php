@@ -16,7 +16,7 @@
                     </div>
                     <input type="hidden" id="sarpras_id" value="{{ $data->id }}">
                     <input type="hidden" id="validasi_id" value="{{ $id }}">
-                    <input type="text" class="spinner-input form-control text-center" readonly>
+                    <input type="text" class="spinner-input form-control text-center" value="0" readonly>
                     <div class="spinner-buttons input-group-btn">
                         <button type="button" class="btn btn-default spinner-up">
                             <i class="fa fa-plus"></i>

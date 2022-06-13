@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Pengembalian;
 use App\Models\Sarpras;
+use App\Models\User;
+use App\Models\Validasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +18,7 @@ class DashController extends Controller
             if (Auth::user()->roles != 'Mahasiswa' || Auth::user()->roles != 'Dosen') {
                 return redirect('/dashboard');
             } else {
+                $sarpras_alls = Sarpras::all();
                 $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->get();
                 $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->get();
                 $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->get();
@@ -24,9 +27,10 @@ class DashController extends Controller
                 $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->get();
                 $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->get();
 
-                return view('front.dashboard', compact('sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
+                return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
             }
         } else {
+            $sarpras_alls = Sarpras::all();
             $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->get();
             $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->get();
             $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->get();
@@ -35,7 +39,7 @@ class DashController extends Controller
             $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->get();
             $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->get();
 
-            return view('front.dashboard', compact('sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
+            return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
         }
     }
     public function index()
@@ -175,14 +179,49 @@ class DashController extends Controller
 
             $perbandingan = $data_;
 
-            if (Auth::user()->roles == 'BMN') {
-                return view('back.dashbmn', compact('perbandingan', 'perbandingan_sarpras'));
-            } elseif (Auth::user()->roles == 'KTU') {
-                return view('back.dashktu', compact('perbandingan'));
-            } elseif (Auth::user()->roles == 'Koordinator') {
-                return view('back.dashkoor', compact('perbandingan'));
-            } elseif (Auth::user()->roles == 'Mahasiswa' || Auth::user()->roles == 'Dosen') {
+            $t_peminjaman = Pengembalian::all()->count();
+            $t_pengembalian = Pengembalian::where('status', 1)->get()->count();
+            $t_pengguna = User::all()->count();
 
+            if (Auth::user()->roles == 'BMN') {
+                $menuggu_validasi = Validasi::where('validasi_ktu', 1)->where('validasi_koor', 1)->where('validasi_bmn', 0)->get()->count();
+                $unread = Validasi::where('validasi_ktu', 1)->where('validasi_koor', 1)->where('validasi_bmn', 0)->where('notif', 0)->get()->count();
+
+                return view('back.dashbmn', compact(
+                    'perbandingan',
+                    'perbandingan_sarpras',
+                    'menuggu_validasi',
+                    'unread',
+                    't_peminjaman',
+                    't_pengembalian',
+                    't_pengguna'
+                ));
+            } elseif (Auth::user()->roles == 'Koordinator') {
+                $menuggu_validasi = Validasi::where('validasi_ktu', 1)->where('validasi_koor', 0)->get()->count();
+                $unread = Validasi::where('validasi_ktu', 1)->where('validasi_koor', 0)->where('notif', 0)->get()->count();
+
+                return view('back.dashkoor', compact(
+                    'perbandingan',
+                    'menuggu_validasi',
+                    'unread',
+                    't_peminjaman',
+                    't_pengembalian',
+                    't_pengguna'
+                ));
+            } elseif (Auth::user()->roles == 'KTU') {
+                $menuggu_validasi = Validasi::where('validasi_ktu', 0)->get()->count();
+                $unread = Validasi::where('validasi_ktu', 0)->where('notif', 0)->get()->count();
+
+                return view('back.dashktu', compact(
+                    'perbandingan',
+                    'menuggu_validasi',
+                    'unread',
+                    't_peminjaman',
+                    't_pengembalian',
+                    't_pengguna'
+                ));
+            } elseif (Auth::user()->roles == 'Mahasiswa' || Auth::user()->roles == 'Dosen') {
+                $sarpras_alls = Sarpras::all();
                 $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->get();
                 $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->get();
                 $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->get();
@@ -191,10 +230,11 @@ class DashController extends Controller
                 $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->get();
                 $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->get();
 
-                return view('front.dashboard', compact('sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
+                return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
             }
         } else {
 
+            $sarpras_alls = Sarpras::all();
             $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->get();
             $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->get();
             $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->get();
@@ -203,7 +243,7 @@ class DashController extends Controller
             $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->get();
             $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->get();
 
-            return view('front.dashboard', compact('sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
+            return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
         }
     }
     public function barang()
@@ -219,6 +259,18 @@ class DashController extends Controller
         $sarpras = Sarpras::where('jenis', 'Ruangan')->get();
 
         return view('front.sarpras', compact('title', 'sarpras'));
+    }
+    public function search(Request $request)
+    {
+        $input = $request->input('value');
+        $jenis = $request->input('jenis');
+
+        $sarpras = Sarpras::where('jenis', $jenis)
+            ->where('nama', 'LIKE', '%' . $input . '%')
+            // ->whereNotIn('jumlah', [0])
+            ->orderBy('nama', 'asc')->get();
+
+        return view('front.card_sarpras', compact('sarpras'));
     }
     public function sarpras_detail($id)
     {

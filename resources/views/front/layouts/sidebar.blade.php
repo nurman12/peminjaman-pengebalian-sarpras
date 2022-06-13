@@ -54,11 +54,11 @@
 
             <div class="sidebar-gallery w-full">
                 <span class="mtext-101 cl5">
-                    About Us
+                    Tentang
                 </span>
 
                 <p class="stext-108 cl6 p-t-27">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus vulputate hendrerit. Praesent faucibus erat vitae rutrum gravida. Vestibulum tempus mi enim, in molestie sem fermentum quis.
+                    Layanan resmi POLINEMA PSDKU KEDIRI dengan pengelola BMN yang disediakan bagi para dosen dan mahasiswa untuk permohonan peminjaman barang dan ruangan.
                 </p>
             </div>
         </div>

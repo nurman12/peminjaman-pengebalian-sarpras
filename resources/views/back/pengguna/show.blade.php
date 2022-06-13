@@ -303,6 +303,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @if($pengembalian->count() > 0)
                                         @foreach($pengembalian as $data)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
@@ -344,6 +345,15 @@
                                             </td>
                                         </tr>
                                         @endforeach
+                                        @else
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>

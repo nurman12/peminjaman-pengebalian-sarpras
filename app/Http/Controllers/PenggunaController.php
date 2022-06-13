@@ -164,26 +164,22 @@ class PenggunaController extends Controller
     }
     public function userexport()
     {
-        if (Auth::user()) {
-            if (Auth::user()->roles != 'BMN') {
-                return redirect('/deshboard');
-            }
-            return Excel::download(new UsersExport, 'pengguna.xlsx');
-        } else {
-            return redirect('/deshboard');
-        }
+        return Excel::download(new UsersExport, 'pengguna.xlsx');
     }
     public function userimport(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx'
         ]);
-        if (Auth::user()->roles != 'BMN') {
-            return redirect('/dashboard');
-        }
-        $file = $request->file;
 
-        Excel::import(new UsersImport, $file);
+        $file = $request->file('file')->store('import');
+        $import = new UsersImport;
+        $import->import($file);
+
+        if ($import->failures()->isNotEmpty()) {
+            return redirect('/pengguna')->withfailures($import->failures());
+        }
+        // Excel::import(new UsersImport, $file);
 
         return redirect('/pengguna');
     }

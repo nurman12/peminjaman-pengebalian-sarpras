@@ -41,6 +41,7 @@ class SarprasController extends Controller
         $sarpras->jumlah = 0;
         $sarpras->deskripsi = $request->deskripsi;
         $sarpras->photo =  $filename;
+        // $sarpras->photo =  $request->file('photo')->store('sarpras');
         $sarpras->save();
 
         return redirect('/sarpras');

@@ -24,4 +24,48 @@ class BotController extends Controller
             ]);
         }
     }
+    public function index()
+    {
+        $bot = Bot::all();
+
+        return view('back.bot.index', compact('bot'));
+    }
+    public function store(Request $request)
+    {
+        $request->validate([
+            'received' => 'required',
+            'response' => 'required',
+        ]);
+
+        $cek = Bot::where('received', $request->received)->first();
+        if ($cek) {
+            return redirect('/bot')->with(['error' => 'Keyword' . $request->received . ' sudah ada']);
+        } else {
+            $bot = new Bot();
+            $bot->received = $request->received;
+            $bot->send = $request->response;
+            $bot->save();
+            return redirect('/bot')->with(['success' => 'Berhasil simpan data']);
+        }
+    }
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'received' => 'required',
+            'response' => 'required',
+        ]);
+
+        Bot::where('id', $id)
+            ->update([
+                'received' => $request->received,
+                'send' => $request->response
+            ]);
+        return redirect('/bot')->with(['success' => 'Berhasil ubah data']);
+    }
+    public function destroy($id)
+    {
+        Bot::destroy($id);
+
+        return redirect('/bot')->with(['success' => 'Berhasil hapus data']);
+    }
 }

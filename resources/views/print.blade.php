@@ -21,7 +21,7 @@
                     <!-- <h4 class="h4 m-none text-dark text-bold">#76598345</h4> -->
 
                     <div class="m-t-15 ">
-                        <img src="{{ asset('/back') }}/images/invoice-logo.png" alt="OKLER Themes" />
+                        <img src="{{ asset('/front') }}/images/logo-polinema.png" style="width: 75px;" alt="OKLER Themes" />
                     </div>
                 </div>
                 <div class="col-sm-6 text-right mt-md mb-md">
@@ -30,9 +30,9 @@
                         <br />
                         No.1, Sukorame, Kec. Mojoroto, Jawa Timur
                         <br />
-                        Telepon: 0896-0900-4444
+                        Telepon: (+365) 96 716 6879
                         <br />
-                        okler@okler.net
+                        bmn@polinema.ac.id
                     </address>
                 </div>
             </div>

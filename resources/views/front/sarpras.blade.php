@@ -2,7 +2,7 @@
 @push('title', 'Sarpras')
 @section('content')
 <!-- Title page -->
-<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('{{ asset('/front') }}/images/bg-01.jpg');">
+<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('{{ asset('/front') }}/images/gedung-a.jpg');">
     <h2 class="ltext-105 cl0 txt-center">
         {{$title}}
     </h2>
@@ -58,7 +58,7 @@
                 <div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
                     <i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
                     <i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
-                    Search
+                    Cari
                 </div>
             </div>
 
@@ -69,47 +69,19 @@
                         <i class="zmdi zmdi-search"></i>
                     </button>
 
-                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" placeholder="Cari" id="find" onkeyup="find()">
                 </div>
             </div>
         </div>
 
-        <div class="row isotope-grid">
-            @foreach($sarpras as $data)
-            <?php
-            $pecah_string = explode(", ", $data->kategori);
-            ?>
-            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item @foreach($pecah_string as $item) {{$item}} @endforeach">
-                <!-- Block2 -->
-                <div class="block2">
-                    <div class="block2-pic hov-img0">
-                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
-
-                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
-                            Lihat Sekilas
-                        </a>
-                    </div>
-
-                    <div class="block2-txt flex-w flex-t p-t-14">
-                        <div class="block2-txt-child1 flex-col-l ">
-                            <a href="/sarpras_detail/{{$data->id}}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                {{$data->nama}}
-                            </a>
-
-                            <span class="stext-105 cl3">
-                                {{$data->jumlah}}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
+        <div id="content">
+            @include('front.card_sarpras')
         </div>
     </div>
 </div>
 
 <!-- Modal1 -->
-<div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
+<div class=" wrap-modal1 js-modal1 p-t-60 p-b-20">
     <div class="overlay-modal1 js-hide-modal1"></div>
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10 col-sm-10">
@@ -185,104 +157,25 @@
 <!--===============================================================================================-->
 @endpush
 
-@push('script')
+@push('last_script')
 <script>
-    $('.btn-num-product-up').click(function(e) {
-        e.preventDefault();
-        let incre = $(this).parents('.quantity').find('.qty-input').val();
-        let max = $(this).parents('.quantity').find('#max_qty').val();
-        let value = parseInt(incre);
-        if (value < max) {
-            value++;
-            $(this).parents('.quantity').find('.qty-input').val(value);
-        }
-    });
+    var jenis = `<?= trim($title, "Daftar "); ?>`
 
-    $('.btn-num-product-down').click(function(e) {
-        e.preventDefault();
-        let decre = $(this).parents('.quantity').find('.qty-input').val();
-        let value = parseInt(decre);
-        if (value > 1) {
-            value--;
-            $(this).parents('.quantity').find('.qty-input').val(value);
-        }
-    });
-</script>
-<!--===============================================================================================-->
-<script src="{{ asset('/front') }}/vendor/slick/slick.min.js"></script>
-<script src="{{ asset('/front') }}/js/slick-custom.js"></script>
-<!--===============================================================================================-->
-<script src="{{ asset('/front') }}/vendor/parallax100/parallax100.js"></script>
-<script>
-    $('.parallax100').parallax100();
-</script>
-<!--===============================================================================================-->
-<script src="{{ asset('/front') }}/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
-<script>
-    $('.gallery-lb').each(function() { // the containers for all your galleries
-        $(this).magnificPopup({
-            delegate: 'a', // the selector for gallery item
-            type: 'image',
-            gallery: {
-                enabled: true
-            },
-            mainClass: 'mfp-fade'
-        });
-    });
-</script>
-<!--===============================================================================================-->
-<script src="{{ asset('/front') }}/vendor/isotope/isotope.pkgd.min.js"></script>
-<!--===============================================================================================-->
-<script src="{{ asset('/front') }}/vendor/sweetalert/sweetalert.min.js"></script>
-<script>
-    $(document).on('click', '.js-show-modal1', function() {
-        var id = $(this).data('id');
-        var nama = $(this).data('nama');
-        var jumlah = $(this).data('jumlah');
-        var img = $(this).data('img');
-        var keterangan = $(this).data('keterangan');
-
-        $('#sarpras_id').val(id);
-        $('#nama_item').text(nama);
-        $('#img').attr('src', '/storage/sarpras/' + img);
-        $('.zoom-picture').attr('href', '/storage/sarpras/' + img);
-        $('#jumlah').text(jumlah);
-        $('#max_qty').val(jumlah);
-        $('#keterangan').text(keterangan);
-
-        $('.qty-input').val(1);
-    });
-
-    $(document).on('click', '.js-addcart-detail', function() {
-        var sarpras_id = $(this).parents('.respon6-next').find('.sarpras_id').val();
-        var sarpras_qty = $(this).parents('.respon6-next').find('.qty-input').val();
-        var nama = $(this).parents('.nama_sarpras').find('#nama_item').text();
-
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
+    function find() {
+        const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        const value = $('#find').val();
         $.ajax({
-            method: "POST",
-            url: "{{ route('draft.store')}}",
+            url: '/sarpras/search',
+            type: 'POST',
             data: {
-                'sarpras_id': sarpras_id,
-                'sarpras_qty': sarpras_qty,
+                _token: CSRF_TOKEN,
+                value: value,
+                jenis: jenis,
             },
-            success: function(response) {
-                if (response.tes == 'Ok') {
-                    swal("Berhasil", response.status, "success");
-                    totalDraf();
-                } else if (response.tes == 'Update') {
-                    swal("Update!", response.status, "success");
-                    totalDraf();
-                } else if (response.tes == 'Error') {
-                    swal("Error!", response.status, "error");
-                }
+            success: function(data) {
+                $('#content').html(data);
             }
-        });
-    });
+        })
+    }
 </script>
 @endpush

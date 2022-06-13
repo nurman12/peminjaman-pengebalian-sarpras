@@ -87,7 +87,7 @@
                                 @endif
                             </div>
                         </td>
-                        <th width="80px">
+                        <th width="90px !important">
                             <a href="{{ route('pengembalian.show', $data->id) }}" class="mr-xs mt-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
                             <a href="{{ route('pengembalian.edit', $data->id) }}" class="mt-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Validasi"><i class="fa fa-file-text"></i></a>
                             <a id="delete" data-validasi_id="{{ $data->validasi->id }}" style="width: 34px;" class="mr-xs mt-xs btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash-o"></i></i></a>

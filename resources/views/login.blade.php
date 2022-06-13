@@ -41,7 +41,7 @@
     <section class="body-sign">
         <div class="center-sign">
             <a href="/" class="logo pull-left">
-                <img src="{{ asset('/back') }}/images/logo.png" height="54" alt="Porto Admin" />
+                <img src="{{ asset('/front') }}/images/logo-polinema-sayap.png" height="54" alt="Porto Admin" />
             </a>
 
             <div class="panel panel-sign">
@@ -91,15 +91,15 @@
                         </div>
 
                         <div class="row">
-                            <!-- <div class="col-sm-8">
+                            <div class="col-sm-8">
                                 <div class="checkbox-custom checkbox-default">
-                                    <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                    <input type="checkbox" id="showPassword">
 
-                                    <label for="remember">
-                                        Remember Me
+                                    <label for="showPassword">
+                                        Show password
                                     </label>
                                 </div>
-                            </div> -->
+                            </div>
                             <div class="col-sm-4 ">
                                 <button type="submit" class="btn btn-primary hidden-xs">Sign In</button>
                                 <button type="submit" class="btn btn-primary btn-block btn-lg visible-xs mt-lg">Sign In</button>
@@ -116,13 +116,24 @@
 
     <!-- Vendor -->
     <script src="{{ asset('/back') }}/vendor/jquery/jquery.js"></script>
+    <script>
+        const showPassword = document.getElementById('showPassword');
+        const password = document.getElementById('password');
+
+        showPassword.onclick = () => {
+            if (password.type == "password") {
+                password.type = "text";
+            } else {
+                password.type = "password";
+            }
+        }
+    </script>
     <script src="{{ asset('/back') }}/vendor/jquery-browser-mobile/jquery.browser.mobile.js"></script>
     <script src="{{ asset('/back') }}/vendor/bootstrap/js/bootstrap.js"></script>
     <script src="{{ asset('/back') }}/vendor/nanoscroller/nanoscroller.js"></script>
     <script src="{{ asset('/back') }}/vendor/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
     <script src="{{ asset('/back') }}/vendor/magnific-popup/magnific-popup.js"></script>
     <script src="{{ asset('/back') }}/vendor/jquery-placeholder/jquery.placeholder.js"></script>
-
     <!-- Theme Base, Components and Settings -->
     <script src="{{ asset('/back') }}/javascripts/theme.js"></script>
 

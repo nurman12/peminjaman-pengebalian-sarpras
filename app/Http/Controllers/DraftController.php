@@ -175,7 +175,7 @@ class DraftController extends Controller
     public function cek_qr_code(Request $request)
     {
         $id = explode(' ', $request->qr_code);
-        // dd($id[0]);
+
         $validasi = Validasi::where('id', $id[0])->first();
 
         $peminjaman = Pengembalian::where('validasi_id', $id[0])->first();

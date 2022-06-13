@@ -23,6 +23,7 @@
             <blockquote class="primary rounded b-thin">
                 <p>Sarpras yang tampil merupakan sarpras yang tidak ada pada draft peminjam. Pilih sarpras yang ingin ditambahkan, masukkan jumlah kemudian <cite>click</cite> tombol Add to Draft. jika berhasil menambahkan sarpras pada draft, sarpras yang dimasukkan tadi akan tidak tampil.</p>
             </blockquote>
+            <a href="{{ route('validasi.edit', $id) }}" class="btn btn-primary">Kembali</a>
             <div id="content">
                 @include('back.validasi.list_sarpras')
             </div>
@@ -84,7 +85,7 @@
                     swal.fire({
                         icon: 'success',
                         title: 'Berhasil menambah sarpras pada draft peminjaman',
-                        showConfirmButton: false
+                        // showConfirmButton: false
                     }).then((result) => {
                         $('#content').html(response);
                     })

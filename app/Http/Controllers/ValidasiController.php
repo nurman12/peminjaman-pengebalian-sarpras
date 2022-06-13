@@ -18,9 +18,9 @@ class ValidasiController extends Controller
     {
         // send notif whatsapp 
         $curl = curl_init();
-
+        $server = env('SERVER_WHATSAPP');
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://localhost:4000/send-media-form',
+            CURLOPT_URL => $server . 'send-media-form',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -42,9 +42,9 @@ class ValidasiController extends Controller
     function send_text($number, $message)
     {
         $curl = curl_init();
-
+        $server = env('SERVER_WHATSAPP');
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://localhost:4000/send-message',
+            CURLOPT_URL => $server . 'send-message',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -544,118 +544,116 @@ class ValidasiController extends Controller
     }
     public function update_lanjut(Request $request, $id)
     {
-        if (Auth::user()->roles == 'Mahasiswa' || Auth::user()->roles == 'Dosen') {
 
-            $request->validate([
-                'keperluan' => 'required',
-                'proposal' => 'mimes:pdf,doc,docx',
-                'tanggal' => 'required|date_format:Y-m-d',
-                'sampai' => 'required|date_format:Y-m-d'
-            ]);
+        $request->validate([
+            'keperluan' => 'required',
+            'proposal' => 'mimes:pdf,doc,docx',
+            'tanggal' => 'required|date_format:Y-m-d',
+            'sampai' => 'required|date_format:Y-m-d'
+        ]);
 
-            $draft_new = Draft::where('user_id', $request->user_id)->where('validasi_id', 0)->get();
+        $draft_new = Draft::where('user_id', $request->user_id)->where('validasi_id', 0)->get();
 
-            $draft_old = Draft::where('validasi_id', $id)->get();
+        $draft_old = Draft::where('validasi_id', $id)->get();
 
-            if ($draft_new->count() == 0) {
-                return redirect('/draft')->with('error', 'Jumlah draft tidak boleh kosong!');
-            } else {
+        if ($draft_new->count() == 0) {
+            return redirect('/draft')->with('error', 'Jumlah draft tidak boleh kosong!');
+        } else {
 
-                // cek apakah stok ketersediaan melebihi atau sama dengan jumlah yang ingin di pinjam 
-                foreach ($draft_new as $item) {
-                    $sarpras = Sarpras::where('id', $item->sarpras_id)->first();
-                    if ($sarpras->jumlah < $item->qty) {
-                        return redirect('/draft')->with('error', "Jumlah " . $sarpras->nama . " yang tersedia berjumlah " . $sarpras->jumlah);
-                    }
+            // cek apakah stok ketersediaan melebihi atau sama dengan jumlah yang ingin di pinjam 
+            foreach ($draft_new as $item) {
+                $sarpras = Sarpras::where('id', $item->sarpras_id)->first();
+                if ($sarpras->jumlah < $item->qty) {
+                    return redirect('/draft')->with('error', "Jumlah " . $sarpras->nama . " yang tersedia berjumlah " . $sarpras->jumlah);
                 }
+            }
 
-                /*------------------------------------------------------------- 
+            /*------------------------------------------------------------- 
                 |jumlah qty yang sudah ada dengan yang baru ditambahkan
                 ---------------------------------------------------------------*/
 
-                foreach ($draft_old as $item) {
-                    foreach ($draft_new as $data) {
-                        if ($item->sarpras_id === $data->sarpras_id) {
-                            Draft::where('id', $item->id)
-                                ->update([
-                                    'qty' => $data->qty + $item->qty
-                                ]);
+            foreach ($draft_old as $item) {
+                foreach ($draft_new as $data) {
+                    if ($item->sarpras_id === $data->sarpras_id) {
+                        Draft::where('id', $item->id)
+                            ->update([
+                                'qty' => $data->qty + $item->qty
+                            ]);
 
-                            SarprasDetail::where('draft_id', $item->id)
-                                ->where('jenis', 'keluar')
-                                ->update([
-                                    'jumlah' => $data->qty + $item->qty
-                                ]);
-                        }
+                        SarprasDetail::where('draft_id', $item->id)
+                            ->where('jenis', 'keluar')
+                            ->update([
+                                'jumlah' => $data->qty + $item->qty
+                            ]);
                     }
                 }
-                /*------------------------------------------------------------- 
+            }
+            /*------------------------------------------------------------- 
                 |lakukan hal sama tapi untuk menghapus jika ada jenis 
                 |item yang sama jadi logikanya jumlah keduanya, 
                 |jika sudah maka hapus id draft baru
                 ---------------------------------------------------------------*/
-                foreach ($draft_old as $item) {
-                    foreach ($draft_new as $data) {
-                        if ($item->sarpras_id == $data->sarpras_id) {
-                            Draft::where('id', $data->id)->delete();
-                        }
+            foreach ($draft_old as $item) {
+                foreach ($draft_new as $data) {
+                    if ($item->sarpras_id == $data->sarpras_id) {
+                        Draft::where('id', $data->id)->delete();
                     }
                 }
+            }
 
-                $cek = Draft::where('user_id', $request->user_id)->where('validasi_id', 0)->get();
+            $cek = Draft::where('user_id', $request->user_id)->where('validasi_id', 0)->get();
 
-                foreach ($cek as $item) {
+            foreach ($cek as $item) {
 
-                    $data_k = SarprasDetail::where('draft_id', $item->id)->where('jenis', 'keluar')->first();
+                $data_k = SarprasDetail::where('draft_id', $item->id)->where('jenis', 'keluar')->first();
 
-                    if ($data_k == null) {
-                        $sarpras_keluar = new SarprasDetail();
-                        $sarpras_keluar->user_id = $item->user_id;
-                        $sarpras_keluar->draft_id = $item->id;
-                        $sarpras_keluar->sarpras_id = $item->sarpras_id;
-                        $sarpras_keluar->tanggal = date('Y-m-d');
-                        $sarpras_keluar->jenis = "keluar";
-                        $sarpras_keluar->jumlah = $item->qty;
-                        $sarpras_keluar->save();
-                    }
+                if ($data_k == null) {
+                    $sarpras_keluar = new SarprasDetail();
+                    $sarpras_keluar->user_id = $item->user_id;
+                    $sarpras_keluar->draft_id = $item->id;
+                    $sarpras_keluar->sarpras_id = $item->sarpras_id;
+                    $sarpras_keluar->tanggal = date('Y-m-d');
+                    $sarpras_keluar->jenis = "keluar";
+                    $sarpras_keluar->jumlah = $item->qty;
+                    $sarpras_keluar->save();
                 }
+            }
 
-                Draft::where('user_id', $request->user_id)
-                    ->where('validasi_id', 0)
+            Draft::where('user_id', $request->user_id)
+                ->where('validasi_id', 0)
+                ->update([
+                    'validasi_id' => $id
+                ]);
+
+            foreach ($draft_new as $item) {
+                $sarpras = Sarpras::where('id', $item->sarpras_id)->first();
+
+                Sarpras::where('id', $item->sarpras_id)
                     ->update([
-                        'validasi_id' => $id
+                        'jumlah' => $sarpras->jumlah - $item->qty
                     ]);
+            }
 
-                foreach ($draft_new as $item) {
-                    $sarpras = Sarpras::where('id', $item->sarpras_id)->first();
+            Validasi::where('id', $id)
+                ->update([
+                    'keperluan' => $request->keperluan,
+                    'tanggal_start' => $request->tanggal,
+                    'tanggal_finish' => $request->sampai
+                ]);
 
-                    Sarpras::where('id', $item->sarpras_id)
-                        ->update([
-                            'jumlah' => $sarpras->jumlah - $item->qty
-                        ]);
-                }
+            if ($request->file('proposal')) {
+
+                $filename = time() . '.' . request()->proposal->getClientOriginalExtension();
+                request()->proposal->move(public_path('storage/proposal'), $filename);
+                unlink(public_path('storage/proposal/' . $request->old_proposal));
 
                 Validasi::where('id', $id)
                     ->update([
-                        'keperluan' => $request->keperluan,
-                        'tanggal_start' => $request->tanggal,
-                        'tanggal_finish' => $request->sampai
+                        'proposal' => $request->file('proposal')->store('proposal')
                     ]);
-
-                if ($request->file('proposal')) {
-
-                    $filename = time() . '.' . request()->proposal->getClientOriginalExtension();
-                    request()->proposal->move(public_path('storage/proposal'), $filename);
-                    unlink(public_path('storage/proposal/' . $request->old_proposal));
-
-                    Validasi::where('id', $id)
-                        ->update([
-                            'proposal' => $request->file('proposal')->store('proposal')
-                        ]);
-                }
-
-                return redirect('/profile')->with(['status' => 'Berhasil mengubah data']);
             }
+
+            return redirect('/profile')->with(['status' => 'Berhasil mengubah data']);
         }
     }
     public function update_peminjaman(Request $request, $id)
@@ -826,7 +824,7 @@ class ValidasiController extends Controller
     {
         $date_now = date("Y-m-d");
 
-        $expired = Validasi::where('tanggal_finish', '<=', $date_now)
+        $expired = Validasi::where('tanggal_finish', '<', $date_now)
             ->where('status', '!=', 1)
             ->orderBy('tanggal_finish', 'asc')->get();
 

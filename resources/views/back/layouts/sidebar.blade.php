@@ -181,6 +181,13 @@
                                 <span>Pengembalian</span>
                             </a>
                         </li>
+                        <li class="{{ request()->is('bot*') ? 'nav-active' : '' }}">
+                            <a href="{{ route('bot.index') }}">
+                                <span class="pull-right label label-primary"></span>
+                                <i class="fa fa-reddit" aria-hidden="true"></i>
+                                <span>Bot WhatsApp</span>
+                            </a>
+                        </li>
                         @endif
                     </ul>
                 </nav>

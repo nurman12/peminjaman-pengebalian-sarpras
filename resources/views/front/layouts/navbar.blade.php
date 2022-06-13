@@ -119,6 +119,14 @@
                 <li>
                     <a href="/profile">Profile</a>
                 </li>
+                <li>
+                    <a href="#" onclick=" event.preventDefault(); document.getElementById('formLogout').submit();">
+                        Logout
+                        <form id="formLogout" action="{{ route('logout') }}" method="post">
+                            @csrf
+                        </form>
+                    </a>
+                </li>
                 @else
                 <li>
                     <a href="/login">Login</a>

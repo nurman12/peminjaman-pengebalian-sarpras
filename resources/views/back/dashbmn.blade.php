@@ -59,48 +59,23 @@
             </div>
             <div class="row">
                 <div class="col-md-12 col-lg-6 col-xl-6">
-                    <section class="panel panel-featured-left panel-featured-primary">
-                        <div class="panel-body">
-                            <div class="widget-summary">
-                                <div class="widget-summary-col widget-summary-col-icon">
-                                    <div class="summary-icon bg-primary">
-                                        <i class="fa fa-life-ring"></i>
-                                    </div>
-                                </div>
-                                <div class="widget-summary-col">
-                                    <div class="summary">
-                                        <h4 class="title">Support Questions</h4>
-                                        <div class="info">
-                                            <strong class="amount">1281</strong>
-                                            <span class="text-primary">(14 unread)</span>
-                                        </div>
-                                    </div>
-                                    <div class="summary-footer">
-                                        <a class="text-muted text-uppercase">(view all)</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <div class="col-md-12 col-lg-6 col-xl-6">
                     <section class="panel panel-featured-left panel-featured-secondary">
                         <div class="panel-body">
                             <div class="widget-summary">
                                 <div class="widget-summary-col widget-summary-col-icon">
                                     <div class="summary-icon bg-secondary">
-                                        <i class="fa fa-usd"></i>
+                                        <i class="fa fa-plane"></i>
                                     </div>
                                 </div>
                                 <div class="widget-summary-col">
                                     <div class="summary">
-                                        <h4 class="title">Total Profit</h4>
+                                        <h4 class="title">Total Peminjaman</h4>
                                         <div class="info">
-                                            <strong class="amount">$ 14,890.30</strong>
+                                            <strong class="amount">{{$t_peminjaman}}</strong>
                                         </div>
                                     </div>
                                     <div class="summary-footer">
-                                        <a class="text-muted text-uppercase">(withdraw)</a>
+                                        <a href="/peminjaman" class="text-muted text-uppercase">(lihat semua)</a>
                                     </div>
                                 </div>
                             </div>
@@ -113,18 +88,43 @@
                             <div class="widget-summary">
                                 <div class="widget-summary-col widget-summary-col-icon">
                                     <div class="summary-icon bg-tertiary">
-                                        <i class="fa fa-shopping-cart"></i>
+                                        <i class="fa fa-rocket"></i>
                                     </div>
                                 </div>
                                 <div class="widget-summary-col">
                                     <div class="summary">
-                                        <h4 class="title">Today's Orders</h4>
+                                        <h4 class="title">Total Pengembalian</h4>
                                         <div class="info">
-                                            <strong class="amount">38</strong>
+                                            <strong class="amount">{{$t_pengembalian}}</strong>
                                         </div>
                                     </div>
                                     <div class="summary-footer">
-                                        <a class="text-muted text-uppercase">(statement)</a>
+                                        <a href="/pengembalian" class="text-muted text-uppercase">(lihat semua)</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <section class="panel panel-featured-left panel-featured-primary">
+                        <div class="panel-body">
+                            <div class="widget-summary">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-check-square-o"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Menuggu Validasi</h4>
+                                        <div class="info">
+                                            <strong class="amount">{{ $menuggu_validasi }}</strong>
+                                            <span class="text-primary">({{$unread}} unread)</span>
+                                        </div>
+                                    </div>
+                                    <div class="summary-footer">
+                                        <a href="/belum_validasi" class="text-muted text-uppercase">(lihat semua)</a>
                                     </div>
                                 </div>
                             </div>
@@ -137,18 +137,18 @@
                             <div class="widget-summary">
                                 <div class="widget-summary-col widget-summary-col-icon">
                                     <div class="summary-icon bg-quartenary">
-                                        <i class="fa fa-user"></i>
+                                        <i class="fa fa-users"></i>
                                     </div>
                                 </div>
                                 <div class="widget-summary-col">
                                     <div class="summary">
-                                        <h4 class="title">Today's Visitors</h4>
+                                        <h4 class="title">Jumlah Mahasiswa / Dosen</h4>
                                         <div class="info">
-                                            <strong class="amount">3765</strong>
+                                            <strong class="amount">{{$t_pengguna}}</strong>
                                         </div>
                                     </div>
                                     <div class="summary-footer">
-                                        <a class="text-muted text-uppercase">(report)</a>
+                                        <a href="/pengguna" class="text-muted text-uppercase">(lihat semua)</a>
                                     </div>
                                 </div>
                             </div>

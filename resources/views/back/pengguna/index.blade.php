@@ -44,6 +44,36 @@
                 {{$message}}
             </div>
             @enderror
+            @if(session()->has('failures'))
+            <table class="table table-bordered table-striped mb-4 mt-4">
+                <thead>
+                    <tr class="bg-danger">
+                        <th>Row</th>
+                        <th>Attribute</th>
+                        <th>Errors</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(session()->get('failures') as $validation)
+                    <tr>
+                        <td>{{ $validation->row() }}</td>
+                        <td>{{ $validation->attribute() }}</td>
+                        <td>
+                            <ul>
+                                @foreach( $validation->errors() as $e )
+                                <li>{{ $e }}</li>
+                                @endforeach
+                            </ul>
+                        </td>
+                        <td>
+                            {{ $validation->values()[$validation->attribute()] }}
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
             <table class="table table-bordered table-striped mb-none" id="datatable-default">
                 <thead>
                     <tr>

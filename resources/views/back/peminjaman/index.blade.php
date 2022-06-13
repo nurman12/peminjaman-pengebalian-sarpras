@@ -46,18 +46,10 @@
                         <td>{{$data->validasi->user->name}}</td>
                         <td>{{$data->validasi->keperluan}}</td>
                         <td>{{date('d F Y', strtotime($data->date_ambil))}}</td>
-                        <th width="120px">
+                        <th width="90px !important">
                             <a href="{{ route('peminjaman.show', $data->id) }}" class="mr-xs mt-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
                             <a href="{{ route('peminjaman.edit', $data->id) }}" class="mr-xs mt-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Validasi"><i class="fa fa-file-text"></i></a>
-                            <a id="delete" data-validasi_id="{{ $data->validasi->id }}" class="mt-xs btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash-o"></i></i></a>
-                            <!-- <form action="{{ route('peminjaman.destroy', $data->id) }}" method="post" style="display: inline;">
-                                @csrf
-                                @method('delete')
-                                <input type="hidden" name="old_photo" value="{{$data->photo_profile}}">
-                                <button type="submit" onclick="return confirm('Yakin ingin hapus ini?')" class="mt-xs btn btn-danger btn-sm" style="width:34px;" onclick="return confirm('Yakin hapus data ini?')" data-toggle="tooltip" data-placement="top" title="Hapus">
-                                    <i class="fa fa-trash-o"></i>
-                                </button>
-                            </form> -->
+                            <a id="delete" data-validasi_id="{{ $data->validasi->id }}" style="width: 34px;" class="mt-xs btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash-o"></i></i></a>
                         </th>
                     </tr>
                     @endforeach
