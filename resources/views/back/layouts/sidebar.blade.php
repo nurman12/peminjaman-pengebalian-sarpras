@@ -146,6 +146,8 @@
                         <li class="nav-parent nav-expanded nav-active">
                             @elseif(request()->is('kerusakan'))
                         <li class="nav-parent nav-expanded nav-active">
+                            @elseif(request()->is('l_peminjaman'))
+                        <li class="nav-parent nav-expanded nav-active">
                             @else
                         <li class="nav-parent">
                             @endif
@@ -162,6 +164,11 @@
                                 <li class="{{ request()->is('kerusakan') ? 'nav-active' : '' }}">
                                     <a href="/kerusakan">
                                         Kerusakan
+                                    </a>
+                                </li>
+                                <li class="{{ request()->is('l_peminjaman') ? 'nav-active' : '' }}">
+                                    <a href="/l_peminjaman">
+                                        Peminjaan
                                     </a>
                                 </li>
                             </ul>

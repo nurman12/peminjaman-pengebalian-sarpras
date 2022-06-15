@@ -30,6 +30,12 @@
             <h2 class="panel-title">Daftar Sarpras Masuk</h2>
         </header>
         <div class="panel-body">
+            @if(\Session::has('success'))
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <strong>Peringatan !!</strong> {{\Session::get('success')}}
+            </div>
+            @endif
             <a href="{{ route('sarpras_masuk.create') }}" class="btn btn-primary rounded" style="margin-bottom: 10px;"><i class="fa fa-plus"></i> Create</a>
             <div id="content">
                 @include('back.sarpras_masuk.table')
@@ -137,12 +143,58 @@
             var tanggal = $(this).data('tanggal');
 
             $('.modal-title').text("Edit " + nama_sarpras);
-            $('#img').attr('src', '/storage/sarpras/' + img_sarpras);
+            $('#img').attr('src', '/storage/' + img_sarpras);
             $('.keterangan').val(keterangan_draf);
             $('.id').val(id);
             $('.sarpras_id').val(sarpras_id);
             $('.jumlah').val(jumlah);
             $('.tanggal').val(tanggal);
+        });
+        $(document).on('click', '#delete', function() {
+            var id = $(this).data('id');
+            var nama = $(this).data('nama');
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            swal.fire({
+                title: 'Apa kamu yakin?',
+                text: "Menghapus " + nama + " keluar",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, yakin!',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: "DELETE",
+                        url: "/sarpras_masuk/" + id,
+                        data: {
+
+                        },
+                        success: function(response) {
+                            swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: response.success_message
+                            }).then((result) => {
+                                location.reload();
+                            })
+                        },
+                        error: function(xhr) {
+                            swal.fire({
+                                icon: 'error',
+                                title: 'Oops..!',
+                                text: 'Someting went wrong!'
+                            });
+                        }
+                    });
+                }
+            })
         });
     });
 </script>

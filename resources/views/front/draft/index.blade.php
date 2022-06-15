@@ -233,7 +233,7 @@
                                         </span>
                                     </div>
                                     <div class="bor8 bg0 m-b-12 w-full">
-                                        <a href="/storage/proposal/{{ $item->proposal }}" class="btn btn-success w-full" target="_blank" rel="noopener noreferrer">
+                                        <a href="/storage/{{ $item->proposal }}" class="btn btn-success w-full" target="_blank" rel="noopener noreferrer">
                                             Download
                                         </a>
                                     </div>

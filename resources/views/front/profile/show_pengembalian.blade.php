@@ -87,7 +87,7 @@
                         </div>
                         <div class="size-209">
                             <span class="mtext-115 cl2">
-                                {{ date('d F Y', strtotime( $pengembalian->date_ambil )) }}
+                                {{ date('d F Y', strtotime( $pengembalian->date_kembali )) }}
                             </span>
                         </div>
                     </div>
@@ -127,7 +127,7 @@
                         <i class="fa fa-star" aria-hidden="true"></i>
                         @endif
                     </div>
-                    <footer class="blockquote-footer">{{ date('d F Y', strtotime( $pengembalian->rating->updated_at)) }}</footer>
+                    <footer class="blockquote-footer">{{ showDateTime($pengembalian->rating->updated_at, 'l, d F Y') }}</footer>
                 </blockquote>
                 <div class="col-sm-12 col-md-12 p-t-20">
                     <table class="table table-hover table-bordered" id="example">

@@ -71,7 +71,7 @@ class PeminjamanKadaluarsa extends Command
         }
         Validasi::where('id', $item['id'])
             ->update([
-                'status' => 2
+                'status' => 3
             ]);
     }
 }

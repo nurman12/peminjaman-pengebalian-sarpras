@@ -1,9 +1,9 @@
 @extends('back.layouts.index')
-@push('title', 'Laporan | Kerusakan')
+@push('title', 'Laporan | Peminjaman')
 @section('content')
 <section role="main" class="content-body">
     <header class="page-header">
-        <h2>Laporan Kerusakan</h2>
+        <h2>Laporan Peminjaman</h2>
 
         <div class="right-wrapper pull-right">
             <ol class="breadcrumbs">
@@ -14,7 +14,7 @@
                 </li>
                 <li><span>Pages</span></li>
                 <li><span>Laporan</span></li>
-                <li><span style="margin-right: 20px;">Karusakan</span></li>
+                <li><span style="margin-right: 20px;">Peminjaman</span></li>
             </ol>
 
         </div>
@@ -27,29 +27,41 @@
                 <a href="#" class="fa fa-times"></a>
             </div>
 
-            <h2 class="panel-title">Daftar Kerusakan</h2>
+            <h2 class="panel-title">Laporan Peminjaman</h2>
         </header>
         <div class="panel-body">
             <table class="table table-bordered table-striped mb-none" id="datatable-default">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Pengguna</th>
-                        <th>Jumlah</th>
-                        <th>Sarpras</th>
-                        <th>Keterangan</th>
-                        <th>Terakhir Diubah</th>
+                        <th>Nama</th>
+                        <th>Keperluan</th>
+                        <th>Rencana Peminjaman</th>
+                        <th>Durasi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($rusak as $data)
+                    @foreach($peminjaman as $data)
                     <tr>
-                        <th>{{ $loop->iteration }}</th>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $data->user->name }}</td>
-                        <td>{{ $data->hilang }}</td>
-                        <td>{{ $data->sarpras->nama }}</td>
-                        <td>{{ $data->keterangan }}</td>
-                        <td>{{ showDateTime($data->updated_at, 'l, d F Y') }}</td>
+                        <td>{{ $data->validasi->keperluan }}</td>
+                        <?php
+                        $tgl1 = new DateTime($data->validasi->tanggal_start);
+                        $tgl2 = new DateTime($data->validasi->tanggal_finish);
+                        $jarak = $tgl2->diff($tgl1);
+
+                        if ($data->status == 0 || $data->status == 2) {
+                            $durasi = "belum dikembalikan";
+                        } else {
+                            $tgl1_ambil = new DateTime($data->date_ambil);
+                            $tgl2_kembali = new DateTime($data->date_kembali);
+                            $rentan = $tgl2_kembali->diff($tgl1_ambil);
+                            $durasi = $rentan->d . " hari";
+                        }
+                        ?>
+                        <td>{{ $jarak->d }} hari</td>
+                        <td>{{ $durasi->d }}</td>
                     </tr>
                     @endforeach
                 </tbody>

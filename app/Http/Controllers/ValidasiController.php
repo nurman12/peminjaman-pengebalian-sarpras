@@ -11,14 +11,15 @@ use App\Models\Validasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ValidasiController extends Controller
 {
-    function send_media($number, $filename)
+    function send_media($number, $file)
     {
         // send notif whatsapp 
         $curl = curl_init();
-        $server = env('SERVER_WHATSAPP');
+        $server = 'http://localhost:4000/';
         curl_setopt_array($curl, array(
             CURLOPT_URL => $server . 'send-media-form',
             CURLOPT_RETURNTRANSFER => true,
@@ -31,7 +32,7 @@ class ValidasiController extends Controller
             CURLOPT_POSTFIELDS => array(
                 'number' => $number,
                 'caption' => 'test kirim lewat form',
-                'file' => new \CURLFILE(public_path('storage/proposal/' . $filename))
+                'file' => new \CURLFILE(public_path('storage/' . $file))
             ),
         ));
 
@@ -42,7 +43,7 @@ class ValidasiController extends Controller
     function send_text($number, $message)
     {
         $curl = curl_init();
-        $server = env('SERVER_WHATSAPP');
+        $server = 'http://localhost:4000/';
         curl_setopt_array($curl, array(
             CURLOPT_URL => $server . 'send-message',
             CURLOPT_RETURNTRANSFER => true,
@@ -89,13 +90,11 @@ class ValidasiController extends Controller
                     return redirect('/draft')->with('error', "Jumlah " . $sarpras->nama . " yang tersedia berjumlah " . $sarpras->jumlah);
                 }
             }
-            $filename = time() . '.' . request()->proposal->getClientOriginalExtension();
-            request()->proposal->move(public_path('storage/proposal'), $filename);
-
+            $file = $request->file('proposal')->store('proposal');
             $validasi = new Validasi();
             $validasi->user_id = $request->user_id;
             $validasi->keperluan = $request->keperluan;
-            $validasi->proposal = $filename;
+            $validasi->proposal = $file;
             $validasi->tanggal_start = $request->tanggal;
             $validasi->tanggal_finish = $request->sampai;
 
@@ -135,7 +134,7 @@ class ValidasiController extends Controller
             $message = "Halo, Yth Bpk/Ibu: " . $ktu->name . "\nSaya memberitahukan ada permohonan pinjaman " . $mahasiswa->roles . "\nAtas nama : " . $mahasiswa->name . "\nKeperluan : " . $request->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($request->tanggal)) . " sampai " . date('d/m/Y', strtotime($request->sampai)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih 😂";
 
             $this->send_text($ktu->no_telp, $message);
-            $this->send_media($ktu->no_telp, $filename);
+            $this->send_media($ktu->no_telp, $file);
 
             return redirect('/draft')->with('success', 'Berhasil mengirim permohonan pinjaman!');
         }
@@ -255,12 +254,10 @@ class ValidasiController extends Controller
                 ]);
 
             if ($request->file('proposal')) {
-                $filename = time() . '.' . request()->proposal->getClientOriginalExtension();
-                request()->proposal->move(public_path('storage/proposal'), $filename);
-                unlink(public_path('storage/proposal/' . $request->old_proposal));
+                Storage::delete($request->old_proposal);
                 Validasi::where('id', $id)
                     ->update([
-                        'proposal' => $filename
+                        'proposal' => $request->file('proposal')->store('proposal')
                     ]);
             }
 
@@ -309,7 +306,7 @@ class ValidasiController extends Controller
                     'validasi_koor' => $request->sebelum_koor
                 ]);
 
-            if ($request->sebelum_ktu == 1) {
+            if ($request->sebelum_koor == 1) {
                 Validasi::where('id', $id)
                     ->update([
                         'notif' => 0
@@ -642,11 +639,7 @@ class ValidasiController extends Controller
                 ]);
 
             if ($request->file('proposal')) {
-
-                $filename = time() . '.' . request()->proposal->getClientOriginalExtension();
-                request()->proposal->move(public_path('storage/proposal'), $filename);
-                unlink(public_path('storage/proposal/' . $request->old_proposal));
-
+                Storage::delete($request->old_proposal);
                 Validasi::where('id', $id)
                     ->update([
                         'proposal' => $request->file('proposal')->store('proposal')
@@ -691,16 +684,13 @@ class ValidasiController extends Controller
             ]);
 
         if ($request->file('proposal')) {
-            $filename = time() . '.' . request()->proposal->getClientOriginalExtension();
-            request()->proposal->move(public_path('storage/proposal'), $filename);
-            if ($request->old_proposal) {
-                unlink(public_path('storage/proposal/' . $request->old_proposal));
-            }
+            Storage::delete($request->old_proposal);
             Validasi::where('id', $id)
                 ->update([
-                    'proposal' => $filename
+                    'proposal' => $request->file('proposal')->store('proposal')
                 ]);
         }
+
         return redirect('/validasi/' . $id . '/edit');
     }
     public function destroy(Request $request, $id)
@@ -714,9 +704,11 @@ class ValidasiController extends Controller
                     ->update([
                         'jumlah' => $data->sarpras->jumlah + $data->qty
                     ]);
+
+                SarprasDetail::where('draft_id', $data->id)->where('jenis', 'keluar')->delete();
             }
             Draft::where('validasi_id', $id)->delete();
-            unlink(public_path('storage/proposal/' . $request->proposal));
+            Storage::delete($request->proposal);
             Validasi::where('id', $id)->delete();
 
             return redirect('/profile')->with(['status' => 'Berhasil menghapus data']);
@@ -750,7 +742,7 @@ class ValidasiController extends Controller
             }
             $validasi = Validasi::where('id', $id)->first();
 
-            unlink(public_path('storage/proposal/' . $validasi->proposal));
+            Storage::delete($validasi->proposal);
 
             DB::table('validasi')->where('id', $id)->delete();
 

@@ -29,7 +29,7 @@ class DraftController extends Controller
         $data = Validasi::where('user_id', Auth::user()->id)->where('validasi_ktu', 0)->where('validasi_koor', 0)->where('validasi_bmn', 0)->get();
 
         $draft = Validasi::where('user_id', Auth::user()->id)->where('validasi_ktu', 0)->where('validasi_koor', 0)->where('validasi_bmn', 0)->get();
-        // dd($draft);
+
         return view('front.draft.index', compact('data', 'draft'));
     }
     public function store(Request $request)

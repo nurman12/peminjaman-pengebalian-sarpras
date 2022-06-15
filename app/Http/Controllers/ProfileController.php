@@ -9,6 +9,7 @@ use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -118,16 +119,15 @@ class ProfileController extends Controller
                 ]);
 
             if ($request->file('photo')) {
-                $filename = time() . '.' . request()->photo->getClientOriginalExtension();
-                request()->photo->move(public_path('storage/photo'), $filename);
                 if ($request->old_photo) {
-                    unlink(public_path('storage/photo/' . $request->old_photo));
+                    Storage::delete($request->old_photo);
                 }
                 User::where('id', $id)
                     ->update([
-                        'photo_profile' => $filename
+                        'photo_profile' => $request->file('photo')->store('photo')
                     ]);
             }
+
 
             return response()->json(['success_message' => 'berhasil update biodata']);
         } else {
@@ -151,14 +151,10 @@ class ProfileController extends Controller
                     'no_telp' => $request->no_telp
                 ]);
             if ($request->file('photo_profile')) {
-                $filename = time() . '.' . request()->photo_profile->getClientOriginalExtension();
-                request()->photo_profile->move(public_path('storage/photo'), $filename);
-                if ($request->old_photo) {
-                    unlink(public_path('storage/photo/' . $request->old_photo));
-                }
+                Storage::delete($request->old_photo);
                 User::where('id', $id)
                     ->update([
-                        'photo_profile' => $filename
+                        'photo_profile' => $request->file('photo_profile')->store('photo')
                     ]);
             }
             return redirect('/edit');

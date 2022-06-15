@@ -101,7 +101,7 @@ class SendReminderEmails extends Command
 
                 $number = $user->no_telp;
                 $curl = curl_init();
-                $server = env('SERVER_WHATSAPP');
+                $server = 'http://localhost:4000/';
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => $server . 'send-message',
                     CURLOPT_RETURNTRANSFER => true,
@@ -131,7 +131,7 @@ class SendReminderEmails extends Command
 
                 $number = $user->no_telp;
                 $curl = curl_init();
-                $server = env('SERVER_WHATSAPP');
+                $server = 'http://localhost:4000/';
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => $server . 'send-message',
                     CURLOPT_RETURNTRANSFER => true,

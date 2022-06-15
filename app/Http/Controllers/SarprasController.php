@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Draft;
 use App\Models\Sarpras;
+use App\Models\SarprasDetail;
+use App\Models\Validasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class SarprasController extends Controller
 {
@@ -27,9 +31,6 @@ class SarprasController extends Controller
             'photo' => 'required|image|file|max:8192'
         ]);
 
-        $filename = time() . '.' . request()->photo->getClientOriginalExtension();
-        request()->photo->move(public_path('storage/sarpras'), $filename);
-
         $sarpras = new Sarpras();
         $sarpras->jenis = $request->jenis;
         if ($request->jenis == 'Ruangan') {
@@ -40,11 +41,10 @@ class SarprasController extends Controller
         $sarpras->nama = $request->nama;
         $sarpras->jumlah = 0;
         $sarpras->deskripsi = $request->deskripsi;
-        $sarpras->photo =  $filename;
-        // $sarpras->photo =  $request->file('photo')->store('sarpras');
+        $sarpras->photo =  $request->file('photo')->store('sarpras');
         $sarpras->save();
 
-        return redirect('/sarpras');
+        return redirect('/sarpras')->with(['success' => 'Berhasil simpan data']);
     }
     public function show($id)
     {
@@ -84,24 +84,38 @@ class SarprasController extends Controller
                 ]);
         }
         if ($request->file('photo')) {
-
-            $filename = time() . '.' . request()->photo->getClientOriginalExtension();
-            request()->photo->move(public_path('storage/sarpras'), $filename);
-
-            unlink(public_path('storage/sarpras/' . $request->old_photo));
-
+            Storage::delete($request->old_photo);
             Sarpras::where('id', $id)
                 ->update([
-                    'photo' => $filename
+                    'photo' => $request->file('photo')->store('sarpras')
                 ]);
         }
-        return redirect('/sarpras');
+
+        return redirect('/sarpras')->with(['success' => 'Berhasil ubah data']);
     }
     public function destroy(Request $request, $id)
     {
-        unlink(public_path('storage/sarpras/' . $request->old_photo));
-        Sarpras::destroy($id);
+        $cek = Draft::where('sarpras_id', $id)->first();
+        $ceks = SarprasDetail::where('sarpras_id', $id)->first();
+        if ($cek != null || $ceks != null) {
 
-        return redirect('/sarpras');
+            return response(['error_message' => 'sarpras ini memiliki relasi ke tabel lain']);
+        } else {
+            Storage::delete($request->photo);
+
+            Sarpras::destroy($id);
+
+            return response(['success_message' => 'berasil menghapus sarpras']);
+        }
+    }
+    public function delete(Request $request, $id)
+    {
+        Draft::where('sarpras_id', $id)->delete();
+        SarprasDetail::where('sarpras_id', $id)->delete();
+
+        Storage::delete($request->photo);
+
+        Sarpras::destroy($id);
+        return response(['success_messages' => 'berasil menghapus sarpras']);
     }
 }

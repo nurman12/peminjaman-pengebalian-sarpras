@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Exports\UsersExport;
 use App\Imports\UsersImport;
+use App\Models\Draft;
 use App\Models\Pengembalian;
 use App\Models\Rating;
+use App\Models\Sarpras;
+use App\Models\SarprasDetail;
 use App\Models\Validasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PenggunaController extends Controller
@@ -51,13 +55,11 @@ class PenggunaController extends Controller
         $user->kota = $request->kota;
         $user->no_telp = $request->no_telp;
         if ($request->file('photo_profile')) {
-            $filename = time() . '.' . request()->photo_profile->getClientOriginalExtension();
-            request()->photo_profile->move(public_path('storage/photo'), $filename);
-            $user->photo_profile = $filename;
+            $user->photo_profile = $request->file('photo_profile')->store('photo');
         }
         $user->save();
 
-        return redirect('/pengguna');
+        return redirect('/pengguna')->with(['success' => 'Berhasil simpan data']);
     }
     public function show($id)
     {
@@ -117,26 +119,61 @@ class PenggunaController extends Controller
                 'no_telp' => $request->no_telp,
             ]);
         if ($request->file('photo_profile')) {
-            $filename = time() . '.' . request()->photo_profile->getClientOriginalExtension();
-            request()->photo_profile->move(public_path('storage/photo'), $filename);
-            if ($request->old_photo) {
-                unlink(public_path('storage/photo/' . $request->old_photo));
-            }
+            Storage::delete($request->old_photo);
             User::where('id', $id)
                 ->update([
-                    'photo_profile' => $filename
+                    'photo_profile' => $request->file('photo_profile')->store('photo')
                 ]);
         }
-        return redirect('/pengguna');
+
+        return redirect('/pengguna')->with(['success' => 'Berhasil mengubah data']);
     }
     public function destroy(Request $request, $id)
     {
-        if ($request->old_photo) {
-            unlink(public_path('storage/photo/' . $request->old_photo));
+        $cek = Validasi::where('user_id', $id)->first();
+        $ceks = Draft::where('user_id', $id)->first();
+
+        if ($cek != null || $ceks != null) {
+
+            return response(['error_message' => 'pengguna ini memiliki relasi ke tabel lain']);
+        } else {
+            if ($request->photo) {
+                Storage::delete($request->photo);
+            }
+
+            User::destroy($id);
+
+            return response(['success_message' => 'berasil menghapus pengguna']);
         }
+    }
+    public function delete(Request $request, $id)
+    {
+        // restore qty
+        $draft = Draft::where('user_id', $id)->whereNotNull('validasi_id')->get();
+        foreach ($draft as $data) {
+            $sarpras = Sarpras::where('id', $data->sarpras_id)->first();
+
+            $jumlah = $sarpras->jumlah + $data->qty;
+
+            Sarpras::where('id', $data->sarpras_id)
+                ->update([
+                    'jumlah' => $jumlah
+                ]);
+        }
+        // delete
+        Draft::where('user_id', $id)->delete();
+        SarprasDetail::where('user_id', $id)->delete();
+        Validasi::where('user_id', $id)->delete();
+        Pengembalian::where('user_id', $id)->delete();
+        Rating::where('user_id', $id)->delete();
+
+        if ($request->photo) {
+            Storage::delete($request->photo);
+        }
+
         User::destroy($id);
 
-        return redirect('/pengguna');
+        return response(['success_messages' => 'berasil menghapus pengguna']);
     }
     public function password(Request $request, $id)
     {

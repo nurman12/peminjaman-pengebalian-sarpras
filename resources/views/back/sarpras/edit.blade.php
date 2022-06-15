@@ -100,7 +100,7 @@
                             <div class="col-md-8">
                                 <input type="hidden" name="old_photo" value="{{$sarpras->photo}}">
                                 <input type="file" class="form-control" id="Photo" name="photo" onchange="previewImage(this)">
-                                <img src="{{  url('/storage/sarpras/'. $sarpras->photo) }}" id="preview_sarpras" class="rounded img-responsive" style="width: 35vh; margin-top:10px;">
+                                <img src="{{  url('/storage/'. $sarpras->photo) }}" id="preview_sarpras" class="rounded img-responsive" style="width: 35vh; margin-top:10px;">
                                 @error('photo')
                                 <span class="has-error" role="alert">
                                     <strong class="text-danger">{{ $message }}</strong>

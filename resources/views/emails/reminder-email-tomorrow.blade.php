@@ -16,7 +16,7 @@ Saya memberitahukan bahwa peminjaman dengan keterangan:
 <?php
 $peminjaman = App\Models\Pengembalian::where('validasi_id', $reminder['id'])->first();
 ?>
-|{{$reminder['keperluan']}}|{{ date('l, d F Y', strtotime($reminder['tanggal_start'])) }}|{{ date('l, d F Y', strtotime($reminder['tanggal_finish'])) }}|{{ date('l, d F Y', strtotime($peminjaman['date_ambil']))}}|
+|{{$reminder['keperluan']}}|{{ date('d F Y', strtotime($reminder['tanggal_start'])) }}|{{ date('d F Y', strtotime($reminder['tanggal_finish'])) }}|{{ date('d F Y', strtotime($peminjaman['date_ambil']))}}|
 <?php
 $draft = App\Models\Draft::where('validasi_id', $reminder['id'])->get();
 ?>

@@ -8,7 +8,7 @@
         <div class="profile-header">
             <div class="profile-img">
                 @if(Auth::user()->photo_profile)
-                <img src="{{  url('/storage/photo/'. Auth::user()->photo_profile)}}" width="200" alt="">
+                <img src="{{  url('/storage/'. Auth::user()->photo_profile)}}" width="200" alt="">
                 @else
                 <img src="https://ui-avatars.com/api/?name={{ Auth::user()->name }}" width="200" alt="">
                 @endif
@@ -357,7 +357,7 @@
                             <div class="gallery-lb">
                                 <div class="wrap-pic-w pos-relative">
                                     @if(Auth::user()->photo_profile)
-                                    <img src="{{ url('/storage/photo/'. Auth::user()->photo_profile) }}" id="preview_photo" alt="IMG-PRODUCT">
+                                    <img src="{{ url('/storage/'. Auth::user()->photo_profile) }}" id="preview_photo" alt="IMG-PRODUCT">
                                     <a class="flex-c-m size-108 m-l-20 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04 zoom-picture" href="{{ url('/storage/'. Auth::user()->photo_profile)}}">
                                         <i class="fa fa-expand"></i>
                                     </a>

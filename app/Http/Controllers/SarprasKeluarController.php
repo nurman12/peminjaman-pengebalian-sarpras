@@ -11,8 +11,6 @@ class SarprasKeluarController extends Controller
 {
     public function index()
     {
-        // $user = User::where('roles', 'Mahasiswa')->orWhere('roles', 'Dosen')->get();
-        // dd($user);
         $sarpras_keluar = SarprasDetail::whereNotIn('user_id', User::where('roles', 'Mahasiswa')
             ->orWhere('roles', 'Dosen')->get('id'))
             ->where('jenis', 'keluar')
@@ -57,7 +55,7 @@ class SarprasKeluarController extends Controller
                 'jumlah' => $sarpras->jumlah - $request->jumlah
             ]);
 
-        return redirect('/sarpras_keluar');
+        return redirect('/sarpras_keluar')->with(['success' => 'Berhasil simpan data']);
     }
     public function update(Request $request, $id)
     {
@@ -100,6 +98,6 @@ class SarprasKeluarController extends Controller
 
         SarprasDetail::destroy($id);
 
-        return redirect('/sarpras_keluar');
+        return response(['success_message' => 'berhasil hapus data']);
     }
 }

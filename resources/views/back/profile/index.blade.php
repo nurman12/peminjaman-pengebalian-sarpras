@@ -25,7 +25,7 @@
                 <div class="panel-body">
                     <div class="thumb-info mb-md">
                         @if(Auth::user()->photo_profile)
-                        <img src="{{  url('/storage/photo/'. Auth::user()->photo_profile) }}" id="preview_profile" class="rounded img-responsive" style="width: 35vh;">
+                        <img src="{{  url('/storage/'. Auth::user()->photo_profile) }}" id="preview_profile" class="rounded img-responsive" style="width: 35vh;">
                         @else
                         <img src="https://ui-avatars.com/api/?name={{Auth::user()->name}}" id="preview_profile" class="rounded img-responsive" style="width: 35vh;">
                         @endif

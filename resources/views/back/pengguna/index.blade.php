@@ -29,6 +29,12 @@
             <h2 class="panel-title">Daftar Pengguna</h2>
         </header>
         <div class="panel-body">
+            @if(\Session::has('success'))
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <strong>Peringatan !!</strong> {{\Session::get('success')}}
+            </div>
+            @endif
             <div class="row justify-content-center">
                 <div class="col-lg-4 col-lg-offset-4">
                     <!-- <div class="mb-md"> -->
@@ -97,14 +103,15 @@
                             <a href="{{ route('pengguna.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
                             @if($data->roles != 'BMN')
                             <a href="{{ route('pengguna.edit', $data->id) }}" class="mr-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>
-                            <form onclick="return confirm('Yakin ingin hapus ini?')" action="{{ route('pengguna.destroy', $data->id) }}" method="post" style="display: inline;">
+                            <!-- <form onclick="return confirm('Yakin ingin hapus ini?')" action="{{ route('pengguna.destroy', $data->id) }}" method="post" style="display: inline;">
                                 @csrf
                                 @method('delete')
                                 <input type="hidden" name="old_photo" value="{{$data->photo_profile}}">
                                 <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus">
                                     <i class="fa fa-trash-o"></i>
                                 </button>
-                            </form>
+                            </form>-->
+                            <a id="delete" data-id="{{ $data->id }}" data-nama="{{$data->nama}}" data-gambar="{{$data->photo_profile}}" class=" btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash-o"></i></i></a>
                             @endif
                         </th>
                     </tr>
@@ -162,6 +169,94 @@
 <script src="{{ asset('/back') }}/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js"></script>
 <script src="{{ asset('/back') }}/vendor/jquery-datatables-bs3/assets/js/datatables.js"></script>
 <!-- <script src="{{ asset('/back') }}/vendor/pnotify/pnotify.custom.js"></script> -->
+<script>
+    $(document).on('click', '#delete', function() {
+        var id = $(this).data('id');
+        var nama = $(this).data('nama');
+        var photo = $(this).data('gambar');
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        swal.fire({
+            title: 'Yakin Ingin Hapus?',
+            text: "Data " + nama + " kemungkinan terhubung dengan data lain",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, yakin!',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    method: "DELETE",
+                    url: "/pengguna/" + id,
+                    data: {
+                        photo: photo,
+                    },
+                    success: function(response) {
+                        if (response.error_message) {
+                            swal.fire({
+                                title: 'Error!',
+                                text: response.error_message,
+                                icon: 'warning',
+                                showDenyButton: true,
+                                confirmButtonText: 'Ya',
+                                denyButtonText: `Nanti`,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $.ajax({
+                                        method: "DELETE",
+                                        url: "/pengguna_delete/" + id,
+                                        data: {
+                                            photo: photo,
+                                        },
+                                        success: function(response) {
+                                            swal.fire({
+                                                icon: 'success',
+                                                title: 'Berhasil',
+                                                text: response.success_messages
+                                            }).then((result) => {
+                                                location.reload();
+                                            })
+                                        },
+                                        error: function(xhr) {
+                                            swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops..!',
+                                                text: 'Someting went wrong!'
+                                            });
+                                        }
+                                    })
+                                } else if (result.isDenied) {
+                                    location.reload();
+                                }
+                            })
+                        } else if (response.success_message) {
+                            swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: response.success_message
+                            }).then((result) => {
+                                location.reload();
+                            })
+                        }
+                    },
+                    error: function(xhr) {
+                        swal.fire({
+                            icon: 'error',
+                            title: 'Oops..!',
+                            text: 'Someting went wrong!'
+                        });
+                    }
+                });
+            }
+        })
+    });
+</script>
 @endpush
 
 @push('last_script')

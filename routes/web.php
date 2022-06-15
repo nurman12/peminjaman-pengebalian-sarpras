@@ -60,7 +60,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/pengguna/{id}/edit', [PenggunaController::class, 'password']);
 
         Route::resource('pengguna', PenggunaController::class);
+        Route::delete('pengguna_delete/{id}', [PenggunaController::class, 'delete']);
         Route::resource('sarpras', SarprasController::class);
+        Route::delete('sarpras_delete/{id}', [SarprasController::class, 'delete']);
         Route::resource('sarpras_masuk', SarprasMasukController::class);
         Route::resource('sarpras_keluar', SarprasKeluarController::class);
         Route::resource('peminjaman', PeminjamanController::class);
@@ -93,6 +95,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('/ketersediaan', [LaporanController::class, 'ketersediaan']);
         Route::get('/kerusakan', [LaporanController::class, 'kerusakan']);
+        Route::get('/l_peminjaman', [LaporanController::class, 'peminjaman']);
     });
 
     Route::resource('validasi', ValidasiController::class);

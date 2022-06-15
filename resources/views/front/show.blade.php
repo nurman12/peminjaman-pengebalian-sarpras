@@ -25,7 +25,7 @@
                 <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
                 <div class="slick3 gallery-lb">
                     <div class="wrap-pic-w pos-relative">
-                        <img src="{{ url('/storage/sarpras/'. $sarpras->photo) }}" style="width: 34vw;" alt="IMG-PRODUCT">
+                        <img src="{{ url('/storage/'. $sarpras->photo) }}" style="width: 34vw;" alt="IMG-PRODUCT">
 
                         <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{ url('/storage/'. $sarpras->photo) }}">
                             <i class="fa fa-expand"></i>
@@ -128,7 +128,7 @@
                 <!-- Block2 -->
                 <div class="block2">
                     <div class="block2-pic hov-img0">
-                        <img src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
+                        <img src="{{ url('/storage/'. $data->photo) }}" style="height: 13vw;" alt="IMG-PRODUCT">
 
                         <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-id="{{$data->id}}" data-nama="{{$data->nama}}" data-jumlah="{{$data->jumlah}}" data-img="{{$data->photo}}" data-keterangan="{{$data->deskripsi}}">
                             Lihat Sekilas

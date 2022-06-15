@@ -33,7 +33,7 @@
                 <div class="panel-body">
                     <div class="row" style="margin-bottom: 4vw;">
                         <div class="col-md-12 col-sm-12 col-lg-5">
-                            <img src="{{ url('/storage/sarpras/'. $sarpras->photo) }}" id="previewkk" style=" width: 19vw;min-width: 100px; margin-top: 5px;">
+                            <img src="{{ url('/storage/'. $sarpras->photo) }}" id="previewkk" style=" width: 19vw;min-width: 100px; margin-top: 5px;">
                         </div>
                         <div class="col-md-12 col-sm-12 col-lg-7">
                             <h4 class="display-4">{{$sarpras->nama}}</h4>

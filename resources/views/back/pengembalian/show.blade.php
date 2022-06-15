@@ -26,7 +26,7 @@
                 <div class="panel-body">
                     <div class="thumb-info mb-md">
                         @if($pengembalian->validasi->user->photo_profile)
-                        <img src="{{  url('/storage/photo/'. $pengembalian->user->photo_profile) }}" id="preview_pengguna" class="rounded img-responsive" style="width: 35vh;">
+                        <img src="{{  url('/storage/'. $pengembalian->user->photo_profile) }}" id="preview_pengguna" class="rounded img-responsive" style="width: 35vh;">
                         @else
                         <img src="https://ui-avatars.com/api/?name={{$pengembalian->user->name}}" id="preview_pengguna" class="rounded img-responsive" style="width: 35vh;">
                         @endif
@@ -155,7 +155,7 @@
                                 </div>
                                 <div class="size-209">
                                     <span class="stext-115 cl2">
-                                        <a href="/storage/proposal/{{ $pengembalian->validasi->proposal }}" target="_blank" rel="noopener noreferrer">
+                                        <a href="/storage/{{ $pengembalian->validasi->proposal }}" target="_blank" rel="noopener noreferrer">
                                             <span class="mb-xs mt-xs btn btn-success btn-xs c-default" style="cursor: pointer;"> <i class="fa fa-file"></i> Download</span>
                                         </a>
                                     </span>
@@ -334,7 +334,7 @@
                             </div>
                         </div>
                         @if($pengembalian->rating)
-                        <small>{{ date('d F Y', strtotime( $pengembalian->rating->updated_at)) }}</small>
+                        <small>{{ showDateTime($pengembalian->rating->updated_at, 'l, d F Y') }}</small>
                         @endif
                     </blockquote>
                     @endif
@@ -391,7 +391,7 @@
             var desc = $(this).data('desc');
 
             $('.panel-title').text(nama);
-            $('#img').attr("src", '/storage/sarpras/' + img);
+            $('#img').attr("src", '/storage/' + img);
             $('p#deskripsi').text(desc);
         });
     });

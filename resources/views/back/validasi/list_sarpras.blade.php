@@ -1,8 +1,8 @@
 @foreach($sarpras as $data)
 <div class="col-md-3 mt-xl">
     <div class="panel-body">
-        <a class="image-popup-no-margins" href="{{ url('/storage/sarpras/'. $data->photo) }}">
-            <img class="img-responsive" src="{{ url('/storage/sarpras/'. $data->photo) }}" style="height: 16rem; width:27rem;">
+        <a class="image-popup-no-margins" href="{{ url('/storage/'. $data->photo) }}">
+            <img class="img-responsive" src="{{ url('/storage/'. $data->photo) }}" style="height: 16rem; width:27rem;">
         </a>
         <h4 class="text-dark">{{ $data->nama }}</h4>
         <h5 class="text-bold">{{ $data->jumlah }}</h5>

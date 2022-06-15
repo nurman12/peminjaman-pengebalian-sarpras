@@ -48,7 +48,7 @@ class SarprasMasukController extends Controller
                 'jumlah' => $sarpras->jumlah + $request->jumlah
             ]);
 
-        return redirect('/sarpras_masuk');
+        return redirect('/sarpras_masuk')->with(['success' => 'Berhasil simpan data']);
     }
     public function show($id)
     {
@@ -97,6 +97,6 @@ class SarprasMasukController extends Controller
 
         SarprasDetail::destroy($id);
 
-        return redirect('/sarpras_masuk');
+        return response(['success_message' => 'berhasil hapus data']);
     }
 }
