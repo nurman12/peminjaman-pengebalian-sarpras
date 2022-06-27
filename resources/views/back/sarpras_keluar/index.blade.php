@@ -30,6 +30,12 @@
             <h2 class="panel-title">Daftar Sarpras Keluar</h2>
         </header>
         <div class="panel-body">
+            @if(\Session::has('error'))
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <strong>Peringatan !!</strong> {{\Session::get('error')}}
+            </div>
+            @endif
             @if(\Session::has('success'))
             <div class="alert alert-success">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -37,9 +43,39 @@
             </div>
             @endif
             <a href="{{ route('sarpras_keluar.create') }}" class="btn btn-primary rounded" style="margin-bottom: 10px;"><i class="fa fa-plus"></i> Create</a>
-            <div id="content">
-                @include('back.sarpras_keluar.table')
-            </div>
+            <table class="table table-bordered table-striped mb-none" id="datatable-default">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nama</th>
+                        <th>Tanggal</th>
+                        <th class="hidden-phone">Jumlah</th>
+                        <th class="center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($sarpras_keluar as $data)
+                    <tr>
+                        <th>{{$loop->iteration}}</th>
+                        <td>{{$data->sarpras->nama}}</td>
+                        <td>{{date('d F Y', strtotime($data->tanggal))}}</td>
+                        <td class="center">{{$data->jumlah}}</td>
+                        <th width="125px">
+                            <a href="{{ route('sarpras_keluar.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
+                            <a id="edit" data-id="{{$data->id}}" data-tanggal="{{$data->tanggal}}" data-jumlah="{{$data->jumlah}}" data-keterangan="{{$data->keterangan}}" data-sarpras_id="{{ $data->sarpras_id }}" data-nama="{{ $data->sarpras->nama }}" data-img="{{ $data->sarpras->photo }}" data-toggle="modal" data-target="#exampleModal" class="mr-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>
+                            <!-- <form onclick="return confirm('Yakin ingin hapus ini?')" action="{{ route('sarpras_keluar.destroy', $data->id) }}" method="post" style="display: inline;">
+                    @csrf
+                    @method('delete')
+                    <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus">
+                        <i class="fa fa-trash-o"></i>
+                    </button>
+                </form> -->
+                            <a id="delete" data-id="{{ $data->id }}" data-nama="{{$data->nama}}" data-gambar="{{$data->photo}}" style="width: 34px;" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash-o"></i></i></a>
+                        </th>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </section>
     <!-- End page -->
@@ -63,34 +99,37 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <img id="img" src="" style="width: 29rem;" alt="">
-                    </div>
-                    <div class="col-md-5">
-                        <div class="form-group">
-                            <label for="tanggal">Tanggal</label>
-                            <input type="date" class="form-control tanggal" id="tanggal">
-                            <input type="hidden" class="id" id="id">
-                            <input type="hidden" class="sarpras_id" id="sarpras_id">
+            <form id="form" action="" method="post">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img id="img" src="" style="width: 29rem;" alt="">
                         </div>
-                        <div class="form-group">
-                            <label for="jumlah">Jumlah</label>
-                            <input type="number" class="form-control jumlah" id="jumlah">
-                            <input type="hidden" class="jumlah" id="old_jumlah">
-                        </div>
-                        <div class="form-group">
-                            <label for="keterangan">Keterangan</label>
-                            <input type="text" class="form-control keterangan" id="keterangan">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="tanggal">Tanggal</label>
+                                <input type="date" name="tanggal" class="form-control tanggal" id="tanggal">
+                                <input type="hidden" name="sarpras_id" class="sarpras_id" id="sarpras_id">
+                            </div>
+                            <div class="form-group">
+                                <label for="jumlah">Jumlah</label>
+                                <input type="number" name="jumlah" class="form-control jumlah">
+                                <input type="hidden" name="old_jumlah" class="jumlah">
+                            </div>
+                            <div class="form-group">
+                                <label for="keterangan">Keterangan</label>
+                                <input type="text" name="keterangan" class="form-control keterangan" id="keterangan">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="update">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -105,34 +144,6 @@
 
 <script>
     $(document).ready(function() {
-        $(document).on('click', '#update', function() {
-            const id = $('#id').val();
-            const sarpras_id = $('#sarpras_id').val();
-            const tanggal = $('#tanggal').val();
-            const jumlah = $('#jumlah').val();
-            const old_jumlah = $('#old_jumlah').val();
-            const keterangan = $('#keterangan').val();
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: 'sarpras_keluar/' + id,
-                type: 'PUT',
-                data: {
-                    sarpras_id: sarpras_id,
-                    tanggal: tanggal,
-                    jumlah: jumlah,
-                    old_jumlah: old_jumlah,
-                    keterangan: keterangan,
-                },
-                success: function(data) {
-                    // $('#content').html(data);
-                    location.reload();
-                }
-            })
-        });
         $(document).on('click', '#edit', function() {
             var nama_sarpras = $(this).data('nama');
             var img_sarpras = $(this).data('img');
@@ -144,11 +155,11 @@
 
             $('.modal-title').text("Edit " + nama_sarpras);
             $('#img').attr('src', '/storage/' + img_sarpras);
-            $('.keterangan').val(keterangan_draf);
-            $('.id').val(id);
+            $('.tanggal').val(tanggal);
             $('.sarpras_id').val(sarpras_id);
             $('.jumlah').val(jumlah);
-            $('.tanggal').val(tanggal);
+            $('.keterangan').val(keterangan_draf);
+            $('#form').attr('action', 'sarpras_keluar/' + id);
         });
         $(document).on('click', '#delete', function() {
             var id = $(this).data('id');

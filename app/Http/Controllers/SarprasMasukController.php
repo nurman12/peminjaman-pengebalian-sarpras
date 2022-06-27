@@ -13,7 +13,9 @@ class SarprasMasukController extends Controller
     {
         $sarpras_masuk = SarprasDetail::whereNotIn('user_id', User::where('roles', 'Mahasiswa')
             ->orWhere('roles', 'Dosen')->get('id'))
-            ->where('jenis', 'masuk')->get();
+            ->where('jenis', 'masuk')
+            ->orderBy('tanggal', 'desc')
+            ->get();
 
         return view('back.sarpras_masuk.index', compact('sarpras_masuk'));
     }
@@ -80,9 +82,7 @@ class SarprasMasukController extends Controller
                 'keterangan' => $keterangan
             ]);
 
-        // $sarpras_masuk = SarprasMasuk::whereNotIn('user_id', User::where('roles', 'Mahasiswa')->orWhere('roles', 'Dosen')->get('id'))->get();
-
-        // return view('back.sarpras_masuk.table', compact('sarpras_masuk'));
+        return redirect('/sarpras_masuk')->with(['success' => 'Berhasil mengubah data']);
     }
     public function destroy($id)
     {

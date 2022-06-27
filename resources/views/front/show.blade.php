@@ -154,7 +154,73 @@
 </section>
 
 <!-- Modal1 -->
+<div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
+    <div class="overlay-modal1 js-hide-modal1"></div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-sm-10">
+            <div class="bg0 how-pos3-parent">
+                <button class="how-pos3 hov3 trans-04 js-hide-modal1">
+                    <img src="{{ asset('/front') }}/images/icons/icon-close.png" alt="CLOSE">
+                </button>
 
+                <div class="row">
+                    <div class="col-md-3 col-lg-5 col-sm-4">
+                        <div class="wrap-slick3-dots"></div>
+                        <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+
+                        <div class="gallery-lb">
+                            <div class="wrap-pic-w pos-relative">
+                                <img src="" id="img" alt="IMG-PRODUCT">
+
+                                <a class="flex-c-m size-108 m-l-20 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04 zoom-picture" href="">
+                                    <i class="fa fa-expand"></i>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-lg-4 col-sm-6 p-b-30 nama_sarpras">
+                        <div class="p-r-50 p-t-30 p-lr-0-lg">
+                            <h4 class="mtext-105 cl2 js-name-detail p-b-14" id="detail_nama_item"></h4>
+
+                            <span class="mtext-106 cl2" id="detail_jumlah"></span>
+
+                            <p class="stext-102 cl3 p-t-23">
+                                Masukkan jumlah sarpras yang ingin anda pinjam
+                            </p>
+
+                            <!--  -->
+                            <div class="p-t-33">
+                                <div class="flex-w p-b-10">
+                                    <div class="w-full flex-w flex-m respon6-next">
+                                        <div class="wrap-num-product flex-w m-r-20 m-tb-10 detail-quantity">
+                                            <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                                                <i class="fs-16 zmdi zmdi-minus"></i>
+                                            </div>
+
+                                            <input type="hidden" class="detail_sarpras_id" id="detail_sarpras_id">
+                                            <input type="hidden" class="detail_max-qty" id="detail_max_qty">
+                                            <input class="mtext-104 cl3 txt-center num-product detail-qty-input" type="number" name="num-product" value="1">
+
+                                            <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                                                <i class="fs-16 zmdi zmdi-plus"></i>
+                                            </div>
+                                        </div>
+
+                                        <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-details">
+                                            Add to Draft
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="stext-102 cl3 p-t-23" id="detail_keterangan"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('style')
@@ -184,6 +250,27 @@
         if (value > 1) {
             value--;
             $(this).parents('.quantity').find('.qty-input').val(value);
+        }
+    });
+
+    $('.btn-num-product-up').click(function(e) {
+        e.preventDefault();
+        let incre = $(this).parents('.detail-quantity').find('.detail-qty-input').val();
+        let max = $(this).parents('.detail-quantity').find('#detail_max_qty').val();
+        let value = parseInt(incre);
+        if (value < max) {
+            value++;
+            $(this).parents('.detail-quantity').find('.detail-qty-input').val(value);
+        }
+    });
+
+    $('.btn-num-product-down').click(function(e) {
+        e.preventDefault();
+        let decre = $(this).parents('.detail-quantity').find('.detail-qty-input').val();
+        let value = parseInt(decre);
+        if (value > 1) {
+            value--;
+            $(this).parents('.detail-quantity').find('.detail-qty-input').val(value);
         }
     });
 </script>
@@ -221,21 +308,51 @@
         var img = $(this).data('img');
         var keterangan = $(this).data('keterangan');
 
-        $('#sarpras_id').val(id);
-        $('#nama_item').text(nama);
+        $('#detail_sarpras_id').val(id);
+        $('#detail_nama_item').text(nama);
         $('#img').attr('src', '/storage/' + img);
         $('.zoom-picture').attr('href', '/storage/' + img);
-        $('#jumlah').text(jumlah);
-        $('#max_qty').val(jumlah);
-        $('#keterangan').text(keterangan);
+        $('#detail_jumlah').text(jumlah);
+        $('#detail_max_qty').val(jumlah);
+        $('#detail_keterangan').text(keterangan);
 
-        $('.qty-input').val(1);
+        $('.detail-qty-input').val(1);
     });
 
     $(document).on('click', '.js-addcart-detail', function() {
         var sarpras_id = $(this).parents('.respon6-next').find('.sarpras_id').val();
         var sarpras_qty = $(this).parents('.respon6-next').find('.qty-input').val();
-        var nama = $(this).parents('.nama_sarpras').find('#nama_item').text();
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            method: "POST",
+            url: "{{ route('draft.store')}}",
+            data: {
+                'sarpras_id': sarpras_id,
+                'sarpras_qty': sarpras_qty,
+            },
+            success: function(response) {
+                if (response.tes == 'Ok') {
+                    swal("Berhasil", response.status, "success");
+                    totalDraf();
+                } else if (response.tes == 'Update') {
+                    swal("Update!", response.status, "success");
+                    totalDraf();
+                } else if (response.tes == 'Error') {
+                    swal("Error!", response.status, "error");
+                }
+            }
+        });
+    });
+
+    $(document).on('click', '.js-addcart-details', function() {
+        var sarpras_id = $(this).parents('.respon6-next').find('.detail_sarpras_id').val();
+        var sarpras_qty = $(this).parents('.respon6-next').find('.detail-qty-input').val();
 
         $.ajaxSetup({
             headers: {

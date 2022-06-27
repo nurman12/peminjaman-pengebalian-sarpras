@@ -131,7 +131,7 @@ class ValidasiController extends Controller
 
             // get KTU
             $ktu = User::where('roles', 'KTU')->first();
-            $message = "Halo, Yth Bpk/Ibu: " . $ktu->name . "\nSaya memberitahukan ada permohonan pinjaman " . $mahasiswa->roles . "\nAtas nama : " . $mahasiswa->name . "\nKeperluan : " . $request->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($request->tanggal)) . " sampai " . date('d/m/Y', strtotime($request->sampai)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih 😂";
+            $message = "Halo, Yth Bpk/Ibu: " . $ktu->name . "\nSaya memberitahukan ada permohonan pinjaman " . $mahasiswa->roles . "\nAtas nama : " . $mahasiswa->name . "\nKeperluan : " . $request->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($request->tanggal)) . " sampai " . date('d/m/Y', strtotime($request->sampai)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih";
 
             $this->send_text($ktu->no_telp, $message);
             $this->send_media($ktu->no_telp, $file);
@@ -276,7 +276,7 @@ class ValidasiController extends Controller
 
                 // get Koordinator
                 $koordinator = User::where('roles', 'Koordinator')->first();
-                $message = "Halo, Yth Bpk/Ibu: " . $koordinator->name . "\nSaya memberitahukan ada permohonan pinjaman " . $validasi->user->roles . "\nAtas nama : " . $validasi->user->name . "\nKeperluan : " . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih 😂";
+                $message = "Halo, Yth Bpk/Ibu: " . $koordinator->name . "\nSaya memberitahukan ada permohonan pinjaman " . $validasi->user->roles . "\nAtas nama : " . $validasi->user->name . "\nKeperluan : " . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih";
 
                 $this->send_text($koordinator->no_telp, $message);
                 $this->send_media($koordinator->no_telp, $validasi->proposal);
@@ -299,7 +299,7 @@ class ValidasiController extends Controller
                 }
             }
 
-            return redirect('/belum_validasi');
+            return redirect('/belum_validasi')->with(['success' => 'Berhasil mengubah data']);
         } elseif ($request->sebelum_koor) {
             Validasi::where('id', $id)
                 ->update([
@@ -314,7 +314,7 @@ class ValidasiController extends Controller
 
                 // get bmn
                 $bmn = User::where('roles', 'BMN')->first();
-                $message = "Halo, Yth Bpk/Ibu: " . $bmn->name . "\nSaya memberitahukan ada permohonan pinjaman " . $validasi->user->roles . "\nAtas nama : " . $validasi->user->name . "\nKeperluan : " . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih 😂";
+                $message = "Halo, Yth Bpk/Ibu: " . $bmn->name . "\nSaya memberitahukan ada permohonan pinjaman " . $validasi->user->roles . "\nAtas nama : " . $validasi->user->name . "\nKeperluan : " . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih";
 
                 $this->send_text($bmn->no_telp, $message);
                 $this->send_media($bmn->no_telp, $validasi->proposal);
@@ -337,7 +337,7 @@ class ValidasiController extends Controller
                 }
             }
 
-            return redirect('/belum_validasi');
+            return redirect('/belum_validasi')->with(['success' => 'Berhasil mengubah data']);
         } elseif ($request->sebelum_bmn) {
             Validasi::where('id', $id)
                 ->update([
@@ -351,7 +351,7 @@ class ValidasiController extends Controller
                     ]);
 
                 // send message Mahasisiswa 
-                $message = "Halo, Yth: " . $validasi->user->name . "\nSaya memberitahukan bahwa permohonan pinjaman anda dengan \nKeperluan : "  . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \n\nTelah mendapatkan PERSETUJUAN, silahan download draft pada akun ada, kemudian lakukan pengambilan sarpras. \nTerima kasih 😂";
+                $message = "Halo, Yth: " . $validasi->user->name . "\nSaya memberitahukan bahwa permohonan pinjaman anda dengan \nKeperluan : "  . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \n\nTelah mendapatkan *persetujuan*, silahan download draft pada akun ada, kemudian lakukan pengambilan sarpras. \nTerima kasih";
 
                 $this->send_text($validasi->user->no_telp, $message);
             }
@@ -373,7 +373,7 @@ class ValidasiController extends Controller
                 }
             }
 
-            return redirect('/belum_validasi');
+            return redirect('/belum_validasi')->with(['success' => 'Berhasil mengubah data']);
         } elseif ($request->sudah_ktu) {
             Validasi::where('id', $id)
                 ->update([
@@ -388,7 +388,7 @@ class ValidasiController extends Controller
 
                 // get Koordinator
                 $koordinator = User::where('roles', 'Koordinator')->first();
-                $message = "Halo, Yth Bpk/Ibu: " . $koordinator->name . "\nSaya memberitahukan ada permohonan pinjaman " . $validasi->user->roles . "\nAtas nama : " . $validasi->user->name . "\nKeperluan : " . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih 😂";
+                $message = "Halo, Yth Bpk/Ibu: " . $koordinator->name . "\nSaya memberitahukan ada permohonan pinjaman " . $validasi->user->roles . "\nAtas nama : " . $validasi->user->name . "\nKeperluan : " . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih";
 
                 $this->send_text($koordinator->no_telp, $message);
                 $this->send_media($koordinator->no_telp, $validasi->proposal);
@@ -428,7 +428,7 @@ class ValidasiController extends Controller
                 }
             }
 
-            return redirect('/sudah_validasi');
+            return redirect('/sudah_validasi')->with(['success' => 'Berhasil mengubah data']);
         } elseif ($request->sudah_koor) {
             Validasi::where('id', $id)
                 ->update([
@@ -443,7 +443,7 @@ class ValidasiController extends Controller
 
                 // get bmn
                 $bmn = User::where('roles', 'BMN')->first();
-                $message = "Halo, Yth Bpk/Ibu: " . $bmn->name . "\nSaya memberitahukan ada permohonan pinjaman " . $validasi->user->roles . "\nAtas nama : " . $validasi->user->name . "\nKeperluan : " . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih 😂";
+                $message = "Halo, Yth Bpk/Ibu: " . $bmn->name . "\nSaya memberitahukan ada permohonan pinjaman " . $validasi->user->roles . "\nAtas nama : " . $validasi->user->name . "\nKeperluan : " . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \nberikut saya sertakan proposal permohonan pinjaman. \n\nTerima kasih";
 
                 $this->send_text($bmn->no_telp, $message);
                 $this->send_media($bmn->no_telp, $validasi->proposal);
@@ -482,7 +482,7 @@ class ValidasiController extends Controller
                 }
             }
 
-            return redirect('/sudah_validasi');
+            return redirect('/sudah_validasi')->with(['success' => 'Berhasil mengubah data']);
         } elseif ($request->sudah_bmn) {
 
             Validasi::where('id', $id)
@@ -497,7 +497,7 @@ class ValidasiController extends Controller
                     ]);
 
                 // send message Mahasisiswa 
-                $message = "Halo, Yth: " . $validasi->user->name . "\nSaya memberitahukan bahwa permohonan pinjaman anda dengan \nKeperluan : "  . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \n\ntelah mendapatkan PERSETUJUAN, silahan download draft pada akun ada, kemudian lakukan pengambilan sarpras. \nTerima kasih 😂";
+                $message = "Halo, Yth: " . $validasi->user->name . "\nSaya memberitahukan bahwa permohonan pinjaman anda dengan \nKeperluan : "  . $validasi->keperluan . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($validasi->tanggal_start)) . " sampai " . date('d/m/Y', strtotime($validasi->tanggal_finish)) . ", \n\ntelah mendapatkan *persetujuan*, silahan download draft pada akun ada, kemudian lakukan pengambilan sarpras. \nTerima kasih";
 
                 $this->send_text($validasi->user->no_telp, $message);
             }
@@ -536,7 +536,7 @@ class ValidasiController extends Controller
                 }
             }
 
-            return redirect('/sudah_validasi');
+            return redirect('/sudah_validasi')->with(['success' => 'Berhasil mengubah data']);
         }
     }
     public function update_lanjut(Request $request, $id)
@@ -691,7 +691,7 @@ class ValidasiController extends Controller
                 ]);
         }
 
-        return redirect('/validasi/' . $id . '/edit');
+        return redirect('/validasi/' . $id . '/edit')->with(['success' => 'Berhasil mengubah data']);;
     }
     public function destroy(Request $request, $id)
     {
@@ -811,15 +811,5 @@ class ValidasiController extends Controller
                 ->where('validasi_bmn', 2)->get();
         }
         return view('back.validasi.sudah', compact('setuju', 'tidak'));
-    }
-    public function expired_validasi()
-    {
-        $date_now = date("Y-m-d");
-
-        $expired = Validasi::where('tanggal_finish', '<', $date_now)
-            ->where('status', '!=', 1)
-            ->orderBy('tanggal_finish', 'asc')->get();
-
-        return view('back.validasi.expired', compact('expired'));
     }
 }

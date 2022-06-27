@@ -30,6 +30,12 @@
             <h2 class="panel-title">Daftar Persetujuan Permohonan</h2>
         </header>
         <div class="panel-body">
+            @if(\Session::has('success'))
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <strong>Peringatan !!</strong> {{\Session::get('success')}}
+            </div>
+            @endif
             <table class="table table-bordered table-striped mb-none" id="datatable-default">
                 <thead>
                     <tr>

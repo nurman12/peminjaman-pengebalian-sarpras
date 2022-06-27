@@ -14,6 +14,7 @@ class SarprasKeluarController extends Controller
         $sarpras_keluar = SarprasDetail::whereNotIn('user_id', User::where('roles', 'Mahasiswa')
             ->orWhere('roles', 'Dosen')->get('id'))
             ->where('jenis', 'keluar')
+            ->orderBy('tanggal', 'desc')
             ->get();
 
         return view('back.sarpras_keluar.index', compact('sarpras_keluar'));
@@ -40,22 +41,28 @@ class SarprasKeluarController extends Controller
             'jumlah' => 'required|numeric',
             'keterangan' => 'required'
         ]);
-        $sarpras_keluar = new SarprasDetail();
-        $sarpras_keluar->user_id = $request->user_id;
-        $sarpras_keluar->sarpras_id = $request->sarpras;
-        $sarpras_keluar->tanggal = $request->tanggal;
-        $sarpras_keluar->jenis = "keluar";
-        $sarpras_keluar->jumlah = $request->jumlah;
-        $sarpras_keluar->keterangan = $request->keterangan;
-        $sarpras_keluar->save();
 
         $sarpras = Sarpras::where('id', $request->sarpras)->first();
-        Sarpras::where('id', $request->sarpras)
-            ->update([
-                'jumlah' => $sarpras->jumlah - $request->jumlah
-            ]);
 
-        return redirect('/sarpras_keluar')->with(['success' => 'Berhasil simpan data']);
+        if ($sarpras->jumlah >= $request->jumlah) {
+            $sarpras_keluar = new SarprasDetail();
+            $sarpras_keluar->user_id = $request->user_id;
+            $sarpras_keluar->sarpras_id = $request->sarpras;
+            $sarpras_keluar->tanggal = $request->tanggal;
+            $sarpras_keluar->jenis = "keluar";
+            $sarpras_keluar->jumlah = $request->jumlah;
+            $sarpras_keluar->keterangan = $request->keterangan;
+            $sarpras_keluar->save();
+
+            Sarpras::where('id', $request->sarpras)
+                ->update([
+                    'jumlah' => $sarpras->jumlah - $request->jumlah
+                ]);
+
+            return redirect('/sarpras_keluar')->with(['success' => 'Berhasil simpan data']);
+        } else {
+            return redirect('/sarpras_keluar')->with(['error' => 'Jumlah keluar melebihi stok']);
+        }
     }
     public function update(Request $request, $id)
     {
@@ -69,21 +76,23 @@ class SarprasKeluarController extends Controller
         $jumlah_a = $sarpras->jumlah + $old_jumlah;
         $jumlah_c = $jumlah_a - $jumlah_b;
 
-        Sarpras::where('id', $sarpras_id)
-            ->update([
-                'jumlah' => $jumlah_c
-            ]);
+        if ($jumlah_a >= $jumlah_b) {
+            Sarpras::where('id', $sarpras_id)
+                ->update([
+                    'jumlah' => $jumlah_c
+                ]);
 
-        SarprasDetail::where('id', $id)
-            ->update([
-                'tanggal' => $tanggal,
-                'jumlah' => $jumlah_b,
-                'keterangan' => $keterangan
-            ]);
+            SarprasDetail::where('id', $id)
+                ->update([
+                    'tanggal' => $tanggal,
+                    'jumlah' => $jumlah_b,
+                    'keterangan' => $keterangan
+                ]);
 
-        // $sarpras_keluar = SarprasKeluar::whereNotIn('user_id', User::where('roles', 'Mahasiswa')->orWhere('roles', 'Dosen')->get('id'))->get();
-
-        // return view('back.sarpras_keluar.table', compact('sarpras_keluar'));
+            return redirect('/sarpras_keluar')->with(['success' => 'Berhasil mengubah data']);
+        } else {
+            return redirect('/sarpras_keluar')->with(['error' => 'Jumlah keluar melebihi stok']);
+        }
     }
     public function destroy($id)
     {

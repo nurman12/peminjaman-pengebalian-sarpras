@@ -1,5 +1,5 @@
 @extends('back.layouts.index')
-@push('title', 'Show Pwngguna')
+@push('title', 'Show Pengguna')
 @section('content')
 <section role="main" class="content-body">
     <header class="page-header">
@@ -39,7 +39,7 @@
                     <h6 class="text-muted">Data Profile</h6>
                     <ul class="simple-todo-list">
                         <li class="{{$user->photo_profile ? 'completed' : 'text-warning'}}">Update Poto Profil</li>
-                        <li class="{{$user->change_Password != 0 ? 'completed' : 'text-warning'}}">Ganti Password</li>
+                        <li class="{{$user->password_tidack_enkripsi != 12345678 ? 'completed' : 'text-warning'}}">Ganti Password</li>
                     </ul>
                     @if($user->roles == 'Mahasiswa' || $user->roles == 'Dosen')
                     <hr class="dotted short">
@@ -303,7 +303,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if($pengembalian->count() > 0)
                                         @foreach($pengembalian as $data)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
@@ -311,6 +310,7 @@
                                             <td>{{ date('d F Y', strtotime( $data->date_ambil )) }}</td>
                                             <td>{{ date('d F Y', strtotime( $data->date_kembali )) }}</td>
                                             <td id="rate-rating">
+                                                @if($data->rating)
                                                 @if($data->rating->penilaian == 1)
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 <i class="fa fa-star-o" aria-hidden="true"></i>
@@ -342,18 +342,16 @@
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 @endif
+                                                @else
+                                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach
-                                        @else
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        @endif
                                     </tbody>
                                 </table>
                             </div>

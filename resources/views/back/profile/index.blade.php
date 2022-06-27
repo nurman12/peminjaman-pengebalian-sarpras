@@ -38,7 +38,7 @@
                     <h6 class="text-muted">Data Profile</h6>
                     <ul class="simple-todo-list">
                         <li class="{{Auth::user()->photo_profile ? 'completed' : 'text-warning'}}">Update Poto Profil</li>
-                        <li class="{{Auth::user()->change_Password != 0 ? 'completed' : 'text-warning'}}">Ganti Password</li>
+                        <li class="{{Auth::user()->password_tidack_enkripsi != 12345678 ? 'completed' : 'text-warning'}}">Ganti Password</li>
                     </ul>
                     <hr class="dotted short">
 
@@ -66,6 +66,12 @@
                     </li>
                 </ul>
                 <div class="tab-content">
+                    @if(\Session::has('success'))
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <strong>Peringatan !!</strong> {{\Session::get('success')}}
+                    </div>
+                    @endif
                     <div id="overview" class="tab-pane {{ request()->is('profile') ? 'active' : '' }}">
                         <h4 class="mb-md">About Me</h4>
                         <div class="row">

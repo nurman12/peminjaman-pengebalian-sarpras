@@ -32,9 +32,9 @@
                             <h2 class="panel-title">Pengambilan & Pengembalian</h2>
                             <p class="panel-subtitle">Perbandingan data peminjaman dengan data pengembalian pada sistem</p>
                         </header>
-                        <div class="panel-body" style="height: 23rem;">
+                        <div class="panel-body">
                             <!-- chart.js -->
-                            <div id="peminjaman_pengembalian"></div>
+                            <canvas id="peminjaman_pengembalian" style="height: 30rem;"></canvas>
 
                         </div>
                     </section>
@@ -49,9 +49,9 @@
                             <h2 class="panel-title">Pengambilan & Pengembalian Sarpras</h2>
                             <p class="panel-subtitle">Perbandingan jumlah sarpras yang dipinjam dengan jumlah sarpras yang dikembalikan.</p>
                         </header>
-                        <div class="panel-body" style="height: 23rem;">
+                        <div class="panel-body">
                             <!-- chart.js -->
-                            <canvas id="stok_peminjaman_pengembalian"></canvas>
+                            <canvas id="stok_peminjaman_pengembalian" style="height: 30rem;"></canvas>
 
                         </div>
                     </section>
@@ -173,89 +173,93 @@
 
 @endpush
 @push('last_script')
-<script type="text/javascript" src="{{ asset('/back') }}/vendor/chart-js/loader.js"></script>
-<script type="text/javascript">
-    google.charts.load('current', {
-        'packages': ['corechart']
-    });
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-        var months = ['Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-        var data = google.visualization.arrayToDataTable([
-            ['Bulan', 'Peminjaman', 'Pengembalian'],
-            <?php foreach ($perbandingan as $item) : ?>[months[<?= $item['bulan']; ?> - 1], <?= $item['jumlah_pinjam']; ?>, <?= $item['jumlah_kembali']; ?>],
-            <?php endforeach; ?>
-        ]);
-
-        var options = {
-            title: 'Perbandingan',
-            curveType: 'function',
-            legend: {
-                position: 'bottom'
-            }
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('peminjaman_pengembalian'));
-
-        chart.draw(data, options);
-    }
-</script>
 <script type="text/javascript" src="{{ asset('/back') }}/vendor/chart-js/chart.js"></script>
 <script>
     // setup 
     const months = ['Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    const data = {
-        labels: [<?php foreach ($perbandingan_sarpras as $item) : ?>months[<?= $item['bulan']; ?> - 1], <?php endforeach; ?>],
-        datasets: [{
-            label: 'Pengembalian',
-            data: [<?php foreach ($perbandingan_sarpras as $item) : ?><?= $item['masuk']; ?>, <?php endforeach; ?>],
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-
-        }, {
-            label: 'Peminjaman',
-            data: [<?php foreach ($perbandingan_sarpras as $item) : ?><?= $item['keluar']; ?>, <?php endforeach; ?>],
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-
-        }]
-    };
 
     // customLegend
-    const customLegend = {
-        id: 'customLegend',
-        afterDraw: (chart, args, options) => {
-            const {
-                _metasets,
-                ctx
-            } = chart;
-            ctx.save();
+    // const customLegend = {
+    //     id: 'customLegend',
+    //     afterDraw: (chart, args, options) => {
+    //         const {
+    //             _metasets,
+    //             ctx
+    //         } = chart;
+    //         ctx.save();
 
-            _metasets.forEach((meta) => {
-                ctx.font = 'bolder 12px Arial';
-                ctx.fillStyle = meta._dataset.borderColor;
-                ctx.textBaseLine = 'middle';
-                ctx.fillText(meta._dataset.label, meta.data[meta.data.length - 1].x + 6, meta.data[meta.data.length - 1].y)
-            })
+    //         _metasets.forEach((meta) => {
+    //             ctx.font = 'bolder 12px Arial';
+    //             ctx.fillStyle = meta._dataset.borderColor;
+    //             ctx.textBaseLine = 'middle';
+    //             ctx.fillText(meta._dataset.label, meta.data[meta.data.length - 1].x + 6, meta.data[meta.data.length - 1].y)
+    //         })
+    //     }
+    // }
+    // tooltipLine
+    const tooltipLine = {
+        id: 'tooltipLine',
+        beforeDraw: chart => {
+            if (chart.tooltip._active && chart.tooltip._active.length) {
+                const ctx = chart.ctx;
+                ctx.save();
+                const activePoint = chart.tooltip._active[0];
+
+                ctx.beginPath();
+                ctx.setLineDash([5.7]);
+                ctx.moveTo(activePoint.element.x, chart.chartArea.top);
+                ctx.lineTo(activePoint.element.x, activePoint.element.y);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = 'red';
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.beginPath();
+                ctx.moveTo(activePoint.element.x, activePoint.element.y);
+                ctx.lineTo(activePoint.element.x, chart.chartArea.bottom);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = 'rgba(119, 107, 107, 0.8)';
+                ctx.stroke();
+                ctx.restore();
+            }
         }
     }
 
     // config 
-    const config = {
+    const config1 = {
         type: 'line',
-        data,
+        data: {
+            labels: [<?php foreach ($perbandingan as $item) : ?>months[<?= $item['bulan']; ?> - 1], <?php endforeach; ?>],
+            datasets: [{
+                label: 'Peminjaman',
+                data: [<?php foreach ($perbandingan as $item) : ?><?= $item['pinjam']; ?>, <?php endforeach; ?>],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                tension: 0.4,
+                pointHoverBorderColor: 'white',
+                pointHoverBackgroundColor: 'rgba(54, 162, 235, 0.2)',
+                pointBorderWidth: 3,
+                pointHoverBorderWidth: 3,
+                pointRadius: 7,
+                pointHoverRadius: 7,
+            }, {
+                label: 'Pengembalian',
+                data: [<?php foreach ($perbandingan as $item) : ?><?= $item['kembali']; ?>, <?php endforeach; ?>],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                tension: 0.4,
+                pointHoverBorderColor: 'white',
+                pointHoverBackgroundColor: 'rgba(54, 162, 235, 0.2)',
+                pointBorderWidth: 3,
+                pointHoverBorderWidth: 3,
+                pointRadius: 7,
+                pointHoverRadius: 7,
+            }]
+        },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    right: 100
-                }
-            },
             plugins: {
-                legend: {
-                    display: false
+                tooltip: {
+                    yAlign: 'bottom'
                 }
             },
             tension: 0.4,
@@ -265,13 +269,54 @@
                 }
             }
         },
-        plugins: [customLegend]
+        plugins: [tooltipLine]
     };
 
-    // render init block
-    const myChart = new Chart(
+    const config2 = {
+        type: 'line',
+        data: {
+            labels: [<?php foreach ($perbandingan_sarpras as $item) : ?>months[<?= $item['bulan']; ?> - 1], <?php endforeach; ?>],
+            datasets: [{
+                label: 'Peminjaman',
+                data: [<?php foreach ($perbandingan_sarpras as $item) : ?><?= $item['keluar']; ?>, <?php endforeach; ?>],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+
+            }, {
+                label: 'Pengembalian',
+                data: [<?php foreach ($perbandingan_sarpras as $item) : ?><?= $item['masuk']; ?>, <?php endforeach; ?>],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+
+            }]
+        },
+        options: {
+            // responsive: true,
+            // maintainAspectRatio: false,
+            // layout: {
+            //     padding: {
+            //         right: 100
+            //     }
+            // },
+            tension: 0.4,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+        // plugins: [customLegend]
+    };
+
+    // render init block 
+    const myChart1 = new Chart(
+        document.getElementById('peminjaman_pengembalian'),
+        config1
+    );
+
+    const myChart2 = new Chart(
         document.getElementById('stok_peminjaman_pengembalian'),
-        config
+        config2
     );
 </script>
 @endpush

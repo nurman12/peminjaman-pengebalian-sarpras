@@ -54,10 +54,10 @@
                         <td>{{$data->jenis}}</td>
                         <td>{{$data->nama}}</td>
                         <td class="center">{{$data->jumlah}}</td>
-                        <th width="120px">
+                        <th width="125px">
                             <a href="{{ route('sarpras.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
                             <a href="{{ route('sarpras.edit', $data->id) }}" class="mr-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>
-                            <a id="delete" data-id="{{ $data->id }}" data-nama="{{$data->nama}}" data-gambar="{{$data->photo}}" style="width: 34px;" class="mt-xs btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash-o"></i></i></a>
+                            <a id="delete" data-id="{{ $data->id }}" data-nama="{{$data->nama}}" data-gambar="{{$data->photo}}" style="width: 34px;" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash-o"></i></i></a>
                             <!-- <form onclick="return confirm('Yakin ingin hapus ini?')" action="{{ route('sarpras.destroy', $data->id) }}" method="post" style="display: inline;">
                                 @csrf
                                 @method('delete')

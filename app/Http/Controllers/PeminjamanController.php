@@ -287,8 +287,10 @@ class PeminjamanController extends Controller
                 }
             }
             if ($check_sesuai == 'false') {
-                if ($sarpras_masuk->jumlah + $sarpras_keluar->hilang == $sarpras_keluar->jumlah) {
-                    return response()->json(['error_message' => 'Jumlah sarpras yang belum divalidasi tidak ada!']);
+                if ($sarpras_masuk != null) {
+                    if ($sarpras_masuk->jumlah + $sarpras_keluar->hilang == $sarpras_keluar->jumlah) {
+                        return response()->json(['error_message' => 'Jumlah sarpras yang belum divalidasi tidak ada!']);
+                    }
                 }
             }
 
@@ -319,9 +321,17 @@ class PeminjamanController extends Controller
 
         $peminjaman = Pengembalian::where('id', $id)->first();
         if ($peminjaman->status == 1) {
-            return response()->json(['success_message' => 'Ingin memberi rating?']);
+            Validasi::where('id', $peminjaman->validasi_id)
+                ->update([
+                    'status' => 2
+                ]);
+            return response()->json(['success_message' => 'Anda dapat memberi rating pada menu pengembalian']);
         } else {
-            return response()->json(['success_message_other' => 'berhasil']);
+            Validasi::where('id', $peminjaman->validasi_id)
+                ->update([
+                    'status' => 1
+                ]);
+            return response()->json(['success_message_other' => 'berhasil melakukan validasi']);
         }
     }
     public function destroy($id)

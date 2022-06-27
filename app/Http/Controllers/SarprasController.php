@@ -14,7 +14,7 @@ class SarprasController extends Controller
 {
     public function index()
     {
-        $sarpras = Sarpras::orderBy('jenis', 'asc')->get();
+        $sarpras = Sarpras::orderBy('created_at', 'desc')->get();
 
         return view('back.sarpras.index', compact('sarpras'));
     }

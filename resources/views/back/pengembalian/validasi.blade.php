@@ -674,11 +674,23 @@
                             $('#modal-rating').modal('show');
                             $('#kembali_id').val(pengem);
                         } else if (result.isDenied) {
-                            location.reload();
+                            swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: response.success_message
+                            }).then((result) => {
+                                location.reload();
+                            })
                         }
                     })
                 } else if (response.success_message_other) {
-                    location.reload();
+                    swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: response.success_message_other
+                    }).then((result) => {
+                        location.reload();
+                    })
                 }
             },
             error: function(xhr) {

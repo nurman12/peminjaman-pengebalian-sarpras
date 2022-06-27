@@ -107,11 +107,6 @@
                                         Semua Validasi
                                     </a>
                                 </li>
-                                <li class="{{ request()->is('expired_validasi*') ? 'nav-active' : '' }}">
-                                    <a href="/expired_validasi">
-                                        Kedaluwarsa
-                                    </a>
-                                </li>
                             </ul>
                         </li>
                         @endif
@@ -142,9 +137,11 @@
                             </ul>
                         </li>
                         @endif
-                        @if(request()->is('ketersediaan') )
+                        @if(request()->is('l_kadaluarsa') )
                         <li class="nav-parent nav-expanded nav-active">
-                            @elseif(request()->is('kerusakan'))
+                            @elseif(request()->is('l_kerusakan'))
+                        <li class="nav-parent nav-expanded nav-active">
+                            @elseif(request()->is('l_ketersediaan'))
                         <li class="nav-parent nav-expanded nav-active">
                             @elseif(request()->is('l_peminjaman'))
                         <li class="nav-parent nav-expanded nav-active">
@@ -156,19 +153,24 @@
                                 <span>Laporan</span>
                             </a>
                             <ul class="nav nav-children">
-                                <li class="{{ request()->is('ketersediaan') ? 'nav-active' : '' }}">
-                                    <a href="/ketersediaan">
+                                <li class="{{ request()->is('l_kadaluarsa') ? 'nav-active' : '' }}">
+                                    <a href="/l_kadaluarsa">
+                                        Kedaluwarsa
+                                    </a>
+                                </li>
+                                <li class="{{ request()->is('l_ketersediaan') ? 'nav-active' : '' }}">
+                                    <a href="/l_ketersediaan">
                                         Ketersediaan
                                     </a>
                                 </li>
-                                <li class="{{ request()->is('kerusakan') ? 'nav-active' : '' }}">
-                                    <a href="/kerusakan">
+                                <li class="{{ request()->is('l_kerusakan') ? 'nav-active' : '' }}">
+                                    <a href="/l_kerusakan">
                                         Kerusakan
                                     </a>
                                 </li>
                                 <li class="{{ request()->is('l_peminjaman') ? 'nav-active' : '' }}">
                                     <a href="/l_peminjaman">
-                                        Peminjaan
+                                        Peminjaman
                                     </a>
                                 </li>
                             </ul>

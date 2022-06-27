@@ -12,7 +12,6 @@ use App\Models\Sarpras;
 use App\Models\SarprasDetail;
 use App\Models\Validasi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -101,7 +100,6 @@ class PenggunaController extends Controller
             'email' => ['required', 'string', 'email', 'max:255'],
             'nim_nidn' => ['required', 'integer', 'min:6'],
             'photo_profile' => 'image|file|max:8192'
-
         ]);
         User::where('id', $id)
             ->update([
@@ -178,26 +176,27 @@ class PenggunaController extends Controller
     public function password(Request $request, $id)
     {
         $request->validate([
-            'old_password' => 'required',
+            // 'old_password' => 'required',
             'password' => ['required', 'string', 'min:8', 'confirmed']
         ]);
 
-        $user = User::where('id', $id)->first();
+        // $user = User::where('id', $id)->first();
 
-        if (Hash::check($request->old_password, $user->password)) {
-            User::where('id', $id)
-                ->update([
-                    'password' => bcrypt($request->password)
-                ]);
+        // if (Hash::check($request->old_password, $user->password)) {
+        User::where('id', $id)
+            ->update([
+                'password' => bcrypt($request->password),
+                'password_tidack_enkripsi' => $request->password
+            ]);
 
-            User::where('id', $id)
-                ->update([
-                    'password_tidack_enkripsi' => $request->password
-                ]);
-            return redirect('/pengguna' . '/' . $id . '/edit');
-        } else {
-            return view('back.pengguna.edit', compact('user'))->withErrors(['old_password' => 'Password yang anda masukkan salah']);
-        }
+        // User::where('id', $id)
+        //     ->update([
+        //         'password_tidack_enkripsi' => $request->password
+        //     ]);
+        return redirect('/pengguna' . '/' . $id . '/edit')->with(['success' => 'Berhasil mengubah data']);;
+        // } else {
+        //     return view('back.pengguna.edit', compact('user'))->withErrors(['old_password' => 'Password yang anda masukkan salah']);
+        // }
     }
     public function userexport()
     {
@@ -216,8 +215,7 @@ class PenggunaController extends Controller
         if ($import->failures()->isNotEmpty()) {
             return redirect('/pengguna')->withfailures($import->failures());
         }
-        // Excel::import(new UsersImport, $file);
 
-        return redirect('/pengguna');
+        return redirect('/pengguna')->with(['success' => 'Berhasil import data']);
     }
 }

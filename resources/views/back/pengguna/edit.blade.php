@@ -1,5 +1,5 @@
 @extends('back.layouts.index')
-@push('title', 'Profile')
+@push('title', 'Pengguna')
 @section('content')
 <section role="main" class="content-body">
     <header class="page-header">
@@ -39,7 +39,7 @@
                     <h6 class="text-muted">Data Profile</h6>
                     <ul class="simple-todo-list">
                         <li class="{{$user->photo_profile ? 'completed' : 'text-warning'}}">Update Poto Profil</li>
-                        <li class="{{$user->change_Password != 0 ? 'completed' : 'text-warning'}}">Ganti Password</li>
+                        <li class="{{$user->password_tidack_enkripsi != 12345678 ? 'completed' : 'text-warning'}}">Ganti Password</li>
                     </ul>
                     <hr class="dotted short">
 
@@ -197,7 +197,7 @@
                     <div id="changePassword" class="tab-pane  {{ request()->is('/pengguna/*/edit') ? 'active' : '' }}">
                         <form class="form-horizontal" method="post" action="/pengguna/{{$user->id}}/edit">
                             @csrf
-                            <h4 class="mb-xlg">Ubah Password</h4>
+                            <!-- <h4 class="mb-xlg">Ubah Password</h4>
                             <fieldset class="mb-xl">
                                 <div class="form-group @error('old_password') has-error @enderror">
                                     <label class="col-md-4 control-label" for="old_password">Password Lama</label>
@@ -211,7 +211,7 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            <hr class="dotted short">
+                            <hr class="dotted short"> -->
                             <fieldset class="mb-xl">
                                 <div class="form-group @error('password') has-error @enderror">
                                     <label class="col-md-4 control-label" for="password">Password Baru</label>

@@ -258,6 +258,11 @@
                                         @endif
                                     </td>
                                     <td class="text-center display-inline">
+                                        <form action="/draft/print" method="post" target="_blank" rel="noopener noreferrer">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{$data->validasi_id}}">
+                                            <button type="submit" class="btn btn-success btn-sm" data-toggle="tooltip" title="cetak"><i class="fa fa-print" aria-hidden="true"></i></button>
+                                        </form>
                                         @if($data->status == 2)
                                         <a href="storage/surat/SURAT%20PERGANTIAN.docx" class="btn btn-success btn-sm" target="_blank" rel="noopener noreferrer">Unduh</a>
                                         @endif

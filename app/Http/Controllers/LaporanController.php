@@ -5,26 +5,44 @@ namespace App\Http\Controllers;
 use App\Models\Pengembalian;
 use App\Models\Sarpras;
 use App\Models\SarprasDetail;
+use App\Models\Validasi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class LaporanController extends Controller
 {
+    public function kadaluarsa()
+    {
+        $date_now = date("Y-m-d");
+
+        $pinjam = Pengembalian::pluck('validasi_id');
+
+        $expired = Validasi::whereNotIn('id', $pinjam)
+            ->where('tanggal_finish', '<', $date_now)
+            ->where('status', '!=', 1)
+            ->orderBy('tanggal_finish', 'asc')->get();
+
+        return view('back.laporan.kadaluarsa', compact('expired'));
+    }
     public function ketersediaan()
     {
-        $ketersediaan = Sarpras::whereNotIn('jumlah', [0])->get();
+        $ketersediaan = Sarpras::whereNotIn('jumlah', [0])
+            ->orderBy('jumlah', 'asc')
+            ->get();
 
         return view('back.laporan.ketersediaan', compact('ketersediaan'));
     }
     public function kerusakan()
     {
-        $rusak = SarprasDetail::whereNotIn('hilang', [0])->where('jenis', 'keluar')->get();
+        $rusak = SarprasDetail::whereNotIn('hilang', [0])
+            ->where('jenis', 'keluar')
+            ->orderBy('tanggal', 'asc')
+            ->get();
 
         return view('back.laporan.kerusakan', compact('rusak'));
     }
     public function peminjaman()
     {
-        $peminjaman = Pengembalian::all();
+        $peminjaman = Pengembalian::orderBy('date_ambil', 'asc')->get();
 
         return view('back.laporan.peminjaman', compact('peminjaman'));
     }

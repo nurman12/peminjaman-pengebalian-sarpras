@@ -26,12 +26,12 @@ Route::get('/clear-cache', function () {
     return 'DONE';
 });
 
-Route::get('/storage-link', function () {
-    $target  = '/home/sarprask/sarpras/storage/app/public';
-    $link    = '/home/sarprask/public_html/storage';
-    symlink($target, $link);
-    return 'DONE';
-});
+// Route::get('/storage-link', function () {
+//     $target  = '/home/sarprask/sarpras/storage/app/public';
+//     $link    = '/home/sarprask/public_html/storage';
+//     symlink($target, $link);
+//     return 'DONE';
+// });
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
@@ -53,6 +53,8 @@ Route::get('/about', [DashController::class, 'about']);
 Route::get('/contact', [DashController::class, 'contact']);
 Route::get('/faqs', [DashController::class, 'faqs']);
 
+Route::post('/draft', [DraftController::class, 'store'])->name('draft.store');
+
 Route::group(['middleware' => 'auth'], function () {
     Route::group(['middleware' => 'cekroles:BMN'], function () {
         Route::get('/pengguna/export', [PenggunaController::class, 'userexport'])->name('pengguna.export');
@@ -65,12 +67,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('sarpras_delete/{id}', [SarprasController::class, 'delete']);
         Route::resource('sarpras_masuk', SarprasMasukController::class);
         Route::resource('sarpras_keluar', SarprasKeluarController::class);
-        Route::resource('peminjaman', PeminjamanController::class);
-        Route::resource('pengembalian', PengembalianController::class);
+        Route::resource('peminjaman', PeminjamanController::class)->except(['show']);
+        Route::resource('pengembalian', PengembalianController::class)->except(['show']);
         Route::resource('rating', RatingController::class);
         Route::resource('bot', BotController::class);
 
-        Route::get('/expired_validasi', [ValidasiController::class, 'expired_validasi'])->name('expired_validasi');
         Route::post('/cek_qrcode', [DraftController::class, 'cek_qr_code']);
         Route::get('/validasi_edit/{id}', [ValidasiController::class, 'add_sarpras'])->name('validasi_edit.add');
         Route::post('/validasi_edit', [ValidasiController::class, 'store_add_sarpras'])->name('validasi_edit.store');
@@ -85,7 +86,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/draft_', [DraftController::class, 'draft_']);
         Route::get('/draft_update/{id}', [DraftController::class, 'draft_update']);
         Route::put('/draft_qty/{id}', [DraftController::class, 'update_qty']);
-        Route::resource('draft', DraftController::class);
+        Route::resource('draft', DraftController::class)->except(['store']);
+
         Route::post('/draft_update/{id}', [DraftController::class, 'draft_update_delete']);
         Route::post('/draft/print', [DraftController::class, 'print']);
     });
@@ -93,13 +95,17 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('belum_validasi', [ValidasiController::class, 'belum_validasi']);
         Route::get('sudah_validasi', [ValidasiController::class, 'sudah_validasi']);
 
-        Route::get('/ketersediaan', [LaporanController::class, 'ketersediaan']);
-        Route::get('/kerusakan', [LaporanController::class, 'kerusakan']);
+        Route::get('/l_kadaluarsa', [LaporanController::class, 'kadaluarsa']);
+        Route::get('/l_ketersediaan', [LaporanController::class, 'ketersediaan']);
+        Route::get('/l_kerusakan', [LaporanController::class, 'kerusakan']);
         Route::get('/l_peminjaman', [LaporanController::class, 'peminjaman']);
     });
 
     Route::resource('validasi', ValidasiController::class);
     Route::put('/validasi_update/{id}', [ValidasiController::class, 'update_lanjut']);
+
+    Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+    Route::get('/pengembalian/{id}', [PengembalianController::class, 'show'])->name('pengembalian.show');
 
     Route::get('/profile', [ProfileController::class, 'index']);
     Route::get('/edit', [ProfileController::class, 'index']);
@@ -116,6 +122,6 @@ Route::group(['middleware' => 'auth'], function () {
 | Note
 |--------------------------------------------------------------------------
 | - Disni saya menggunakan Whatsapp API menggunakan Node.js
-|
+| - php artisan schedule:work
 |
 */

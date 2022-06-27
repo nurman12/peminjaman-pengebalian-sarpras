@@ -295,9 +295,17 @@ class PengembalianController extends Controller
 
         $pengembalian = Pengembalian::where('id', $id)->first();
         if ($pengembalian->status == 1) {
-            return response()->json(['success_message' => 'Ingin memberi rating?']);
+            Validasi::where('id', $pengembalian->validasi_id)
+                ->update([
+                    'status' => 2
+                ]);
+            return response()->json(['success_message' => 'Anda dapat memberi rating pada menu pengembalian']);
         } else {
-            return response()->json(['success_message_other' => 'berhasil']);
+            Validasi::where('id', $pengembalian->validasi_id)
+                ->update([
+                    'status' => 1
+                ]);
+            return response()->json(['success_message_other' => 'berhasil melakukan validasi']);
         }
     }
     public function destroy($id)

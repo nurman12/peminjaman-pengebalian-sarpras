@@ -278,3 +278,11 @@
 	font-size: 2.5rem;
 	padding-left: 2px;
 }
+
+#example_wrapper.dataTables_wrapper .dataTables_filter input {
+	width: 98%;
+}
+
+#example_wrapper.dataTables_wrapper #example_paginate {
+	margin-top: 1rem;
+}

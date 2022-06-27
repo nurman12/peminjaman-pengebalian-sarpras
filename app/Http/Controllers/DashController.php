@@ -18,26 +18,26 @@ class DashController extends Controller
             if (Auth::user()->roles != 'Mahasiswa' || Auth::user()->roles != 'Dosen') {
                 return redirect('/dashboard');
             } else {
-                $sarpras_alls = Sarpras::all();
-                $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->get();
-                $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->get();
-                $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->get();
-                $sarpras_klas = Sarpras::where('kategori', 'like', '%kelas%')->get();
-                $sarpras_labo = Sarpras::where('kategori', 'like', '%laboratorium%')->get();
-                $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->get();
-                $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->get();
+                $sarpras_alls = Sarpras::whereNotIn('jumlah', [0])->get();
+                $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_klas = Sarpras::where('kategori', 'like', '%kelas%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_labo = Sarpras::where('kategori', 'like', '%laboratorium%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->whereNotIn('jumlah', [0])->get();
 
                 return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
             }
         } else {
-            $sarpras_alls = Sarpras::all();
-            $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->get();
-            $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->get();
-            $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->get();
-            $sarpras_klas = Sarpras::where('kategori', 'like', '%kelas%')->get();
-            $sarpras_labo = Sarpras::where('kategori', 'like', '%laboratorium%')->get();
-            $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->get();
-            $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->get();
+            $sarpras_alls = Sarpras::whereNotIn('jumlah', [0])->get();
+            $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_klas = Sarpras::where('kategori', 'like', '%kelas%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_labo = Sarpras::where('kategori', 'like', '%laboratorium%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->whereNotIn('jumlah', [0])->get();
 
             return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
         }
@@ -45,73 +45,56 @@ class DashController extends Controller
     public function index()
     {
         if (Auth::user()) {
-            $perbandingan_sarpras = DB::table('sarpras_detail')
-                ->where('sarpras_detail.draft_id', '!=', null)
+            $perbandingan_pinjam = DB::table('sarpras_detail')
                 ->join('draft', 'draft.id', '=', 'sarpras_detail.draft_id')
                 ->join('validasi', 'validasi.id', '=', 'draft.validasi_id')
-                ->where('validasi.status', 1)
+                ->join('pengembalian', 'pengembalian.validasi_id', '=', 'validasi.id')
+                ->where('sarpras_detail.draft_id', '!=', null)
+                ->where('sarpras_detail.jenis', 'keluar')
                 ->select([
-                    DB::raw('sarpras_detail.jenis = "keluar" as keluar'),
-                    DB::raw('sarpras_detail.jenis = "masuk" as masuk'),
                     DB::raw('sum(sarpras_detail.jumlah) as jumlah'),
                     DB::raw('MONTH(sarpras_detail.tanggal) as bulan'),
                     DB::raw('YEAR(sarpras_detail.tanggal) as tahun')
                 ])
-                ->groupBy('sarpras_detail.jenis', 'bulan', 'tahun')
+                ->groupBy('bulan', 'tahun')
                 ->orderBy('bulan')
-                ->get();
+                ->get()->toArray();
 
-            $data = [];
-            $masuk = "";
-            $keluar = "";
-            $bulan = "";
-            $bulans = "";
-            $id_loop = [];
+            $perbandingan_kembali = DB::table('sarpras_detail')
+                ->join('draft', 'draft.id', '=', 'sarpras_detail.draft_id')
+                ->join('validasi', 'validasi.id', '=', 'draft.validasi_id')
+                ->join('pengembalian', 'pengembalian.validasi_id', '=', 'validasi.id')
+                ->where('pengembalian.status', 1)
+                ->where('sarpras_detail.draft_id', '!=', null)
+                ->where('sarpras_detail.jenis', 'masuk')
+                ->select([
+                    DB::raw('sum(sarpras_detail.jumlah) as jumlah'),
+                    DB::raw('MONTH(sarpras_detail.tanggal) as bulan'),
+                    DB::raw('YEAR(sarpras_detail.tanggal) as tahun')
+                ])
+                ->groupBy('bulan', 'tahun')
+                ->orderBy('bulan')
+                ->get()->toArray();
 
-            foreach ($perbandingan_sarpras as $key => $item) {
-                if ($item->keluar == 0) {
-                    if ($bulans == $item->bulan) {
-                        $id_loop[] = $key - 1;
-                        if ($masuk == "") {
-                            $jumlah_masuk = $item->jumlah;
-                        } else {
-                            $jumlah_masuk = $item->jumlah + $masuk;
-                        }
-                    } else {
-                        $masuk = $item->jumlah;
-                        $bulan = $item->bulan;
-                        $jumlah_masuk = $item->jumlah;
-                        $jumlah_keluar = 0;
-                    }
-                }
-                if ($item->masuk == 0) {
-                    if ($bulan == $item->bulan) {
-                        $id_loop[] = $key - 1;
-                        if ($keluar == "") {
-                            $jumlah_keluar = $item->jumlah;
-                        } else {
-                            $jumlah_keluar = $item->jumlah + $keluar;
-                        }
-                    } else {
-                        $keluar = $item->jumlah;
-                        $bulans = $item->bulan;
-                        $jumlah_keluar = $item->jumlah;
-                        $jumlah_masuk = 0;
-                    }
-                }
-                $data[] = ["bulan" => $item->bulan, "masuk" => $jumlah_masuk, "keluar" => $jumlah_keluar];
+            $perbandingan_ = array_merge($perbandingan_pinjam, $perbandingan_kembali);
+
+            $bulans__ = [];
+            foreach ($perbandingan_ as $value) {
+                $bulans__[] = $value->bulan;
             }
 
-            foreach ($id_loop as $item) {
-                unset($data[$item]);
-            }
+            $bulan_ = array_unique($bulans__);
 
-            $perbandingan_sarpras = $data;
+            $perbandingan_sarpras = [];
+            foreach ($bulan_ as $key => $bln) {
+                $d_pinjam = array_search($bln, array_column($perbandingan_pinjam, "bulan"));
+                $d_kembali = array_search($bln, array_column($perbandingan_kembali, "bulan"));
+                $perbandingan_sarpras[] = ['keluar' => $perbandingan_pinjam[$d_pinjam]->jumlah, 'masuk' => $perbandingan_kembali[$d_kembali]->jumlah, 'bulan' => $bln];
+            }
 
             $pinjam = DB::table('pengembalian')
                 ->select([
-                    DB::raw('count(id) as jumlah_pinjam'),
-                    DB::raw('0 as jumlah_kembali'),
+                    DB::raw('count(id) as jumlah'),
                     DB::raw('MONTH(date_ambil) as bulan'),
                     DB::raw('YEAR(date_ambil) as tahun')
                 ])->groupBy(['bulan', 'tahun'])
@@ -119,11 +102,10 @@ class DashController extends Controller
                 ->get()
                 ->toArray();
 
-            $pengembalian = DB::table('pengembalian')
+            $kembali = DB::table('pengembalian')
                 ->where('status', 1)
                 ->select([
-                    DB::raw('0 as jumlah_pinjam'),
-                    DB::raw('count(id) as jumlah_kembali'),
+                    DB::raw('count(id) as jumlah'),
                     DB::raw('MONTH(date_kembali) as bulan'),
                     DB::raw('YEAR(date_kembali) as tahun')
                 ])->groupBy(['bulan', 'tahun'])
@@ -131,53 +113,21 @@ class DashController extends Controller
                 ->get()
                 ->toArray();
 
-            $perbandingan_pinjam_kembali = array_merge($pinjam, $pengembalian);
+            $perbandingan_pinjam_kembali = array_merge($pinjam, $kembali);
 
-            $data_ = [];
-            $pinjams = "";
-            $kembalis = "";
-            $bulan = "";
-            $bulans = "";
-            $id_loop = [];
-            foreach ($perbandingan_pinjam_kembali as $key => $item) {
-                if ($item->jumlah_pinjam == 0) {
-                    if ($bulans == $item->bulan) {
-                        $id_loop[] = $key - 1;
-                        if ($kembalis == "") {
-                            $jumlah_kembali = $item->jumlah_kembali;
-                        } else {
-                            $jumlah_kembali = $item->jumlah_kembali + $kembalis;
-                        }
-                    } else {
-                        $kembalis = $item->jumlah_kembali;
-                        $bulan = $item->bulan;
-                        $jumlah_kembali = $item->jumlah_kembali;
-                        $jumlah_pinjam = 0;
-                    }
-                }
-                if ($item->jumlah_kembali == 0) {
-                    if ($bulan == $item->bulan) {
-                        $id_loop[] = $key - 1;
-                        if ($pinjams == "") {
-                            $jumlah_pinjam = $item->jumlah_pinjam;
-                        } else {
-                            $jumlah_pinjam = $item->jumlah_pinjam + $pinjams;
-                        }
-                    } else {
-                        $pinjams = $item->jumlah_pinjam;
-                        $bulans = $item->bulan;
-                        $jumlah_pinjam = $item->jumlah_pinjam;
-                        $jumlah_kembali = 0;
-                    }
-                }
-                $data_[] = ["bulan" => $item->bulan, "jumlah_pinjam" => $jumlah_pinjam, "jumlah_kembali" => $jumlah_kembali];
+            $bulans__ = [];
+            foreach ($perbandingan_pinjam_kembali as $value) {
+                $bulans__[] = $value->bulan;
             }
 
-            foreach ($id_loop as $item) {
-                unset($data_[$item]);
-            }
+            $bulan_ = array_unique($bulans__);
 
-            $perbandingan = $data_;
+            $perbandingan = [];
+            foreach ($bulan_ as $key => $bln) {
+                $d_pinjam = array_search($bln, array_column($pinjam, "bulan"));
+                $d_kembali = array_search($bln, array_column($kembali, "bulan"));
+                $perbandingan[] = ['pinjam' => $pinjam[$d_pinjam]->jumlah, 'kembali' => $kembali[$d_kembali]->jumlah, 'bulan' => $bln];
+            }
 
             $t_peminjaman = Pengembalian::all()->count();
             $t_pengembalian = Pengembalian::where('status', 1)->get()->count();
@@ -221,27 +171,26 @@ class DashController extends Controller
                     't_pengguna'
                 ));
             } elseif (Auth::user()->roles == 'Mahasiswa' || Auth::user()->roles == 'Dosen') {
-                $sarpras_alls = Sarpras::all();
-                $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->get();
-                $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->get();
-                $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->get();
-                $sarpras_klas = Sarpras::where('kategori', 'like', '%kelas%')->get();
-                $sarpras_labo = Sarpras::where('kategori', 'like', '%laboratorium%')->get();
-                $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->get();
-                $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->get();
+                $sarpras_alls = Sarpras::whereNotIn('jumlah', [0])->get();
+                $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_klas = Sarpras::where('kategori', 'like', '%kelas%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_labo = Sarpras::where('kategori', 'like', '%laboratorium%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->whereNotIn('jumlah', [0])->get();
+                $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->whereNotIn('jumlah', [0])->get();
 
                 return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
             }
         } else {
-
-            $sarpras_alls = Sarpras::all();
-            $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->get();
-            $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->get();
-            $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->get();
-            $sarpras_klas = Sarpras::where('kategori', 'like', '%kelas%')->get();
-            $sarpras_labo = Sarpras::where('kategori', 'like', '%laboratorium%')->get();
-            $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->get();
-            $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->get();
+            $sarpras_alls = Sarpras::whereNotIn('jumlah', [0])->get();
+            $sarpras_elek = Sarpras::where('kategori', 'like', '%elektronik%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_mbel = Sarpras::where('kategori', 'like', '%mebel%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_kain = Sarpras::where('kategori', 'like', '%kain%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_klas = Sarpras::where('kategori', 'like', '%kelas%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_labo = Sarpras::where('kategori', 'like', '%laboratorium%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->whereNotIn('jumlah', [0])->get();
+            $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->whereNotIn('jumlah', [0])->get();
 
             return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
         }
@@ -249,14 +198,14 @@ class DashController extends Controller
     public function barang()
     {
         $title = 'Daftar Barang';
-        $sarpras = Sarpras::where('jenis', 'Barang')->get();
+        $sarpras = Sarpras::where('jenis', 'Barang')->whereNotIn('jumlah', [0])->get();
 
         return view('front.sarpras', compact('title', 'sarpras'));
     }
     public function ruangan()
     {
         $title = 'Daftar Ruangan';
-        $sarpras = Sarpras::where('jenis', 'Ruangan')->get();
+        $sarpras = Sarpras::where('jenis', 'Ruangan')->whereNotIn('jumlah', [0])->get();
 
         return view('front.sarpras', compact('title', 'sarpras'));
     }
@@ -267,7 +216,7 @@ class DashController extends Controller
 
         $sarpras = Sarpras::where('jenis', $jenis)
             ->where('nama', 'LIKE', '%' . $input . '%')
-            // ->whereNotIn('jumlah', [0])
+            ->whereNotIn('jumlah', [0])
             ->orderBy('nama', 'asc')->get();
 
         return view('front.card_sarpras', compact('sarpras'));
@@ -277,6 +226,7 @@ class DashController extends Controller
         $sarpras = Sarpras::where('id', $id)->first();
         $sarpras_like = Sarpras::where('jenis', $sarpras->jenis)
             ->whereNotIn('id', [$id])
+            ->whereNotIn('jumlah', [0])
             ->get();
 
         return view('front.show', compact('sarpras', 'sarpras_like'));

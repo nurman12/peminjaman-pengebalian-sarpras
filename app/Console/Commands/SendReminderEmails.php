@@ -97,7 +97,7 @@ class SendReminderEmails extends Command
             $user = User::where('id', $reminder['user_id'])->first();
 
             if ($user->no_telp) {
-                $message = "Halo, Yth: " . $user->name . "\nSaya memberitahukan bahwa pinjaman anda dengan \nKeperluan : "  . $reminder['keperluan'] . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($reminder['tanggal_start'])) . " sampai " . date('d/m/Y', strtotime($reminder['tanggal_finish'])) . ", \n\nMasa peminjaman berakhir hari ini, mohon mengembalikan sarpras tepat waktu \n\nTerima kasih 😂";
+                $message = "Halo, Yth: " . $user->name . "\nSaya memberitahukan bahwa pinjaman anda dengan \nKeperluan : "  . $reminder['keperluan'] . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($reminder['tanggal_start'])) . " sampai " . date('d/m/Y', strtotime($reminder['tanggal_finish'])) . ", \n\nMasa peminjaman berakhir *hari ini*, mohon mengembalikan sarpras tepat waktu \n\nTerima kasih";
 
                 $number = $user->no_telp;
                 $curl = curl_init();
@@ -127,7 +127,7 @@ class SendReminderEmails extends Command
             $user = User::where('id', $reminder['user_id'])->first();
 
             if ($user->no_telp) {
-                $message = "Halo, Yth: " . $user->name . "\nSaya memberitahukan bahwa pinjaman anda dengan \nKeperluan : "  . $reminder['keperluan'] . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($reminder['tanggal_start'])) . " sampai " . date('d/m/Y', strtotime($reminder['tanggal_finish'])) . ", \n\nMasa peminjaman berakhir besok, mohon mengembalikan sarpras tepat waktu \n\nTerima kasih 😂";
+                $message = "Halo, Yth: " . $user->name . "\nSaya memberitahukan bahwa pinjaman anda dengan \nKeperluan : "  . $reminder['keperluan'] . " \nKegiatan dilaksanakan mulai " . date('d/m/ Y', strtotime($reminder['tanggal_start'])) . " sampai " . date('d/m/Y', strtotime($reminder['tanggal_finish'])) . ", \n\nMasa peminjaman berakhir *besok*, mohon mengembalikan sarpras tepat waktu \n\nTerima kasih";
 
                 $number = $user->no_telp;
                 $curl = curl_init();

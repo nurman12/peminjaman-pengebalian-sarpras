@@ -22,10 +22,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('peminjaman:expired')
-            ->dailyAt('03:00');
+            ->dailyAt('12:55');
 
         $schedule->command('reminder:emails')
-            ->dailyAt('10:00');
+            ->dailyAt('13:01');
     }
 
     /**

@@ -77,7 +77,7 @@
                             <label class="badge badge-danger bdg-red shadow">Tolak</label>
                             @endif
                         </td>
-                        <th width="90px !important">
+                        <td width="90px !important">
                             <a href="{{ route('validasi.show', $data->id) }}" class="mr-xs mt-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
                             @if($data->status == 0)
                             <a href="{{ route('validasi.edit', $data->id) }}" class="mt-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>
@@ -86,7 +86,7 @@
                             @if($data->validasi_bmn == 1 && $data->status == 0 && $data->tanggal_finish >= date("Y-m-d h:i:s"))
                             <a id="ambil" data-validasi_id="{{ $data->id }}" data-user_id="{{ $data->user_id }}" data-nama="{{ $data->user->name }}" class="mt-xs btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ambil"> <i class="fa fa-truck"></i></a>
                             @endif
-                            </td>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

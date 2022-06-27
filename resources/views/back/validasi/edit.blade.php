@@ -108,6 +108,12 @@
         <div class="col-md-8 col-lg-9">
             <section class="panel">
                 <div class="panel-body">
+                    @if(\Session::has('success'))
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <strong>Peringatan !!</strong> {{\Session::get('success')}}
+                    </div>
+                    @endif
                     <form action="{{ route('validasi_edit.update', $validasi->id) }}" method="post" enctype="multipart/form-data">
                         @method('put')
                         @csrf

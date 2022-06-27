@@ -26,7 +26,7 @@ class BotController extends Controller
     }
     public function index()
     {
-        $bot = Bot::all();
+        $bot = Bot::orderBy('created_at')->get();
 
         return view('back.bot.index', compact('bot'));
     }

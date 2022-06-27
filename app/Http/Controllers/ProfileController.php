@@ -157,7 +157,7 @@ class ProfileController extends Controller
                         'photo_profile' => $request->file('photo_profile')->store('photo')
                     ]);
             }
-            return redirect('/edit');
+            return redirect('/edit')->with(['success' => 'Berhasil mengubah profil']);
         }
     }
     public function password(Request $request)
@@ -199,7 +199,7 @@ class ProfileController extends Controller
                     ->update([
                         'password_tidack_enkripsi' => $request->password
                     ]);
-                return redirect('/profile');
+                return redirect('/profile')->with(['success' => 'Berhasil mengubah password']);
             } else {
                 return view('back.profile.index')->withErrors(['old_password' => 'Password yang anda masukkan salah']);
             }
