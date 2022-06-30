@@ -17,7 +17,7 @@ class ProfileController extends Controller
     {
         if (Auth::user()) {
             if (Auth::user()->roles == 'Mahasiswa' || Auth::user()->roles == 'Dosen') {
-                $permohonan = Validasi::where('user_id', Auth::user()->id)->where('status', 0)->get();
+                $permohonan = Validasi::where('user_id', Auth::user()->id)->where('status', 0)->orWhere('status', 3)->get();
                 $peminjaman = Pengembalian::where('user_id', Auth::user()->id)->whereNotIn('status', [1])->get();
                 $pengembalian = Pengembalian::where('user_id', Auth::user()->id)->where('status', 1)->get();
 

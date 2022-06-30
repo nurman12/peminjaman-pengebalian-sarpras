@@ -31,7 +31,7 @@
             <div class="left-side">
                 <div class="profile-side">
                     <div class="flex-w w-full p-b-18">
-                        <span class="fs-18 txt-center cl5 p-t-2 size-211">
+                        <span class="fs-18 txt-center cl5 p-t-2 size-221">
                             <span class="lnr lnr-envelope"></span>
                         </span>
 
@@ -40,13 +40,13 @@
                                 Email
                             </span>
 
-                            <p class="stext-115 cl6 size-213 p-t-8">
+                            <p class="stext-109 cl6 size-213 p-t-8">
                                 {{ Auth::user()->email }}
                             </p>
                         </div>
                     </div>
                     <div class="flex-w w-full p-b-18">
-                        <span class="fs-18 txt-center cl5 p-t-2 size-211">
+                        <span class="fs-18 txt-center cl5 p-t-2 size-221">
                             <span class="lnr lnr-license"></span>
                         </span>
 
@@ -55,13 +55,13 @@
                                 NIM / NIDN
                             </span>
 
-                            <p class="stext-115 cl6 size-213 p-t-8">
+                            <p class="stext-109 cl6 size-213 p-t-8">
                                 {{ Auth::user()->nim_nidn }}
                             </p>
                         </div>
                     </div>
                     <div class="flex-w w-full p-b-18">
-                        <span class="fs-18 txt-center cl5 p-t-2 size-211">
+                        <span class="fs-18 txt-center cl5 p-t-2 size-221">
                             <span class="lnr lnr-phone-handset"></span>
                         </span>
 
@@ -70,7 +70,7 @@
                                 No Telp
                             </span>
 
-                            <p class="stext-115 cl6 size-213 p-t-8">
+                            <p class="stext-109 cl6 size-213 p-t-8">
                                 {{ Auth::user()->no_telp }}
                             </p>
                         </div>
@@ -206,7 +206,7 @@
                                         @endif
                                     </td>
                                     <td class="text-center display-inline">
-                                        @if($data->validasi_ktu == 1 && $data->validasi_koor == 1 && $data->validasi_bmn == 1)
+                                        @if($data->validasi_ktu == 1 && $data->validasi_koor == 1 && $data->validasi_bmn == 1 && $data->status == 0)
                                         <form action="/draft/print" method="post" target="_blank" rel="noopener noreferrer">
                                             @csrf
                                             <input type="hidden" name="id" value="{{$data->id}}">
@@ -342,7 +342,7 @@
 
 @push('script')
 <script src="{{ asset('/back') }}/vendor/sweetalert/sweetalert2.all.min.js"></script>
-<script src="{{ asset('/vendor/ijaboCropTool/ijaboCropTool.min.js') }}"></script>
+<!-- <script src="{{ asset('/vendor/ijaboCropTool/ijaboCropTool.min.js') }}"></script> -->
 <!-- Modal1 -->
 <div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
     <div class="overlay-modal1 js-hide-modal1"></div>

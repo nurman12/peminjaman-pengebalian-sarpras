@@ -49,7 +49,7 @@
                         </div>
                         <div class="size-209">
                             <span class="mtext-115 cl2">
-                                {{ date('l, d F Y', strtotime( $validasi->tanggal_start )) }}
+                                {{ date('d F Y', strtotime( $validasi->tanggal_start )) }}
                             </span>
                         </div>
                         <div class="size-208">
@@ -59,7 +59,7 @@
                         </div>
                         <div class="size-209">
                             <span class="mtext-115 cl2">
-                                {{ date('l, d F Y', strtotime( $validasi->tanggal_finish )) }}
+                                {{ date('d F Y', strtotime( $validasi->tanggal_finish )) }}
                             </span>
                         </div>
                         <div class="size-208">
@@ -68,7 +68,9 @@
                             </span>
                         </div>
                         <div class="size-209">
-                            @if( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 1 && $validasi->status == 0 )
+                            @if($validasi->status == 3)
+                            <span class="stext-101 cl0 size-115 bg11 bor13 p-lr-15 trans-04">Kadaluarsa</span>
+                            @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 1 && $validasi->status == 0 )
                             <span class="stext-101 cl0 size-115 bg10 bor13 p-lr-15 trans-04">Disetujui</span>
                             @elseif( $validasi->validasi_ktu == 1 && $validasi->validasi_koor == 1 && $validasi->validasi_bmn == 0 )
                             <span class="stext-101 cl0 size-115 bg3 bor13 p-lr-15 trans-04">Seleksi BMN</span>
@@ -96,6 +98,18 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @if($validasi->status == 3)
+                            @foreach($validasi->draft as $data)
+                            <?php
+                            $value = App\Models\SarprasDetail::where('draft_id', $data->id)->where('jenis', 'keluar')->first();
+                            ?>
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $data->sarpras->nama }}</a></td>
+                                <td>{{ $value->jumlah }}</td>
+                            </tr>
+                            @endforeach
+                            @else
                             @foreach($validasi->draft as $data)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -103,6 +117,7 @@
                                 <td>{{ $data->qty }}</td>
                             </tr>
                             @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>

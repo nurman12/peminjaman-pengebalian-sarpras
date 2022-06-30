@@ -41,7 +41,7 @@ class PeminjamanKadaluarsa extends Command
     public function handle()
     {
         // pinjaman tidak diambil==========================================================>
-        $expired = Validasi::where('tanggal_finish', date("Y-m-d", strtotime("yesterday")))
+        $expired = Validasi::where('tanggal_finish', date("Y-m-d"))
             ->where('status', 0)
             ->get()
             ->toArray();

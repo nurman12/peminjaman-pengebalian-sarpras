@@ -2768,6 +2768,10 @@ input.num-product::-webkit-inner-spin-button {
   width: 82%;
 }
 
+.size-221 {
+  width: 30px;
+}
+
 
 
 /*//////////////////////////////////////////////////////////////////
@@ -3977,7 +3981,7 @@ Custom
 .profile-side p {
   margin-bottom: 7px;
   color: #333;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .profile-side p i {

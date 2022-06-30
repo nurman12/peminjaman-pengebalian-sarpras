@@ -45,7 +45,11 @@
                 </thead>
                 <tbody>
                     @foreach($validasi as $data)
+                    @if($data->status == 3)
+                    <tr class="text-danger">
+                        @else
                     <tr>
+                        @endif
                         <td>{{ $loop->iteration}}</td>
                         <td>{{ $data->user->name }}</td>
                         <td>{{ $data->keperluan }}</td>
@@ -83,7 +87,7 @@
                             <a href="{{ route('validasi.edit', $data->id) }}" class="mt-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>
                             <a id="delete" data-validasi_id="{{ $data->id }}" style="width: 34px;" class="mr-xs mt-xs btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"> <i class="fa fa-trash-o"></i></a>
                             @endif
-                            @if($data->validasi_bmn == 1 && $data->status == 0 && $data->tanggal_finish >= date("Y-m-d h:i:s"))
+                            @if($data->validasi_bmn == 1 && $data->status == 0 )
                             <a id="ambil" data-validasi_id="{{ $data->id }}" data-user_id="{{ $data->user_id }}" data-nama="{{ $data->user->name }}" class="mt-xs btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ambil"> <i class="fa fa-truck"></i></a>
                             @endif
                         </td>

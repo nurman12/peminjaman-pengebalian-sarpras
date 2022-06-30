@@ -20,12 +20,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // recommend set at 16:00 / tutup jam oprasional
         $schedule->command('peminjaman:expired')
-            ->dailyAt('12:55');
+            ->dailyAt('08:20');
 
+        // reminder akan berjalan 2 kali pertama, 
+        // ketika besok berakhir dan hari ini berakhir
         $schedule->command('reminder:emails')
-            ->dailyAt('13:01');
+            ->dailyAt('23:59');
     }
 
     /**

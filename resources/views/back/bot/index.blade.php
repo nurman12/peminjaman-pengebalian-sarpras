@@ -41,7 +41,7 @@
                 <strong>Peringatan !!</strong> {{\Session::get('success')}}
             </div>
             @endif
-            <a href="#modalCreate" class="btn btn-primary rounded mb-xl modal-with-zoom-anim"><i class="fa fa-plus"></i> Create</a>
+            <a href="#modalCreate" class="btn btn-primary rounded mb-xl modal-with-zoom-anim"><i class="fa fa-plus"></i> Buat</a>
             <table class="table table-bordered table-striped mb-none" id="datatable-default">
                 <thead>
                     <tr>
@@ -57,7 +57,7 @@
                         <th>{{$loop->iteration}}</th>
                         <td>{{$data->received}}</td>
                         <td>{{$data->send}}</td>
-                        <th width="90px !important">
+                        <th width="100px !important">
                             <a href="#modalDetail" id="detail" data-received="{{$data->received}}" data-send="{{$data->send}}" class="mr-xs btn btn-primary btn-sm modal-with-zoom-anim" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
                             <a href="#modalEdit" id="edit" data-id="{{$data->id}}" data-received="{{$data->received}}" data-send="{{$data->send}}" class="mr-xs btn btn-warning btn-sm modal-with-zoom-anim" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>
                             <form onclick="return confirm('Yakin ingin hapus ini?')" action="{{ route('bot.destroy', $data->id) }}" method="post" style="display: inline;">
@@ -110,7 +110,8 @@
                         <div class="form-group @error('response') has-error @enderror">
                             <label class="col-sm-4 control-label" for="kirim">Response</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control input-sm" name="response" id="response">
+                                <textarea name="response" id="response" rows="5" class="form-control"></textarea>
+                                <!-- <input type="text" class="form-control input-sm" name="response" id="response"> -->
                                 @error('response')
                                 <span class="has-error" role="alert">
                                     <strong class="text-danger">{{ $message }}</strong>
@@ -189,7 +190,9 @@
                         <div class="form-group @error('response') has-error @enderror">
                             <label class="col-sm-4 control-label" for="kirim">Response</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control input-sm" name="response" id="response">
+                                <textarea name="response" id="response" rows="5" class="form-control"></textarea>
+
+                                <!-- <input type="text" class="form-control input-sm" name="response" id="response"> -->
                                 @error('response')
                                 <span class="has-error" role="alert">
                                     <strong class="text-danger">{{ $message }}</strong>

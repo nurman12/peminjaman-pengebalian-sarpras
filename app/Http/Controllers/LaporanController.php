@@ -17,8 +17,7 @@ class LaporanController extends Controller
         $pinjam = Pengembalian::pluck('validasi_id');
 
         $expired = Validasi::whereNotIn('id', $pinjam)
-            ->where('tanggal_finish', '<', $date_now)
-            ->where('status', '!=', 1)
+            ->where('status', 3)
             ->orderBy('tanggal_finish', 'asc')->get();
 
         return view('back.laporan.kadaluarsa', compact('expired'));

@@ -151,54 +151,87 @@ class PeminjamanController extends Controller
                 if ($sarpras_keluar->hilang == $draft->qty) {
                     return response()->json(['error_message' => 'Jumlah sarpras yang belum divalidasi tidak ada!']);
                 }
+                if ($sarpras_masuk != null) {
+                    if ($sarpras_masuk->jumlah + $sesuai > $sarpras_keluar->jumlah) {
+                        return response()->json(['error_message' => 'Jumlah sarpras yang dimasukkan terlalu banyak!']);
+                    }
+                }
+                if ($sarpras_masuk == null) {
+                    if ($sarpras_keluar->hilang + $sesuai > $sarpras_keluar->jumlah) {
+                        return response()->json(['error_message' => 'Jumlah yang dimasukkan melebihi sarpras yang belum divalidasi']);
+                    }
+                }
             }
+
             if ($check_tidack == 'true') {
                 if ($sarpras_keluar->hilang == 0) {
                     return response()->json(['error_message' => 'Jumlah sarpras hilang / rusak tidak ada!']);
                 }
             }
 
-            if ($sarpras_masuk != null) {
-                if ($draft->qty == $sesuai) {
-                    SarprasDetail::where('draft_id', $draft_id)
-                        ->where('jenis', 'masuk')
-                        ->update([
-                            'jumlah' => $sarpras_masuk->jumlah + $sesuai,
-                            'keterangan' => null
-                        ]);
-
-                    SarprasDetail::where('draft_id', $draft_id)
-                        ->where('jenis', 'keluar')
-                        ->update([
-                            'hilang' => 0
-                        ]);
-                } else {
-                    $jumlah_masuk = $sarpras_masuk->jumlah + $sesuai;
-                    SarprasDetail::where('draft_id', $draft_id)
-                        ->where('jenis', 'masuk')
-                        ->update([
-                            'jumlah' => $jumlah_masuk,
-                            'keterangan' => 'Dikembalikan ' . $jumlah_masuk . ' dari ' . $sarpras_keluar->jumlah
-                        ]);
+            if ($sarpras_keluar->hilang > 0 && $check_tidack == 'true') {
+                if ($sarpras_keluar->hilang < $sesuai) {
+                    return response()->json(['error_message' => 'Jumlah sesuai melebihi jumlah sarpras yang rusak / hilang']);
                 }
-            } else {
-                $sarpras_masuk =  new SarprasDetail();
-                $sarpras_masuk->user_id = $draft->user_id;
-                $sarpras_masuk->draft_id = $draft->id;
-                $sarpras_masuk->sarpras_id = $draft->sarpras_id;
-                $sarpras_masuk->tanggal = date('Y-m-d');
-                $sarpras_masuk->jenis = "masuk";
-                $sarpras_masuk->jumlah = $sesuai;
-                if ($draft->qty == $sesuai) {
-                    $sarpras_masuk->keterangan = null;
-                } else {
-                    $sarpras_masuk->keterangan = 'Dikembalikan ' . $sesuai . ' dari ' . $draft->qty;
-                }
-                $sarpras_masuk->save();
             }
+            if ($check_tidack == 'false') {
+                if ($sarpras_masuk != null) {
+                    if ($draft->qty == $sesuai) {
+                        SarprasDetail::where('draft_id', $draft_id)
+                            ->where('jenis', 'masuk')
+                            ->update([
+                                'jumlah' => $sarpras_masuk->jumlah + $sesuai,
+                                'keterangan' => null
+                            ]);
+
+                        SarprasDetail::where('draft_id', $draft_id)
+                            ->where('jenis', 'keluar')
+                            ->update([
+                                'hilang' => 0
+                            ]);
+                    } else {
+                        $jumlah_masuk = $sarpras_masuk->jumlah + $sesuai;
+                        SarprasDetail::where('draft_id', $draft_id)
+                            ->where('jenis', 'masuk')
+                            ->update([
+                                'jumlah' => $jumlah_masuk,
+                                'keterangan' => 'Dikembalikan ' . $jumlah_masuk . ' dari ' . $sarpras_keluar->jumlah
+                            ]);
+                    }
+                } else {
+                    $sarpras_masuk =  new SarprasDetail();
+                    $sarpras_masuk->user_id = $draft->user_id;
+                    $sarpras_masuk->draft_id = $draft->id;
+                    $sarpras_masuk->sarpras_id = $draft->sarpras_id;
+                    $sarpras_masuk->tanggal = date('Y-m-d');
+                    $sarpras_masuk->jenis = "masuk";
+                    $sarpras_masuk->jumlah = $sesuai;
+                    if ($draft->qty == $sesuai) {
+                        $sarpras_masuk->keterangan = null;
+                    } else {
+                        $sarpras_masuk->keterangan = 'Dikembalikan ' . $sesuai . ' dari ' . $draft->qty;
+                    }
+                    $sarpras_masuk->save();
+                }
+            }
+
+            $new_sarpras_keluar = SarprasDetail::where('draft_id', $draft_id)->where('jenis', 'keluar')->first();
+
+            if ($new_sarpras_keluar->hilang > 0 && $check_tidack == 'true') {
+                if ($new_sarpras_keluar->hilang < $sesuai) {
+                    return response()->json(['error_message' => 'Jumlah sesuai melebihi jumlah sarpras yang rusak / hilang']);
+                }
+                $jumlah_keluar = $new_sarpras_keluar->hilang - $sesuai;
+                SarprasDetail::where('id', $new_sarpras_keluar->id)
+                    ->where('jenis', 'keluar')
+                    ->update([
+                        'hilang' => $jumlah_keluar
+                    ]);
+            }
+
             $sarpras = Sarpras::where('id', $draft->sarpras_id)->first();
 
-            $jumlah_akhir = $draft->qty + $sarpras->jumlah;
+            $jumlah_akhir = $sesuai + $sarpras->jumlah;
 
             $jumlah_qty = $draft->qty - $sesuai;
 
@@ -214,19 +247,6 @@ class PeminjamanController extends Controller
 
             $new_draf = Draft::where('id', $draft_id)->first();
 
-            $new_sarpras_keluar = SarprasDetail::where('draft_id', $draft_id)->where('jenis', 'keluar')->first();
-
-            if ($new_sarpras_keluar->hilang > 0 && $check_tidack == 'true') {
-                if ($new_sarpras_keluar->hilang < $sesuai) {
-                    return response()->json(['error_message' => 'Jumlah sesuai melebihi jumlah sarpras yang rusak / hilang']);
-                }
-                $jumlah_keluar = $new_sarpras_keluar->hilang - $sesuai;
-                SarprasDetail::where('id', $new_sarpras_keluar->id)
-                    ->where('jenis', 'keluar')
-                    ->update([
-                        'hilang' => $jumlah_keluar
-                    ]);
-            }
             if ($new_draf->qty == 0) {
                 Draft::where('id', $draft_id)
                     ->update([
@@ -279,6 +299,13 @@ class PeminjamanController extends Controller
                             'jumlah' => $jumlah_masuk_
                         ]);
 
+                    $sarpras_ = Sarpras::where('id', $sarpras_masuk->sarpras_id)->first();
+                    $hasil = $sarpras_->jumlah - $tidack;
+                    Sarpras::where('id', $sarpras_masuk->sarpras_id)
+                        ->update([
+                            'jumlah' => $hasil
+                        ]);
+
                     $new_sarpras_masuk = SarprasDetail::where('draft_id', $draft_id)->where('jenis', 'masuk')->first();
 
                     if ($new_sarpras_masuk->jumlah == 0) {
@@ -289,6 +316,11 @@ class PeminjamanController extends Controller
             if ($check_sesuai == 'false') {
                 if ($sarpras_masuk != null) {
                     if ($sarpras_masuk->jumlah + $sarpras_keluar->hilang == $sarpras_keluar->jumlah) {
+                        return response()->json(['error_message' => 'Jumlah sarpras yang belum divalidasi tidak ada!']);
+                    }
+                }
+                if ($sarpras_masuk == null) {
+                    if ($sarpras_keluar->hilang + $tidack > $sarpras_keluar->jumlah) {
                         return response()->json(['error_message' => 'Jumlah sarpras yang belum divalidasi tidak ada!']);
                     }
                 }

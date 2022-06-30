@@ -121,7 +121,7 @@ Route::group(['middleware' => 'auth'], function () {
 |--------------------------------------------------------------------------
 | Note
 |--------------------------------------------------------------------------
-| - Disni saya menggunakan Whatsapp API menggunakan Node.js
+| - Disini saya menggunakan Whatsapp API menggunakan Node.js
 | - php artisan schedule:work
-|
+| - pak imron
 */

@@ -48,14 +48,18 @@
                 </thead>
                 <tbody>
                     @foreach($setuju as $data)
+                    @if($data->status == 3)
+                    <tr class="text-danger">
+                        @else
                     <tr>
+                        @endif
                         <th>{{$loop->iteration}}</th>
                         <td>{{$data->keperluan}}</td>
                         <td>{{ date('d F', strtotime( $data->tanggal_start )) }} sd. {{ date('d F Y', strtotime( $data->tanggal_finish )) }}</td>
                         <td>{{ count($data->draft) }}</td>
                         <th width="85px">
                             <a href="{{ route('validasi.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
-                            @if($data->tanggal_finish >= now()->format('Y-m-d'))
+                            @if($data->status != 3)
                             @if(Auth::user()->roles == 'KTU' && $data->validasi_koor == 0)
                             <form action="/validasi/{{$data->id}}" method="post" style="display: inline;">
                                 @csrf
@@ -108,14 +112,18 @@
                 </thead>
                 <tbody>
                     @foreach($tidak as $data)
+                    @if($data->status == 3)
+                    <tr class="text-danger">
+                        @else
                     <tr>
+                        @endif
                         <th>{{$loop->iteration}}</th>
                         <td>{{$data->keperluan}}</td>
                         <td>{{ date('d F', strtotime( $data->tanggal_start )) }} sd. {{ date('d F Y', strtotime( $data->tanggal_finish )) }}</td>
                         <td>{{ count($data->draft) }}</td>
                         <th width="85px">
                             <a href="{{ route('validasi.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
-                            @if($data->tanggal_finish >= now()->format('Y-m-d'))
+                            @if($data->status != 3)
                             @if(Auth::user()->roles == 'KTU' && $data->validasi_koor == 0)
                             <form action="/validasi/{{$data->id}}" method="post" style="display: inline;">
                                 @csrf

@@ -48,7 +48,9 @@
                 </thead>
                 <tbody>
                     @foreach($belum_validasi as $data)
-                    @if($data->notif == 0)
+                    @if($data->status == 3)
+                    <tr class="text-danger">
+                        @elseif($data->notif == 0)
                     <tr class="info">
                         @else
                     <tr>
@@ -59,7 +61,7 @@
                         <td>{{ count($data->draft) }}</td>
                         <th width="130px">
                             <a href="{{ route('validasi.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
-                            @if($data->tanggal_finish >= now()->format('Y-m-d'))
+                            @if($data->status != 3)
                             @if(Auth::user()->roles == 'KTU')
                             <form action="/validasi/{{$data->id}}" method="post" style="display: inline;">
                                 @csrf

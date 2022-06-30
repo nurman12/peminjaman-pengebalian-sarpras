@@ -20,7 +20,7 @@ class PenggunaController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::orderBy('created_at', 'desc')->get();
 
         return view('back.pengguna.index', compact('users'));
     }
