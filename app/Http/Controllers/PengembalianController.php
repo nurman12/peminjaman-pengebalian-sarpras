@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Draft;
 use App\Models\Pengembalian;
 use App\Models\Rating;
+use App\Models\Rusak;
 use App\Models\Sarpras;
 use App\Models\SarprasDetail;
 use App\Models\Validasi;
@@ -69,258 +70,253 @@ class PengembalianController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $draft_id = $request->input('draft_id');
         $sesuai = $request->input('sesuai');
         $tidack = $request->input('tidack');
-        $check_sesuai = $request->input('check_sesuai');
-        $check_tidack = $request->input('check_tidack');
 
-        $draft = Draft::where('id', $draft_id)->first();
-        $sarpras_masuk = SarprasDetail::where('draft_id', $draft_id)->where('jenis', 'masuk')->first();
-        $sarpras_keluar = SarprasDetail::where('draft_id', $draft_id)->where('jenis', 'keluar')->first();
+        // Data master sesuai
+        $old_draft = Draft::where('id', $request->draft_id)->first();
+        $old_sarpras = Sarpras::where('id', $old_draft->sarpras_id)->first();
+        $old_sarpras_masuk = SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'masuk')->first();
+        $old_sarpras_keluar = SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'keluar')->first();
 
-        // kita kasih validasi ya geys ya..
-        if ($sesuai != null || $sesuai != 0 && $tidack != null || $tidack != 0) {
-            if ($sarpras_masuk == null && $draft->qty < $sesuai + $tidack) {
-                return response()->json(['error_message' => 'Jumlah inputan sesuai atau tidak sesuai terlalu banyak!']);
-            }
-            if ($sarpras_masuk != null && $sarpras_masuk->jumlah + $draft->qty < $sesuai + $tidack) {
-                return response()->json(['error_message' => 'Jumlah inputan sesuai atau tidak sesuai terlalu banyak!']);
-            }
-        }
         if ($sesuai != null || $sesuai != 0) {
-            if ($sarpras_masuk == null && $draft->qty < $sesuai) {
-                return response()->json(['error_message' => 'Jumlah inputan sesuai terlalu banyak!']);
-            }
-            if ($sarpras_masuk != null && $draft->qty < $sesuai) {
-                return response()->json(['error_message' => 'Jumlah inputan sesuai terlalu banyak!']);
-            }
-        }
-        if ($tidack != null || $tidack != 0) {
-            if ($sarpras_masuk == null && $draft->qty < $tidack) {
-                return response()->json(['error_message' => 'Jumlah inputan tidak sesuai terlalu banyak!']);
-            }
-            if ($sarpras_masuk == null && $sarpras_keluar->jumlah < $tidack) {
-                return response()->json(['error_message' => 'Jumlah inputan tidak sesuai terlalu banyak!']);
-            }
-            if ($sarpras_masuk != null && $sarpras_masuk->jumlah + $draft->qty < $tidack) {
-                return response()->json(['error_message' => 'Jumlah inputan tidak sesuai terlalu banyak!']);
-            }
-            if ($sarpras_masuk != null && $sarpras_keluar->jumlah < $tidack) {
-                return response()->json(['error_message' => 'Jumlah inputan tidak sesuai terlalu banyak!']);
-            }
-            if ($sarpras_keluar->jumlah < $sarpras_keluar->hilang + $tidack) {
-                return response()->json(['error_message' => 'Jumlah inputan tidak sesuai terlalu banyak!']);
-            }
-        }
+            if ($old_sarpras_keluar->hilang == 0) {
+                if ($old_sarpras_masuk != null) {
 
-        // jika sesuai
-        if ($sesuai != null || $sesuai != 0) {
+                    $jumlah_masuk = $old_sarpras_masuk->jumlah + $sesuai;
 
-            if ($check_tidack == 'false') {
-                if ($sarpras_keluar->hilang == $draft->qty) {
-                    return response()->json(['error_message' => 'Jumlah sarpras yang belum divalidasi tidak ada!']);
-                }
-                if ($sarpras_masuk != null) {
-                    if ($sarpras_masuk->jumlah + $sesuai > $sarpras_keluar->jumlah) {
-                        return response()->json(['error_message' => 'Jumlah sarpras yang dimasukkan terlalu banyak!']);
-                    }
-                }
-                if ($sarpras_masuk == null) {
-                    if ($sarpras_keluar->hilang + $sesuai > $sarpras_keluar->jumlah) {
-                        return response()->json(['error_message' => 'Jumlah yang dimasukkan melebihi sarpras yang belum divalidasi']);
-                    }
-                }
-            }
+                    if ($jumlah_masuk > $old_sarpras_keluar->jumlah) {
+                        return response()->json(['error_message' => 'Jumlah masukan sesuai terlalu banyak!']);
+                    } elseif ($sesuai == $old_draft->qty) {
+                        SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'masuk')->update([
+                            'jumlah' => $jumlah_masuk,
+                            'keterangan' => null
+                        ]);
 
-            if ($check_tidack == 'true') {
-                if ($sarpras_keluar->hilang == 0) {
-                    return response()->json(['error_message' => 'Jumlah sarpras hilang / rusak tidak ada!']);
-                }
-            }
-
-            if ($sarpras_keluar->hilang > 0 && $check_tidack == 'true') {
-                if ($sarpras_keluar->hilang < $sesuai) {
-                    return response()->json(['error_message' => 'Jumlah sesuai melebihi jumlah sarpras yang rusak / hilang']);
-                }
-            }
-            if ($check_tidack == 'false') {
-                if ($sarpras_masuk != null) {
-                    if ($draft->qty == $sesuai) {
-                        SarprasDetail::where('draft_id', $draft_id)
-                            ->where('jenis', 'masuk')
-                            ->update([
-                                'jumlah' => $sarpras_masuk->jumlah + $sesuai,
-                                'keterangan' => null
-                            ]);
-
-                        SarprasDetail::where('draft_id', $draft_id)
-                            ->where('jenis', 'keluar')
-                            ->update([
-                                'hilang' => 0
-                            ]);
+                        SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'keluar')->update([
+                            'hilang' => 0,
+                            'keterangan' => null
+                        ]);
                     } else {
-                        $jumlah_masuk = $sarpras_masuk->jumlah + $sesuai;
-                        SarprasDetail::where('draft_id', $draft_id)
-                            ->where('jenis', 'masuk')
-                            ->update([
-                                'jumlah' => $jumlah_masuk,
-                                'keterangan' => 'Dikembalikan ' . $jumlah_masuk . ' dari ' . $sarpras_keluar->jumlah
-                            ]);
+                        SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'masuk')->update([
+                            'jumlah' => $jumlah_masuk,
+                            'keterangan' => 'Dikembalikan ' . $jumlah_masuk . ' dari ' . $old_sarpras_keluar->jumlah
+                        ]);
+
+                        SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'keluar')->update([
+                            'keterangan' => 'Dikembalikan ' . $jumlah_masuk . ' dari ' . $old_sarpras_keluar->jumlah
+                        ]);
                     }
                 } else {
                     $sarpras_masuk =  new SarprasDetail();
-                    $sarpras_masuk->user_id = $draft->user_id;
-                    $sarpras_masuk->draft_id = $draft->id;
-                    $sarpras_masuk->sarpras_id = $draft->sarpras_id;
+                    $sarpras_masuk->user_id = $old_draft->user_id;
+                    $sarpras_masuk->draft_id = $old_draft->id;
+                    $sarpras_masuk->sarpras_id = $old_draft->sarpras_id;
                     $sarpras_masuk->tanggal = date('Y-m-d');
                     $sarpras_masuk->jenis = "masuk";
                     $sarpras_masuk->jumlah = $sesuai;
-                    if ($draft->qty == $sesuai) {
+                    if ($old_draft->qty == $sesuai) {
                         $sarpras_masuk->keterangan = null;
                     } else {
-                        $sarpras_masuk->keterangan = 'Dikembalikan ' . $sesuai . ' dari ' . $draft->qty;
+                        $sarpras_masuk->keterangan = 'Dikembalikan ' . $sesuai . ' dari ' . $old_sarpras_keluar->jumlah;
+                    }
+                    $sarpras_masuk->save();
+
+                    SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'keluar')->update([
+                        'keterangan' => 'Dikembalikan ' . $sesuai . ' dari ' . $old_sarpras_keluar->jumlah
+                    ]);
+                }
+            } else {
+                if ($old_sarpras_masuk != null) {
+                    if (($old_sarpras_keluar->jumlah - $old_sarpras_masuk->jumlah) < $sesuai) {
+                        return response()->json(['error_message' => 'Jumlah input sesuai terlalu banyak!']);
+                    } else {
+                        $jumlah_masuk = $old_sarpras_masuk->jumlah + $sesuai;
+                        $hilang = $old_sarpras_keluar->hilang - $sesuai;
+
+                        if ($hilang < 0) {
+
+                            $selisih = $old_sarpras_keluar->jumlah - $jumlah_masuk;
+
+                            SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'masuk')->update([
+                                'jumlah' => $jumlah_masuk,
+                                'keterangan' => 'Dikembalikan ' . $selisih . ' dari ' . $old_sarpras_keluar->jumlah
+                            ]);
+
+                            SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'keluar')->update([
+                                'hilang' => 0,
+                                'keterangan' => 'Dikembalikan ' . $jumlah_masuk . ' dari ' . $old_sarpras_keluar->jumlah
+                            ]);
+                        } else {
+                            SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'masuk')->update([
+                                'jumlah' => $jumlah_masuk,
+                                'keterangan' => 'Dikembalikan ' . $jumlah_masuk . ' dari ' . $old_sarpras_keluar->jumlah
+                            ]);
+
+                            SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'keluar')->update([
+                                'hilang' => $hilang,
+                                'keterangan' => 'Dikembalikan ' . $jumlah_masuk . ' dari ' . $old_sarpras_keluar->jumlah
+                            ]);
+                        }
+                    }
+                } else {
+                    $hasil = $old_sarpras_keluar->hilang - $sesuai;
+
+                    if ($hasil < 0) {
+                        SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'keluar')->update([
+                            'hilang' => 0,
+                            'keterangan' => 'Dikembalikan ' . $sesuai . ' dari ' . $old_sarpras_keluar->jumlah
+                        ]);
+                    } else {
+                        SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'keluar')->update([
+                            'hilang' => $hasil,
+                            'keterangan' => 'Dikembalikan ' . $sesuai . ' dari ' . $old_sarpras_keluar->jumlah
+                        ]);
+                    }
+
+                    $sarpras_masuk =  new SarprasDetail();
+                    $sarpras_masuk->user_id = $old_draft->user_id;
+                    $sarpras_masuk->draft_id = $old_draft->id;
+                    $sarpras_masuk->sarpras_id = $old_draft->sarpras_id;
+                    $sarpras_masuk->tanggal = date('Y-m-d');
+                    $sarpras_masuk->jenis = "masuk";
+                    $sarpras_masuk->jumlah = $sesuai;
+                    if ($old_draft->qty == $sesuai) {
+                        $sarpras_masuk->keterangan = null;
+                    } else {
+                        $sarpras_masuk->keterangan = 'Dikembalikan ' . $sesuai . ' dari ' . $old_sarpras_keluar->jumlah;
                     }
                     $sarpras_masuk->save();
                 }
             }
 
-            $new_sarpras_keluar = SarprasDetail::where('draft_id', $draft_id)->where('jenis', 'keluar')->first();
+            $jumlah_akhir = $sesuai + $old_sarpras->jumlah;
+            $jumlah_qty = $old_draft->qty - $sesuai;
 
-            if ($new_sarpras_keluar->hilang > 0 && $check_tidack == 'true') {
-                if ($new_sarpras_keluar->hilang < $sesuai) {
-                    return response()->json(['error_message' => 'Jumlah sesuai melebihi jumlah sarpras yang rusak / hilang']);
-                }
-                $jumlah_keluar = $new_sarpras_keluar->hilang - $sesuai;
-                SarprasDetail::where('id', $new_sarpras_keluar->id)
-                    ->where('jenis', 'keluar')
-                    ->update([
-                        'hilang' => $jumlah_keluar
-                    ]);
-            }
+            Sarpras::where('id', $old_draft->sarpras_id)->update([
+                'jumlah' => $jumlah_akhir
+            ]);
 
-            $sarpras = Sarpras::where('id', $draft->sarpras_id)->first();
+            Draft::where('id', $request->draft_id)->update([
+                'qty' => $jumlah_qty
+            ]);
 
-            $jumlah_akhir = $sesuai + $sarpras->jumlah;
-
-            $jumlah_qty = $draft->qty - $sesuai;
-
-            Sarpras::where('id', $draft->sarpras_id)
-                ->update([
-                    'jumlah' => $jumlah_akhir
-                ]);
-
-            Draft::where('id', $draft_id)
-                ->update([
-                    'qty' => $jumlah_qty
-                ]);
-
-            $new_draf = Draft::where('id', $draft_id)->first();
+            $new_draf = Draft::where('id', $request->draft_id)->first();
 
             if ($new_draf->qty == 0) {
-                Draft::where('id', $draft_id)
-                    ->update([
-                        'kondisi' => 1
-                    ]);
-
-                SarprasDetail::where('id', $sarpras_keluar->id)
-                    ->where('jenis', 'keluar')
-                    ->update([
-                        'hilang' => 0,
-                        'keterangan' => null
-                    ]);
+                Draft::where('id', $request->draft_id)->update([
+                    'kondisi' => 1
+                ]);
             }
-            $new_draf_ = Draft::where('id', $draft_id)->first();
 
-            $data_m = Draft::where('validasi_id', $new_draf_->validasi_id)->whereNotIn('kondisi', [1])->first();
+            // get data baru 
+            $data = Draft::where('validasi_id', $old_draft->validasi_id)->whereNotIn('kondisi', [1])->first();
 
-            if (!$data_m) {
-                Pengembalian::where('id', $id)
-                    ->update([
-                        'date_kembali' => date('Y-m-d'),
-                        'status' => 1
-                    ]);
+            if (!$data) {
+                Pengembalian::where('id', $id)->update([
+                    'date_kembali' => date('Y-m-d'),
+                    'status' => 1
+                ]);
             }
         }
-        // jika tidack 
+
+        // Data master tidack
+        $old_draft = Draft::where('id', $request->draft_id)->first();
+        $old_sarpras = Sarpras::where('id', $old_draft->sarpras_id)->first();
+        $old_sarpras_masuk = SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'masuk')->first();
+        $old_sarpras_keluar = SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'keluar')->first();
+        $old_rusak = Rusak::where('sarpras_detail_id', $old_sarpras_keluar->id)->first();
+
         if ($tidack != null || $tidack != 0) {
 
-            $sarpras_masuk = SarprasDetail::where('draft_id', $draft_id)->where('jenis', 'masuk')->first();
-            $sarpras_keluar = SarprasDetail::where('draft_id', $draft_id)->where('jenis', 'keluar')->first();
-            $new_draf__ = Draft::where('id', $draft_id)->first();
+            // jika belum ada yg dikembalikan
+            if ($old_sarpras_masuk == null) {
+                if (($old_sarpras_keluar->hilang + $tidack) > $old_sarpras_keluar->jumlah) {
+                    return response()->json(['error_message' => 'Jumlah masukan tidak sesuai terlalu banyak!']);
+                } else {
+                    $jumlah_hilang = $old_sarpras_keluar->hilang + $tidack;
+                    SarprasDetail::where('id', $old_sarpras_keluar->id)->update([
+                        'hilang' => $jumlah_hilang,
+                        'keterangan' => 'Dikembalikan ' . 0 . ' dari ' . $old_sarpras_keluar->jumlah
+                    ]);
 
-            if ($check_sesuai == 'true') {
+                    Draft::where('id', $request->draft_id)->update([
+                        'kondisi' => 2
+                    ]);
 
-                if ($sarpras_masuk == null) {
-                    return response()->json(['error_message' => 'Jumlah yang sudah dikembalikan belum ada!']);
-                } elseif ($sarpras_masuk != null && $sarpras_masuk->jumlah < $tidack) {
-                    return response()->json(['error_message' => 'Jumlah yang dimasukkan terlalu banyak!']);
-                } elseif ($sarpras_masuk != null && $sarpras_masuk->jumlah >= $tidack) {
-                    $jumlah_draft =  $new_draf__->qty + $tidack;
-                    Draft::where('id', $draft_id)
-                        ->update([
-                            'qty' => $jumlah_draft
-                        ]);
+                    if ($old_rusak) {
+                        if ($jumlah_hilang > $old_rusak->hilang) {
+                            Rusak::where('sarpras_detail_id', $old_sarpras_keluar->id)->update([
+                                'hilang' => $jumlah_hilang
+                            ]);
+                        }
+                    } else {
+                        $rusak = new Rusak();
+                        $rusak->sarpras_detail_id = $old_sarpras_keluar->id;
+                        $rusak->hilang = $tidack;
+                        $rusak->save();
+                    }
+                }
+            } else {
+                if (($old_sarpras_keluar->hilang + $tidack) > $old_sarpras_keluar->jumlah) {
+                    return response()->json(['error_message' => 'Jumlah input tidak sesuai terlalu banyak!']);
+                } else {
+                    $jumlah_draft = $old_draft->qty + $tidack;
+                    Draft::where('id', $request->draft_id)->update([
+                        'qty' => $jumlah_draft,
+                        'kondisi' => 2
+                    ]);
 
-                    $jumlah_masuk_ = $sarpras_masuk->jumlah - $tidack;
-                    SarprasDetail::where('id', $sarpras_masuk->id)
-                        ->where('jenis', 'masuk')
-                        ->update([
-                            'jumlah' => $jumlah_masuk_
-                        ]);
+                    $jumlah_masuk = $old_sarpras_masuk->jumlah - $tidack;
+                    SarprasDetail::where('id', $old_sarpras_masuk->id)->update([
+                        'jumlah' => $jumlah_masuk
+                    ]);
 
-                    $sarpras_ = Sarpras::where('id', $sarpras_masuk->sarpras_id)->first();
-                    $hasil = $sarpras_->jumlah - $tidack;
-                    Sarpras::where('id', $sarpras_masuk->sarpras_id)
-                        ->update([
-                            'jumlah' => $hasil
-                        ]);
+                    $jumlah_hilang = $old_sarpras_keluar->hilang + $tidack;
+                    SarprasDetail::where('id', $old_sarpras_keluar->id)->update([
+                        'hilang' => $jumlah_hilang,
+                        'keterangan' => 'Dikembalikan ' . $jumlah_masuk . ' dari ' . $old_sarpras_keluar->jumlah
+                    ]);
 
-                    $new_sarpras_masuk = SarprasDetail::where('draft_id', $draft_id)->where('jenis', 'masuk')->first();
+                    $jumlah_sarpras = $old_sarpras->jumlah - $tidack;
+                    Sarpras::where('id', $old_sarpras->id)->update([
+                        'jumlah' => $jumlah_sarpras
+                    ]);
+
+                    $new_sarpras_masuk = SarprasDetail::where('draft_id', $request->draft_id)->where('jenis', 'masuk')->first();
 
                     if ($new_sarpras_masuk->jumlah == 0) {
-                        SarprasDetail::destroy($sarpras_masuk->id);
+                        SarprasDetail::destroy($new_sarpras_masuk->id);
+                    }
+
+                    if ($old_rusak) {
+                        if ($jumlah_hilang > $old_rusak->hilang) {
+                            Rusak::where('sarpras_detail_id', $old_sarpras_keluar->id)->update([
+                                'hilang' => $jumlah_hilang
+                            ]);
+                        }
+                    } else {
+                        $rusak = new Rusak();
+                        $rusak->sarpras_detail_id = $old_sarpras_keluar->id;
+                        $rusak->hilang = $tidack;
+                        $rusak->save();
                     }
                 }
             }
-            if ($check_sesuai == 'false') {
-                if ($sarpras_masuk != null) {
-                    if ($sarpras_masuk->jumlah + $sarpras_keluar->hilang == $sarpras_keluar->jumlah) {
-                        return response()->json(['error_message' => 'Jumlah sarpras yang belum divalidasi tidak ada!']);
-                    }
-                }
-                if ($sarpras_masuk == null) {
-                    if ($sarpras_keluar->hilang + $tidack > $sarpras_keluar->jumlah) {
-                        return response()->json(['error_message' => 'Jumlah sarpras yang belum divalidasi tidak ada!']);
-                    }
-                }
-            }
 
-            $jumlah_keluar___ = $sarpras_keluar->hilang + $tidack;
-            SarprasDetail::where('id', $sarpras_keluar->id)
-                ->where('jenis', 'keluar')
-                ->update([
-                    'hilang' => $jumlah_keluar___,
-                    'keterangan' => 'rusak / hilang'
+            // get data baru 
+            $new_draft = Draft::where('id', $request->draft_id)->first();
+
+            $data = Draft::where('validasi_id', $new_draft->validasi_id)->where('kondisi', 2)->first();
+            if ($data != null) {
+                Pengembalian::where('id', $id)->update([
+                    'date_kembali' => date('Y-m-d'),
+                    'status' => 2
                 ]);
-
-            Draft::where('id', $draft_id)
-                ->update([
-                    'kondisi' => 2
-                ]);
-
-            $new_draf = Draft::where('id', $draft_id)->first();
-
-            $data_r = Draft::where('validasi_id', $new_draf->validasi_id)->where('kondisi', 2)->first();
-            if ($data_r != null) {
-                Pengembalian::where('id', $id)
-                    ->update([
-                        'date_kembali' => date('Y-m-d'),
-                        'status' => 2
-                    ]);
             }
         }
 
+        // cek result validate
         $peminjaman = Pengembalian::where('id', $id)->first();
         if ($peminjaman->status == 1) {
             Validasi::where('id', $peminjaman->validasi_id)
@@ -345,6 +341,7 @@ class PengembalianController extends Controller
 
         foreach ($draft as $data) {
             $sarpras = Sarpras::where('id', $data->sarpras_id)->first();
+
             // jika sudah pernah divalidasi lakukan reset 
             if ($data->sarpras_masuk) {
                 Sarpras::where('id', $sarpras->id)
@@ -352,6 +349,7 @@ class PengembalianController extends Controller
                         'jumlah' => $sarpras->jumlah - $data->sarpras_masuk->jumlah
                     ]);
                 DB::table('sarpras_detail')->where('draft_id', $data->id)->where('jenis', 'masuk')->delete();
+                Rusak::where('sarpras_detail_id', $data->sarpras_keluar->id)->delete();
             }
             Draft::where('id', $data->id)
                 ->update([

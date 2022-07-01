@@ -273,8 +273,10 @@
                                 }
                                 ?>
                                 <td>
-                                    @if( $sarpras_keluar->hilang > 0 )
-                                    <p class="text-lowercase">{{ $sarpras_keluar->hilang }} {{ $sarpras_keluar->keterangan }}</p>
+                                    @if( $data->sarpras_keluar->hilang > 0 )
+                                    <p class="text-lowercase">{{ $data->sarpras_keluar->hilang }} rusak / hilang, {{ $data->sarpras_keluar->keterangan }}</p>
+                                    @else
+                                    <p>{{ $data->sarpras_keluar->keterangan }}</p>
                                     @endif
                                 </td>
                                 <td class="center">
@@ -347,21 +349,6 @@
                         <img id="img" class="img-responsive" src="">
                     </div>
                     <div class="col-md-7">
-                        <h4 class="display-5 text-dark">Validasi</h4>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="col-md-8">Belum validasi</label>
-                                    <label class="col-md-3" id="belum_validasi"></label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="col-md-8">Sudah validasi</label>
-                                    <label class="col-md-3" id="sudah_validasi"></label>
-                                </div>
-                            </div>
-                        </div>
                         <h4 class="display-5 text-dark">Keterangan</h4>
                         <div class="row">
                             <div class="col-md-6">
@@ -395,20 +382,12 @@
                                 <label for="">Sesuai</label>
                                 <select class="form-control" name="sesuai" id="sesuai">
                                 </select>
-                                <div class="checkbox-custom checkbox-default">
-                                    <input id="check_tidack" name="check_tidack" type="checkbox">
-                                    <label for="check_tidack">Mengurangi Data Hilang / Rusak</label>
-                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="">Hilang / Rusak</label>
                                 <input type="hidden" class="draft_id" id="draft_">
                                 <select class="form-control" name="tidack" id="tidack">
                                 </select>
-                                <div class="checkbox-custom checkbox-default">
-                                    <input id="check_sesuai" name="check_sesuai" type="checkbox">
-                                    <label for="check_sesuai">Mengurangi Data Dikembalikan</label>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -418,8 +397,8 @@
                         <blockquote class="primary rounded b-thin">
                             <span class="text-danger">Catatan*</span>
                             <ol>
-                                <li>Jika ada sarpras yang telah divalidasi sesuai ternyata ada yang rusak, masukkan jumlah yang rusak pada kolom rusak/hilang dan <span class="text-warning">Checklist</span> pada checkbox untuk mengurangi data sarpras kondisi sesuai</li>
-                                <li>Jika ada sarpras yang telah divalidasi rusak ternyata ada yang sesuai, masukkan jumlah yang sesuai pada kolom sesuai dan <span class="text-warning">Checklist</span> pada checkbox untuk mengurangi data sarpras kondisi tidak sesuai</li>
+                                <li>Masukkan jumlah sarpras sesuai atau kondisi normal pada form <span class="text-warning">sesuai</span></li>
+                                <li>Masukkan jumlah sarpras tidak sesuai atau dengan kondisi rusak / hilang pada form <span class="text-warning">rusak / hilang</span></li>
                             </ol>
                         </blockquote>
                     </div>
@@ -429,7 +408,7 @@
         <footer class="panel-footer">
             <div class="row">
                 <div class="col-md-12 text-right">
-                    <button class="btn btn-primary modal-dismiss" data-pengem="{{$pengembalian->id}}" id="modal-confirm">Confirm</button>
+                    <button class="btn btn-primary modal-dismiss" data-id="{{$pengembalian->id}}" id="modal-confirm">Confirm</button>
                     <button class="btn btn-default modal-dismiss" id="modal-dismiss">Cancel</button>
                 </div>
             </div>
@@ -595,8 +574,6 @@
 
         $('.panel-title').text(title);
         $('#img').attr("src", '/storage/' + sarpras);
-        $('#belum_validasi').text(pinjam - (hilang + kembali));
-        $('#sudah_validasi').text(hilang + kembali);
         $('#jumlah_pinjam').text(pinjam);
         $('#jumlah_kembali').text(kembali);
         $('#jumlah_hilang').text(hilang);
@@ -629,14 +606,11 @@
 
     // confirm modal validasi
     $(document).on('click', '#modal-confirm', function() {
-        var pengem = $(this).data('pengem');
+        var id = $(this).data('id');
 
         var draft_ = document.getElementById("draft_").value;
         var sesuai = document.getElementById("sesuai").value;
         var tidack = document.getElementById("tidack").value;
-
-        var check_sesuai = document.getElementById("check_sesuai");
-        var check_tidack = document.getElementById("check_tidack");
 
         $.ajaxSetup({
             headers: {
@@ -646,13 +620,11 @@
 
         $.ajax({
             method: "PUT",
-            url: "/pengembalian/" + pengem,
+            url: "/pengembalian/" + id,
             data: {
                 'draft_id': draft_,
                 'sesuai': sesuai,
                 'tidack': tidack,
-                'check_sesuai': check_sesuai.checked,
-                'check_tidack': check_tidack.checked,
             },
             success: function(response) {
                 if (response.error_message) {
@@ -672,7 +644,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $('#modal-rating').modal('show');
-                            $('#kembali_id').val(pengem);
+                            $('#kembali_id').val(id);
                         } else if (result.isDenied) {
                             swal.fire({
                                 icon: 'success',
@@ -710,9 +682,6 @@
 
         $('#sesuai').val("");
         $('#tidack').val("");
-
-        $("#check_tidack").attr("checked", false);
-        $("#check_sesuai").attr("checked", false);
     });
 
     // simpan rating

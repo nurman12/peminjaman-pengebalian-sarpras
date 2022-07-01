@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class SarprasDetail extends Model
 {
-    use HasFactory;
-
     protected $table = 'sarpras_detail';
+    protected $fillabel = ['user_id', 'draft_id', 'tanggal', 'jenis', 'jumlah', 'hilang', 'keterangan'];
+
+    use HasFactory;
 
     public function sarpras()
     {
@@ -18,5 +19,9 @@ class SarprasDetail extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function rusak()
+    {
+        return $this->hasOne(Rusak::class);
     }
 }
