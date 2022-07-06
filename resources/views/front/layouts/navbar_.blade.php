@@ -26,6 +26,16 @@
                                     <li><a href="/ruangan">Ruangan</a></li>
                                 </ul>
                             </li>
+                            @auth
+                            <li>
+                                <a href="#!">Module</a>
+                                <ul class="sub-menu">
+                                    <li><a href="/permohonans">Permohonan</a></li>
+                                    <li><a href="/peminjamans">Peminjaman</a></li>
+                                    <li><a href="/pengembalians">Pengembalian</a></li>
+                                </ul>
+                            </li>
+                            @endauth
                             <li>
                                 <a href="/about">About</a>
                             </li>
@@ -98,7 +108,19 @@
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </span>
                 </li>
-
+                @auth
+                <li>
+                    <a href="#!">Module</a>
+                    <ul class="sub-menu-m">
+                        <li><a href="/permohonans">Permohonan</a></li>
+                        <li><a href="/peminjamans">Peminjaman</a></li>
+                        <li><a href="/pengembalians">Pengembalian</a></li>
+                    </ul>
+                    <span class="arrow-main-menu-m">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </span>
+                </li>
+                @endauth
                 <li>
                     <a href="/about">About</a>
                 </li>

@@ -164,7 +164,7 @@
     google.charts.setOnLoadCallback(drawChart);
 
     function drawChart() {
-        var months = ['Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         var data = google.visualization.arrayToDataTable([
             ['Bulan', 'Peminjaman', 'Pengembalian'],
             <?php foreach ($perbandingan as $item) : ?>[months[<?= $item['bulan']; ?> - 1], <?= $item['pinjam']; ?>, <?= $item['kembali']; ?>],

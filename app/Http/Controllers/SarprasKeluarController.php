@@ -11,9 +11,7 @@ class SarprasKeluarController extends Controller
 {
     public function index()
     {
-        $sarpras_keluar = SarprasDetail::whereNotIn('user_id', User::where('roles', 'Mahasiswa')
-            ->orWhere('roles', 'Dosen')->get('id'))
-            ->where('jenis', 'keluar')
+        $sarpras_keluar = SarprasDetail::where('jenis', 'keluar')
             ->orderBy('tanggal', 'desc')
             ->get();
 

@@ -1,11 +1,74 @@
-#Chat{ 
+#Chat {
 	width: 400px;
 	position: fixed;
-	bottom: 0px; 
+	bottom: 0px;
 	z-index: 1000;
 	transition: all 0.3s ease-in;
 	transform: scaleY(0);
-} 
-#Chat.active{ 
+}
+
+#Chat.active {
 	transform: scaleY(1);
-} 
+}
+
+.d-flex {
+	display: flex;
+}
+
+.align-items-center {
+	-webkit-box-align: center;
+	align-items: center;
+}
+
+.img-size-45 {
+	height: 45px;
+	width: 45px;
+}
+
+.ms-3 {
+	margin-left: 1rem;
+}
+
+.fw-bold {
+	font-weight: 700 !important;
+}
+
+.mb-1 {
+	margin-bottom: .25rem !important;
+}
+
+.text-muted {
+	color: #757575 !important;
+}
+
+.mb-0 {
+	margin-bottom: 0 !important;
+}
+
+.badge {
+	border-radius: .27rem;
+}
+
+.badge-success {
+	background-color: #c7f5d9;
+	color: #0b4121;
+}
+
+.badge-primary {
+	background-color: #cfe0fc;
+	color: #0a47a9;
+}
+
+.badge-warning {
+	background-color: #ffebc2;
+	color: #453008;
+}
+
+.badge-danger {
+	background-color: #c46161;
+	color: #e41c15;
+}
+
+.rounded-pill {
+	border-radius: 50rem;
+}

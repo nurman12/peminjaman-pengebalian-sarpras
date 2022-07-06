@@ -20,7 +20,11 @@ class PenggunaController extends Controller
 {
     public function index()
     {
-        $users = User::orderBy('created_at', 'desc')->get();
+        $bmn = User::where('roles', 'BMN')->orderBy('created_at', 'desc')->get()->toArray();
+        $koor = User::where('roles', 'Koordinator')->orderBy('created_at', 'desc')->get()->toArray();
+        $ktu = User::where('roles', 'KTU')->orderBy('created_at', 'desc')->get()->toArray();
+        $mhs = User::where('roles', 'Mahasiswa')->orWhere('roles', 'Dosen')->orderBy('created_at', 'desc')->get()->toArray();
+        $users = array_merge($bmn, $koor, $ktu, $mhs);
 
         return view('back.pengguna.index', compact('users'));
     }

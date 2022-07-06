@@ -89,7 +89,7 @@
                                 title: 'Success!',
                                 text: 'Data ditemukan !'
                             }).then((result) => {
-                                window.location.href = 'http://127.0.0.1:8000/peminjaman/' + response.peminjaman
+                                window.location.href = 'http://127.0.0.1:8000/peminjaman/' + response.peminjaman + '/edit'
                             });
                         } else if (response.pengembalian) {
                             swal.fire({
@@ -97,7 +97,7 @@
                                 title: 'Success!',
                                 text: 'Data ditemukan !'
                             }).then((result) => {
-                                window.location.href = 'http://127.0.0.1:8000/pengembalian/' + response.pengembalian
+                                window.location.href = 'http://127.0.0.1:8000/pengembalian/' + response.pengembalian + '/edit'
                             });
                         }
                     },

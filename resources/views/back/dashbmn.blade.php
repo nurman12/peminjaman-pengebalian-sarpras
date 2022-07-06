@@ -56,6 +56,38 @@
                         </div>
                     </section>
                 </div>
+                <div class="col-md-12">
+                    <section class="panel">
+                        <div class="panel-body">
+                            <div class="chart-data-selector" id="salesSelectorWrapper">
+                                <h2>
+                                    Kerusakan :
+                                    <strong>
+                                        <select class="form-control" id="salesSelector">
+                                            @foreach($kerusakan as $key => $value)
+                                            <?php
+                                            $data = App\Models\Sarpras::where('id', $value->sarpras_id)->first();
+                                            ?>
+                                            <option value="{{ $data->nama }}" {{ $key == 0 ? 'selected' : '' }}>{{ $data->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                    </strong>
+                                </h2>
+
+                                <div id="salesSelectorItems" class="chart-data-selector-items mt-sm">
+                                    @foreach($kerusakan as $key => $value)
+                                    <?php
+                                    $data = App\Models\Sarpras::where('id', $value->sarpras_id)->first();
+                                    ?>
+                                    <div class="chart chart-sm" data-sales-rel="{{ $data->nama }}" id="sarpras_{{ $value->sarpras_id }}" class="{{ $key == 0 ? 'chart-active' : '' }}"></div>
+                                    @endforeach
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-12 col-lg-6 col-xl-6">
@@ -165,38 +197,25 @@
 
 @push('style')
 <!-- Specific Page Vendor CSS -->
-
+<link rel="stylesheet" href="{{ asset('/back') }}/vendor/bootstrap-multiselect/bootstrap-multiselect.css" />
 @endpush
 
 @push('script')
 <!-- Specific Page Vendor -->
-
+<script src="{{ asset('/back') }}/vendor/bootstrap-multiselect/bootstrap-multiselect.js"></script>
+<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.js"></script>
+<script src="{{ asset('/back') }}/vendor/flot-tooltip/jquery.flot.tooltip.js"></script>
+<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.pie.js"></script>
+<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.categories.js"></script>
+<script src="{{ asset('/back') }}/vendor/flot/jquery.flot.resize.js"></script>
+<script src="{{ asset('/back') }}/vendor/liquid-meter/liquid.meter.js"></script>
 @endpush
 @push('last_script')
-<script type="text/javascript" src="{{ asset('/back') }}/vendor/chart-js/chart.js"></script>
+<script src="{{ asset('/back') }}/vendor/chart-js/chart.js"></script>
 <script>
     // setup 
-    const months = ['Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
-    // customLegend
-    // const customLegend = {
-    //     id: 'customLegend',
-    //     afterDraw: (chart, args, options) => {
-    //         const {
-    //             _metasets,
-    //             ctx
-    //         } = chart;
-    //         ctx.save();
-
-    //         _metasets.forEach((meta) => {
-    //             ctx.font = 'bolder 12px Arial';
-    //             ctx.fillStyle = meta._dataset.borderColor;
-    //             ctx.textBaseLine = 'middle';
-    //             ctx.fillText(meta._dataset.label, meta.data[meta.data.length - 1].x + 6, meta.data[meta.data.length - 1].y)
-    //         })
-    //     }
-    // }
-    // tooltipLine
     const tooltipLine = {
         id: 'tooltipLine',
         beforeDraw: chart => {
@@ -287,17 +306,9 @@
                 data: [<?php foreach ($perbandingan_sarpras as $item) : ?><?= $item['masuk']; ?>, <?php endforeach; ?>],
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
-
             }]
         },
         options: {
-            // responsive: true,
-            // maintainAspectRatio: false,
-            // layout: {
-            //     padding: {
-            //         right: 100
-            //     }
-            // },
             tension: 0.4,
             scales: {
                 y: {
@@ -305,7 +316,6 @@
                 }
             }
         }
-        // plugins: [customLegend]
     };
 
     // render init block 
@@ -318,5 +328,117 @@
         document.getElementById('stok_peminjaman_pengembalian'),
         config2
     );
+</script>
+<script>
+    (function($) {
+
+        'use strict';
+
+        /*
+        Sales Selector
+        */
+        $('#salesSelector').themePluginMultiSelect().on('change', function() {
+            var rel = $(this).val();
+            $('#salesSelectorItems .chart').removeClass('chart-active').addClass('chart-hidden');
+            $('#salesSelectorItems .chart[data-sales-rel="' + rel + '"]').addClass('chart-active').removeClass('chart-hidden');
+        });
+
+        $('#salesSelector').trigger('change');
+
+        $('#salesSelectorWrapper').addClass('ready');
+
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        <?php foreach ($kerusakan as $value) :
+            $rusak = Illuminate\Support\Facades\DB::table('rusak')
+                ->join('sarpras_detail', 'sarpras_detail.id', '=', 'rusak.sarpras_detail_id')
+                ->where('sarpras_detail.sarpras_id', $value->sarpras_id)
+                ->where('sarpras_detail.jenis', 'keluar')
+                ->select([
+                    Illuminate\Support\Facades\DB::raw('sum(rusak.hilang) as jumlah'),
+                    Illuminate\Support\Facades\DB::raw('MONTH(rusak.updated_at) as bulan'),
+                    Illuminate\Support\Facades\DB::raw('YEAR(rusak.updated_at) as tahun')
+                ])->groupBy(['bulan', 'tahun'])->get()->toArray();
+        ?>
+            var flotDashSarpras<?= $value->sarpras_id; ?> = [{
+
+                data: [
+                    <?php foreach ($rusak as $data) : ?>[months[<?= $data->bulan; ?> - 1], <?= $data->jumlah; ?>], <?php endforeach; ?>
+                ],
+                color: "#734ba9"
+            }];
+            var sarpras_<?= $value->sarpras_id; ?> = $.plot('#sarpras_<?= $value->sarpras_id; ?>', flotDashSarpras<?= $value->sarpras_id; ?>, {
+                series: {
+                    lines: {
+                        show: true,
+                        lineWidth: 2
+                    },
+                    points: {
+                        show: true
+                    },
+                    shadowSize: 0
+                },
+                grid: {
+                    hoverable: true,
+                    clickable: true,
+                    borderColor: 'rgba(0,0,0,0.1)',
+                    borderWidth: 1,
+                    labelMargin: 15,
+                    backgroundColor: 'transparent'
+                },
+                yaxis: {
+                    min: 0,
+                    color: 'rgba(0,0,0,0.1)'
+                },
+                xaxis: {
+                    mode: 'categories',
+                    color: 'rgba(0,0,0,0)'
+                },
+                legend: {
+                    show: false
+                },
+                tooltip: true,
+                tooltipOpts: {
+                    content: '%x: %y',
+                    shifts: {
+                        x: -30,
+                        y: 25
+                    },
+                    defaultTheme: false
+                }
+            });
+
+        <?php endforeach; ?>
+
+        /*
+        Liquid Meter
+        */
+        $('#meterSales').liquidMeter({
+            shape: 'circle',
+            color: '#0088cc',
+            background: '#F9F9F9',
+            fontSize: '24px',
+            fontWeight: '600',
+            stroke: '#F2F2F2',
+            textColor: '#333',
+            liquidOpacity: 0.9,
+            liquidPalette: ['#333'],
+            speed: 3000,
+            animate: !$.browser.mobile
+        });
+
+        $('#meterSalesSel a').on('click', function(ev) {
+            ev.preventDefault();
+
+            var val = $(this).data("val"),
+                selector = $(this).parent(),
+                items = selector.find('a');
+
+            items.removeClass('active');
+            $(this).addClass('active');
+
+            // Update Meter Value
+            $('#meterSales').liquidMeter('set', val);
+        });
+    }).apply(this, [jQuery]);
 </script>
 @endpush

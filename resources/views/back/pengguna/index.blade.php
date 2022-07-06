@@ -95,23 +95,15 @@
                     @foreach($users as $data)
                     <tr>
                         <th>{{$loop->iteration}}</th>
-                        <td><span class="highlight rounded">{{$data->nim_nidn}}</span></td>
-                        <td>{{$data->name}}</td>
-                        <td>{{$data->email}}</td>
-                        <td class="center">{{$data->roles}}</td>
+                        <td><span class="highlight rounded">{{$data['nim_nidn']}}</span></td>
+                        <td>{{$data['name']}}</td>
+                        <td>{{$data['email']}}</td>
+                        <td class="center">{{$data['roles']}}</td>
                         <th width="120px">
-                            <a href="{{ route('pengguna.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
-                            @if($data->roles != 'BMN')
-                            <a href="{{ route('pengguna.edit', $data->id) }}" class="mr-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>
-                            <!-- <form onclick="return confirm('Yakin ingin hapus ini?')" action="{{ route('pengguna.destroy', $data->id) }}" method="post" style="display: inline;">
-                                @csrf
-                                @method('delete')
-                                <input type="hidden" name="old_photo" value="{{$data->photo_profile}}">
-                                <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus">
-                                    <i class="fa fa-trash-o"></i>
-                                </button>
-                            </form>-->
-                            <a id="delete" data-id="{{ $data->id }}" data-nama="{{$data->nama}}" data-gambar="{{$data->photo_profile}}" class=" btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash-o"></i></i></a>
+                            <a href="{{ route('pengguna.show', $data['id']) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
+                            @if($data['roles'] != 'BMN')
+                            <a href="{{ route('pengguna.edit', $data['id']) }}" class="mr-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>
+                            <a id="delete" data-id="{{ $data['id'] }}" data-nama="{{$data['name']}}" data-gambar="{{$data['photo_profile']}}" class=" btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash-o"></i></i></a>
                             @endif
                         </th>
                     </tr>

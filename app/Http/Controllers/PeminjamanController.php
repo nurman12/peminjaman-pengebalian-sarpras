@@ -188,7 +188,7 @@ class PeminjamanController extends Controller
                             ]);
                         }
                     }
-                } else {
+                } elseif ($old_sarpras_masuk == null) {
                     $hasil = $old_sarpras_keluar->hilang - $sesuai;
 
                     if ($hasil < 0) {
@@ -286,7 +286,7 @@ class PeminjamanController extends Controller
                         $rusak->save();
                     }
                 }
-            } else {
+            } elseif ($old_sarpras_masuk != null) {
                 if (($old_sarpras_keluar->hilang + $tidack) > $old_sarpras_keluar->jumlah) {
                     return response()->json(['error_message' => 'Jumlah input tidak sesuai terlalu banyak!']);
                 } else {
@@ -358,6 +358,11 @@ class PeminjamanController extends Controller
                 ->update([
                     'status' => 1
                 ]);
+            $rating = Rating::where('pengembalian_id', $peminjaman->id)->first();
+            if ($rating) {
+                Rating::where('pengembalian_id', $peminjaman->id)->delete();
+            }
+
             return response()->json(['success_message_other' => 'berhasil melakukan validasi']);
         }
     }

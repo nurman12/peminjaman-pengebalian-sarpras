@@ -145,6 +145,8 @@
                         <li class="nav-parent nav-expanded nav-active">
                             @elseif(request()->is('l_peminjaman'))
                         <li class="nav-parent nav-expanded nav-active">
+                            @elseif(request()->is('l_pengembalian'))
+                        <li class="nav-parent nav-expanded nav-active">
                             @else
                         <li class="nav-parent">
                             @endif
@@ -173,18 +175,23 @@
                                         Peminjaman
                                     </a>
                                 </li>
+                                <li class="{{ request()->is('l_pengembalian') ? 'nav-active' : '' }}">
+                                    <a href="/l_pengembalian">
+                                        Pengembalian
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         @if(Auth::user()->roles == 'BMN')
                         <li class="{{ request()->is('peminjaman*') ? 'nav-active' : '' }}">
-                            <a href="{{ route('peminjaman.index') }}">
+                            <a href="/peminjaman">
                                 <span class="pull-right label label-primary">{{ count(App\Models\Pengembalian::whereIn('status', [0, 2])->get()) }}</span>
                                 <i class="fa fa-plane" aria-hidden="true"></i>
                                 <span>Peminjaman</span>
                             </a>
                         </li>
                         <li class="{{ request()->is('pengembalian*') ? 'nav-active' : '' }}">
-                            <a href="{{ route('pengembalian.index') }}">
+                            <a href="/pengembalian">
                                 <span class="pull-right label label-primary">{{ count(App\Models\Pengembalian::where('status', 1)->get()) }}</span>
                                 <i class="fa fa-rocket" aria-hidden="true"></i>
                                 <span>Pengembalian</span>

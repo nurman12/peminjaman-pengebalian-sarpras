@@ -26,8 +26,9 @@ class DashController extends Controller
                 $sarpras_labo = Sarpras::where('kategori', 'like', '%laboratorium%')->whereNotIn('jumlah', [0])->get();
                 $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->whereNotIn('jumlah', [0])->get();
                 $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->whereNotIn('jumlah', [0])->get();
+                $tanggungan = Pengembalian::where('user_id', Auth::user()->id)->whereNotIn('status', [1])->get();
 
-                return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
+                return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain', 'tanggungan'));
             }
         } else {
             $sarpras_alls = Sarpras::whereNotIn('jumlah', [0])->get();
@@ -124,10 +125,43 @@ class DashController extends Controller
 
             $perbandingan = [];
             foreach ($bulan_ as $key => $bln) {
-                $d_pinjam = array_search($bln, array_column($pinjam, "bulan"));
-                $d_kembali = array_search($bln, array_column($kembali, "bulan"));
-                $perbandingan[] = ['pinjam' => $pinjam[$d_pinjam]->jumlah, 'kembali' => $kembali[$d_kembali]->jumlah, 'bulan' => $bln];
+
+                $d_pinjam = DB::table('pengembalian')
+                    ->whereMonth('date_ambil', '=', $bln)
+                    ->select([
+                        DB::raw('count(id) as jumlah'),
+                        DB::raw('MONTH(date_ambil) as bulan'),
+                        DB::raw('YEAR(date_ambil) as tahun')
+                    ])->groupBy(['bulan', 'tahun'])
+                    ->first();
+                if ($d_pinjam) {
+                    $p_jumlah = $d_pinjam->jumlah;
+                } else {
+                    $p_jumlah = 0;
+                }
+
+                $d_kembali = DB::table('pengembalian')
+                    ->whereMonth('date_kembali', '=', $bln)
+                    ->where('status', 1)
+                    ->select([
+                        DB::raw('count(id) as jumlah'),
+                        DB::raw('MONTH(date_kembali) as bulan'),
+                        DB::raw('YEAR(date_kembali) as tahun')
+                    ])->groupBy(['bulan', 'tahun'])
+                    ->first();
+                if ($d_kembali) {
+                    $k_jumlah = $d_kembali->jumlah;
+                } else {
+                    $k_jumlah = 0;
+                }
+                $perbandingan[] = ['pinjam' => $p_jumlah, 'kembali' => $k_jumlah, 'bulan' => $bln];
             }
+            $kerusakan = DB::table('rusak')
+                ->join('sarpras_detail', 'sarpras_detail.id', '=', 'rusak.sarpras_detail_id')
+                ->where('sarpras_detail.jenis', 'keluar')
+                ->select([
+                    DB::raw('sarpras_detail.sarpras_id as sarpras_id')
+                ])->groupBy('sarpras_id')->get()->toArray();
 
             $t_peminjaman = Pengembalian::all()->count();
             $t_pengembalian = Pengembalian::where('status', 1)->get()->count();
@@ -140,6 +174,7 @@ class DashController extends Controller
                 return view('back.dashbmn', compact(
                     'perbandingan',
                     'perbandingan_sarpras',
+                    'kerusakan',
                     'menuggu_validasi',
                     'unread',
                     't_peminjaman',
@@ -179,8 +214,9 @@ class DashController extends Controller
                 $sarpras_labo = Sarpras::where('kategori', 'like', '%laboratorium%')->whereNotIn('jumlah', [0])->get();
                 $sarpras_rpat = Sarpras::where('kategori', 'like', '%rapat%')->whereNotIn('jumlah', [0])->get();
                 $sarpras_lain = Sarpras::where('kategori', 'like', '%lainnya%')->whereNotIn('jumlah', [0])->get();
+                $tanggungan = Pengembalian::where('user_id', Auth::user()->id)->whereNotIn('status', [1])->get();
 
-                return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain'));
+                return view('front.dashboard', compact('sarpras_alls', 'sarpras_elek', 'sarpras_mbel', 'sarpras_kain', 'sarpras_klas', 'sarpras_labo', 'sarpras_rpat', 'sarpras_lain', 'tanggungan'));
             }
         } else {
             $sarpras_alls = Sarpras::whereNotIn('jumlah', [0])->get();
@@ -208,6 +244,24 @@ class DashController extends Controller
         $sarpras = Sarpras::where('jenis', 'Ruangan')->whereNotIn('jumlah', [0])->get();
 
         return view('front.sarpras', compact('title', 'sarpras'));
+    }
+    public function permohonan()
+    {
+        $permohonan = Validasi::where('user_id', Auth::user()->id)->where('status', 0)->orWhere('status', 3)->get();
+
+        return view('front.module.permohonan', compact('permohonan'));
+    }
+    public function peminjaman()
+    {
+        $peminjaman = Pengembalian::where('user_id', Auth::user()->id)->whereNotIn('status', [1])->get();
+
+        return view('front.module.peminjaman', compact('peminjaman'));
+    }
+    public function pengembalian()
+    {
+        $pengembalian = Pengembalian::where('user_id', Auth::user()->id)->where('status', 1)->get();
+
+        return view('front.module.pengembalian', compact('pengembalian'));
     }
     public function search(Request $request)
     {

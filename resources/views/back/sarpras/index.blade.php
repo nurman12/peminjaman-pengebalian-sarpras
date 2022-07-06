@@ -43,7 +43,6 @@
                         <th>#</th>
                         <th>Jenis</th>
                         <th>Nama</th>
-                        <th class="hidden-phone">Jumlah</th>
                         <th class="center">Action</th>
                     </tr>
                 </thead>
@@ -53,7 +52,6 @@
                         <th>{{$loop->iteration}}</th>
                         <td>{{$data->jenis}}</td>
                         <td>{{$data->nama}}</td>
-                        <td class="center">{{$data->jumlah}}</td>
                         <th width="125px">
                             <a href="{{ route('sarpras.show', $data->id) }}" class="mr-xs btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></a>
                             <a href="{{ route('sarpras.edit', $data->id) }}" class="mr-xs btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Ubah"><i class="fa fa-pencil-square-o"></i></a>

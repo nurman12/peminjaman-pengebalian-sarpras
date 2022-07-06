@@ -636,25 +636,11 @@
                     })
                 } else if (response.success_message) {
                     swal.fire({
-                        title: 'Apakah kamu ingin memberi rating?',
-                        text: "Kamu dapat memberikan rating dilain waktu jika kamu tidak memberi rating sekarang",
-                        icon: 'warning',
-                        showDenyButton: true,
-                        confirmButtonText: 'Ya',
-                        denyButtonText: `Nanti`,
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: response.success_message
                     }).then((result) => {
-                        if (result.isConfirmed) {
-                            $('#modal-rating').modal('show');
-                            $('#kembali_id').val(id);
-                        } else if (result.isDenied) {
-                            swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil',
-                                text: response.success_message
-                            }).then((result) => {
-                                location.reload();
-                            })
-                        }
+                        location.reload();
                     })
                 } else if (response.success_message_other) {
                     swal.fire({
@@ -724,6 +710,34 @@
             }
         });
     });
+
+    // cek validasi
+    <?php
+    if ($peminjaman->status == 1 && !$peminjaman->rating) {
+    ?>
+        var id = <?= $peminjaman->id; ?>;
+        swal.fire({
+            title: 'Apakah kamu ingin memberi rating?',
+            text: "Kamu dapat memberikan rating dilain waktu jika kamu tidak memberi rating sekarang",
+            icon: 'warning',
+            showDenyButton: true,
+            confirmButtonText: 'Ya',
+            denyButtonText: `Nanti`,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#modal-rating').modal('show');
+                $('#kembali_id').val(id);
+            } else if (result.isDenied) {
+                swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: response.success_message
+                }).then((result) => {
+                    location.reload();
+                })
+            }
+        })
+    <?php } ?>
 
     // tutup modal rating
     $(document).on('click', '.tutup-rating', function() {

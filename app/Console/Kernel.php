@@ -22,12 +22,12 @@ class Kernel extends ConsoleKernel
     {
         // recommend set at 16:00 / tutup jam oprasional
         $schedule->command('peminjaman:expired')
-            ->dailyAt('08:20');
+            ->dailyAt('09:41');
 
         // reminder akan berjalan 2 kali pertama, 
         // ketika besok berakhir dan hari ini berakhir
         $schedule->command('reminder:emails')
-            ->dailyAt('23:59');
+            ->dailyAt('08:13');
     }
 
     /**

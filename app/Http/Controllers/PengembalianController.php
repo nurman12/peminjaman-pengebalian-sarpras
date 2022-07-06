@@ -17,7 +17,7 @@ class PengembalianController extends Controller
 {
     public function index()
     {
-        $pengembalian = Pengembalian::where('status', 1)->orderBy('date_kembali', 'asc')->get();
+        $pengembalian = Pengembalian::where('status', 1)->orderBy('date_kembali', 'desc')->get();
 
         return view('back.pengembalian.index', compact('pengembalian'));
     }
@@ -329,6 +329,10 @@ class PengembalianController extends Controller
                 ->update([
                     'status' => 1
                 ]);
+            $rating = Rating::where('pengembalian_id', $peminjaman->id)->first();
+            if ($rating) {
+                Rating::where('pengembalian_id', $peminjaman->id)->delete();
+            }
             return response()->json(['success_message_other' => 'berhasil melakukan validasi']);
         }
     }

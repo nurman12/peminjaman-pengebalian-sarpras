@@ -79,6 +79,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/validasi_edit/{id}', [ValidasiController::class, 'destroy_sarpras'])->name('validasi_edit.destroy');
     });
     Route::group(['middleware' => 'cekroles:Mahasiswa,Dosen'], function () {
+        Route::get('/permohonans', [DashController::class, 'permohonan']);
+        Route::get('/peminjamans', [DashController::class, 'peminjaman']);
+        Route::get('/pengembalians', [DashController::class, 'pengembalian']);
+
         Route::get('/draft_count', [DraftController::class, 'draft_count']);
         Route::get('/draft_count/{id}', [DraftController::class, 'draft_count_update']);
         Route::get('/draft/mini', [DraftController::class, 'mini_draft']);
@@ -99,6 +103,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/l_ketersediaan', [LaporanController::class, 'ketersediaan']);
         Route::get('/l_kerusakan', [LaporanController::class, 'kerusakan']);
         Route::get('/l_peminjaman', [LaporanController::class, 'peminjaman']);
+        Route::get('/l_pengembalian', [LaporanController::class, 'pengembalian']);
     });
 
     Route::resource('validasi', ValidasiController::class);

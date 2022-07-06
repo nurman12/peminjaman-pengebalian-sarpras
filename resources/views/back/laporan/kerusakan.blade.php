@@ -37,18 +37,19 @@
                         <th>Pengguna</th>
                         <th>Jumlah</th>
                         <th>Sarpras</th>
-                        <th>Keterangan</th>
-                        <th>Terakhir Diubah</th>
+                        <th>Tanggal</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($rusak as $data)
                     <tr>
+                        <?php
+                        $items = App\Models\SarprasDetail::where('id', $data->sarpras_detail_id)->first();
+                        ?>
                         <th>{{ $loop->iteration }}</th>
-                        <td>{{ $data->user->name }}</td>
+                        <td>{{ $items->user->name }}</td>
                         <td>{{ $data->hilang }}</td>
-                        <td>{{ $data->sarpras->nama }}</td>
-                        <td>{{ $data->keterangan }}</td>
+                        <td>{{ $items->sarpras->nama }}</td>
                         <td>{{ showDateTime($data->updated_at, 'l, d F Y') }}</td>
                     </tr>
                     @endforeach
