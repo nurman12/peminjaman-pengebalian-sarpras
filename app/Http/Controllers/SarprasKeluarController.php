@@ -6,14 +6,49 @@ use App\Models\Sarpras;
 use App\Models\SarprasDetail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SarprasKeluarController extends Controller
 {
     public function index()
     {
-        $sarpras_keluar = SarprasDetail::where('jenis', 'keluar')
-            ->orderBy('tanggal', 'desc')
-            ->get();
+        $d_pinjam = DB::table('sarpras_detail')
+            ->join('draft', 'draft.id', '=', 'sarpras_detail.draft_id')
+            ->join('validasi', 'validasi.id', '=', 'draft.validasi_id')
+            ->join('sarpras', 'sarpras.id', '=', 'sarpras_detail.sarpras_id')
+            ->where('sarpras_detail.jenis', 'keluar')
+            ->whereIn('validasi.status', [0, 1])
+            ->orderBy('sarpras_detail.tanggal', 'desc')
+            ->get()->toArray();
+
+        $admin = DB::table('sarpras_detail')
+            ->join('sarpras', 'sarpras.id', '=', 'sarpras_detail.sarpras_id')
+            ->where('sarpras_detail.draft_id', '=', null)
+            ->where('sarpras_detail.jenis', 'keluar')
+            ->select(
+                DB::raw('sarpras_detail.id as id'),
+                DB::raw('sarpras.nama as nama'),
+                DB::raw('sarpras_detail.tanggal as tanggal'),
+                DB::raw('sarpras_detail.jumlah as jumlah'),
+                DB::raw('sarpras_detail.keterangan as keterangan'),
+                DB::raw('sarpras_detail.draft_id as draft_id'),
+                DB::raw('sarpras_detail.sarpras_id as sarpras_id'),
+                DB::raw('sarpras.photo as photo')
+            )
+            ->get()->toArray();
+
+        $sarpras_keluar = [];
+        foreach ($d_pinjam as $data) {
+            $sarpras_keluar[] = ["id" => $data->id, "nama" => $data->nama, "tanggal" => $data->tanggal, "jumlah" => $data->qty, "keperluan" => "dipinjam", "draft_id" => $data->draft_id, "sarpras_id" => $data->sarpras_id, "photo" => $data->photo];
+        }
+        foreach ($admin as $data) {
+            $sarpras_keluar[] = ["id" => $data->id, "nama" => $data->nama, "tanggal" => $data->tanggal, "jumlah" => $data->jumlah, "keperluan" => $data->keterangan, "draft_id" => $data->draft_id, "sarpras_id" => $data->sarpras_id, "photo" => $data->photo];
+        }
+        array_multisort(
+            array_map('strtotime', array_column($sarpras_keluar, 'tanggal')),
+            SORT_DESC,
+            $sarpras_keluar
+        );
 
         return view('back.sarpras_keluar.index', compact('sarpras_keluar'));
     }

@@ -501,6 +501,7 @@
                                 <th>#</th>
                                 <th>Keperluan</th>
                                 <th>Jumlah</th>
+                                <th>Tgl. Kegiatan</th>
                                 <th>Tanggal Ambil</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -512,6 +513,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td><a href="{{ route('peminjaman.show', $data->id) }}" style="color: #7280e0;">{{ $data->validasi->keperluan }}</a></td>
                                 <td>{{ count($data->validasi->draft) }}</td>
+                                <td>{{ date('d F', strtotime( $data->validasi->tanggal_start )) }} s.d. {{ date('d F Y', strtotime( $data->validasi->tanggal_finish )) }}</td>
                                 <td>{{ date('d F Y', strtotime( $data->date_ambil )) }}</td>
                                 <td>
                                     @if($data->status == 0)
@@ -536,6 +538,25 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <button class="flex-c-m stext-101 cl0 size-115 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer js-hide-modal2">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@else
+<div class="wrap-modal2 js-modal2 p-t-60 p-b-20 show-modal2">
+    <div class="overlay-modal2 js-hide-modal2"></div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-8 col-sm-8">
+            <div class="bg0 how-pos3-parent">
+                <div class="container p-all-20">
+                    <h5 class="display-5 p-t-10 text-capitalize">Selamat datang {{Auth::user()->name}}</h5>
+                    <h5 class="txt-center display-5 p-tb-30">
+                        Anda tidak memiliki pinjaman.
+                    </h5>
                     <button class="flex-c-m stext-101 cl0 size-115 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer js-hide-modal2">
                         Tutup
                     </button>

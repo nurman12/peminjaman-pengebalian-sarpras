@@ -34,7 +34,7 @@ $draft = App\Models\Draft::where('validasi_id', $reminder['id'])->get();
 @endforeach
 @endforeach
 
-# Perhatian : Proses peminjaman akan berakhir besok, mohon untuk mengembalikan sarpras tepat waktu
+# Perhatian : Proses peminjaman akan berakhir hari ini, mohon untuk mengembalikan sarpras tepat waktu
 @endcomponent
 
 Segera selesaikan tanggungan anda dan semoga tidak ada kendala.

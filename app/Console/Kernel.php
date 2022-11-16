@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
         // reminder akan berjalan 2 kali pertama, 
         // ketika besok berakhir dan hari ini berakhir
         $schedule->command('reminder:emails')
-            ->dailyAt('08:13');
+            ->dailyAt('19:29');
     }
 
     /**

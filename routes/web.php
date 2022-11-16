@@ -104,6 +104,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/l_kerusakan', [LaporanController::class, 'kerusakan']);
         Route::get('/l_peminjaman', [LaporanController::class, 'peminjaman']);
         Route::get('/l_pengembalian', [LaporanController::class, 'pengembalian']);
+        Route::get('/getSarprasKembali/{id}', [LaporanController::class, 'getSarpras']);
+        Route::get('/l_pengembalian/filter', [LaporanController::class, 'f_pegembalian']);
     });
 
     Route::resource('validasi', ValidasiController::class);

@@ -111,6 +111,7 @@
                                     <label class="col-sm-4 control-label" for="foto">Foto Profil</label>
                                     <div class="col-sm-8">
                                         <input type="file" class="form-control input-sm" name="photo_profile" id="photo_profile">
+                                        <span class="help-block">Ukuran (Max: 1Mb) Ekstensi(.jpg,.jpeg,.png)</span>
                                         @error('photo_profile')
                                         <span class="has-error" role="alert">
                                             <strong class="text-danger">{{ $message }}</strong>

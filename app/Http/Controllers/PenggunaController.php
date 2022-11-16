@@ -24,7 +24,7 @@ class PenggunaController extends Controller
         $koor = User::where('roles', 'Koordinator')->orderBy('created_at', 'desc')->get()->toArray();
         $ktu = User::where('roles', 'KTU')->orderBy('created_at', 'desc')->get()->toArray();
         $mhs = User::where('roles', 'Mahasiswa')->orWhere('roles', 'Dosen')->orderBy('created_at', 'desc')->get()->toArray();
-        $users = array_merge($bmn, $koor, $ktu, $mhs);
+        $users = array_merge($koor, $ktu, $bmn, $mhs);
 
         return view('back.pengguna.index', compact('users'));
     }

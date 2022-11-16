@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengembalian;
+use App\Models\Rusak;
 use App\Models\Sarpras;
 use App\Models\User;
 use App\Models\Validasi;
@@ -78,20 +79,71 @@ class DashController extends Controller
                 ->get()->toArray();
 
             $perbandingan_ = array_merge($perbandingan_pinjam, $perbandingan_kembali);
-
             $bulans__ = [];
             foreach ($perbandingan_ as $value) {
                 $bulans__[] = $value->bulan;
             }
 
             $bulan_ = array_unique($bulans__);
-
-            $perbandingan_sarpras = [];
-            foreach ($bulan_ as $key => $bln) {
-                $d_pinjam = array_search($bln, array_column($perbandingan_pinjam, "bulan"));
-                $d_kembali = array_search($bln, array_column($perbandingan_kembali, "bulan"));
-                $perbandingan_sarpras[] = ['keluar' => $perbandingan_pinjam[$d_pinjam]->jumlah, 'masuk' => $perbandingan_kembali[$d_kembali]->jumlah, 'bulan' => $bln];
+            $bulan_awal = min($bulan_);
+            $bulan_akhir = max($bulan_);
+            // dd($bulan_awal, $bulan_akhir);
+            $bulan_a = [];
+            for ($i = $bulan_awal; $i <= $bulan_akhir; $i++) {
+                $bulan_a[] = $i;
             }
+            // dd($bulan_a);
+            $perbandingan_sarpras = [];
+            foreach ($bulan_a as $key => $bln) {
+                $pinjam = DB::table('sarpras_detail')
+                    ->join('draft', 'draft.id', '=', 'sarpras_detail.draft_id')
+                    ->join('validasi', 'validasi.id', '=', 'draft.validasi_id')
+                    ->join('pengembalian', 'pengembalian.validasi_id', '=', 'validasi.id')
+                    ->where('sarpras_detail.draft_id', '!=', null)
+                    ->whereMonth('sarpras_detail.tanggal', $bln)
+                    ->where('sarpras_detail.jenis', 'keluar')
+                    ->select([
+                        DB::raw('sum(sarpras_detail.jumlah) as jumlah'),
+                        DB::raw('MONTH(sarpras_detail.tanggal) as bulan'),
+                        DB::raw('YEAR(sarpras_detail.tanggal) as tahun')
+                    ])
+                    ->groupBy('bulan', 'tahun')->first();
+
+                $kembali = DB::table('sarpras_detail')
+                    ->join('draft', 'draft.id', '=', 'sarpras_detail.draft_id')
+                    ->join('validasi', 'validasi.id', '=', 'draft.validasi_id')
+                    ->join('pengembalian', 'pengembalian.validasi_id', '=', 'validasi.id')
+                    ->where('pengembalian.status', 1)
+                    ->where('sarpras_detail.draft_id', '!=', null)
+                    ->whereMonth('sarpras_detail.tanggal', $bln)
+                    ->where('sarpras_detail.jenis', 'masuk')
+                    ->select([
+                        DB::raw('sum(sarpras_detail.jumlah) as jumlah'),
+                        DB::raw('MONTH(sarpras_detail.tanggal) as bulan'),
+                        DB::raw('YEAR(sarpras_detail.tanggal) as tahun')
+                    ])
+                    ->groupBy('bulan', 'tahun')->first();
+
+                if (!$pinjam && !$kembali) {
+                    $perbandingan_sarpras[$key] = ['bulan' => $bln, 'keluar' => 0, 'masuk' => 0];
+                } elseif (!$pinjam || !$kembali) {
+                    if (!$pinjam && $kembali) {
+                        $perbandingan_sarpras[$key] = ['bulan' => $bln, 'keluar' => 0, 'masuk' => $kembali->jumlah];
+                    }
+                    if ($pinjam && !$kembali) {
+                        $perbandingan_sarpras[$key] = ['bulan' => $bln, 'keluar' => $pinjam->jumlah, 'masuk' => 0];
+                    }
+                } else {
+                    $perbandingan_sarpras[$key] = ['bulan' => $bln, 'keluar' => $pinjam->jumlah, 'masuk' => $kembali->jumlah];
+                }
+            }
+            // dd($perbandingan_sarpras);
+            // $perbandingan_sarpras = [];
+            // foreach ($bulan_ as $key => $bln) {
+            //     $d_pinjam = array_search($bln, array_column($perbandingan_pinjam, "bulan"));
+            //     $d_kembali = array_search($bln, array_column($perbandingan_kembali, "bulan"));
+            //     $perbandingan_sarpras[] = ['keluar' => $perbandingan_pinjam[$d_pinjam]->jumlah, 'masuk' => $perbandingan_kembali[$d_kembali]->jumlah, 'bulan' => $bln];
+            // }
 
             $pinjam = DB::table('pengembalian')
                 ->select([
@@ -122,9 +174,16 @@ class DashController extends Controller
             }
 
             $bulan_ = array_unique($bulans__);
+            $bulan_awal = min($bulan_);
+            $bulan_akhir = max($bulan_);
+            // dd($bulan_awal, $bulan_akhir);
+            $bulan_a = [];
+            for ($i = $bulan_awal; $i <= $bulan_akhir; $i++) {
+                $bulan_a[] = $i;
+            }
 
             $perbandingan = [];
-            foreach ($bulan_ as $key => $bln) {
+            foreach ($bulan_a as $key => $bln) {
 
                 $d_pinjam = DB::table('pengembalian')
                     ->whereMonth('date_ambil', '=', $bln)

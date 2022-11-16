@@ -211,6 +211,7 @@
 <script src="{{ asset('/back') }}/vendor/liquid-meter/liquid.meter.js"></script>
 @endpush
 @push('last_script')
+<script src="{{ asset('/back') }}/vendor/highcharts/highcharts.js"></script>
 <script src="{{ asset('/back') }}/vendor/chart-js/chart.js"></script>
 <script>
     // setup 
@@ -349,61 +350,87 @@
 
         const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         <?php foreach ($kerusakan as $value) :
-            $rusak = Illuminate\Support\Facades\DB::table('rusak')
+
+            $end_pemasangan = Illuminate\Support\Facades\DB::table('rusak')
                 ->join('sarpras_detail', 'sarpras_detail.id', '=', 'rusak.sarpras_detail_id')
                 ->where('sarpras_detail.sarpras_id', $value->sarpras_id)
                 ->where('sarpras_detail.jenis', 'keluar')
-                ->select([
-                    Illuminate\Support\Facades\DB::raw('sum(rusak.hilang) as jumlah'),
-                    Illuminate\Support\Facades\DB::raw('MONTH(rusak.updated_at) as bulan'),
-                    Illuminate\Support\Facades\DB::raw('YEAR(rusak.updated_at) as tahun')
-                ])->groupBy(['bulan', 'tahun'])->get()->toArray();
-        ?>
-            var flotDashSarpras<?= $value->sarpras_id; ?> = [{
+                ->select(
+                    Illuminate\Support\Facades\DB::raw("CAST(SUM(rusak.hilang) as int) as jumlah")
+                )
+                ->groupBy(Illuminate\Support\Facades\DB::raw("month(rusak.created_at)"))
+                ->pluck('jumlah');
 
-                data: [
-                    <?php foreach ($rusak as $data) : ?>[months[<?= $data->bulan; ?> - 1], <?= $data->jumlah; ?>], <?php endforeach; ?>
-                ],
-                color: "#734ba9"
-            }];
-            var sarpras_<?= $value->sarpras_id; ?> = $.plot('#sarpras_<?= $value->sarpras_id; ?>', flotDashSarpras<?= $value->sarpras_id; ?>, {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2
+            $monthspemasukanpemasangan = Illuminate\Support\Facades\DB::table('rusak')
+                ->join('sarpras_detail', 'sarpras_detail.id', '=', 'rusak.sarpras_detail_id')
+                ->where('sarpras_detail.sarpras_id', $value->sarpras_id)
+                ->where('sarpras_detail.jenis', 'keluar')
+                ->select(Illuminate\Support\Facades\DB::raw("Month(rusak.created_at) as month"))
+                ->groupby(Illuminate\Support\Facades\DB::raw("Month(rusak.created_at)"))
+                ->pluck('month');
+
+            $dataspemasangan = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+            foreach ($monthspemasukanpemasangan as $index => $month) {
+                if (!isset($end_pemasangan[$index])) {
+                    $end_pemasangan[$index] = 0;
+                }
+                $dataspemasangan[$month - 1] = $end_pemasangan[$index];
+            }
+            $data = App\Models\Sarpras::where('id', $value->sarpras_id)->first();
+        ?>
+            var sarpras_<?= $value->sarpras_id; ?> = <?= json_encode($dataspemasangan) ?>;
+
+
+            Highcharts.chart('sarpras_<?= $value->sarpras_id; ?>', {
+                title: {
+                    text: 'Pengembalian 2022'
+                },
+                subtitle: {
+                    text: 'Grafik Kerusakan <?= $data->nama; ?>'
+                },
+                xAxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des']
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Kerusakan'
                     },
-                    points: {
-                        show: true
-                    },
-                    shadowSize: 0
-                },
-                grid: {
-                    hoverable: true,
-                    clickable: true,
-                    borderColor: 'rgba(0,0,0,0.1)',
-                    borderWidth: 1,
-                    labelMargin: 15,
-                    backgroundColor: 'transparent'
-                },
-                yaxis: {
-                    min: 0,
-                    color: 'rgba(0,0,0,0.1)'
-                },
-                xaxis: {
-                    mode: 'categories',
-                    color: 'rgba(0,0,0,0)'
                 },
                 legend: {
-                    show: false
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
                 },
-                tooltip: true,
-                tooltipOpts: {
-                    content: '%x: %y',
-                    shifts: {
-                        x: -30,
-                        y: 25
-                    },
-                    defaultTheme: false
+                plotOptions: {
+                    series: {
+                        allowPointSelect: true
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Sarpras Rusak <?= $data->nama; ?>',
+                    data: sarpras_<?= $value->sarpras_id; ?>
+                }],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
                 }
             });
 

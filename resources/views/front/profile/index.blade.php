@@ -78,7 +78,7 @@
                     <div class="profile-btn">
                         <button class="chatbtn js-show-modal1">
                             <i class="fa fa-user "></i>
-                            Detail
+                            Edit
                         </button>
                         <button class="createbtn js-show-modal2">
                             <i class="fa fa-key"></i>
@@ -150,184 +150,121 @@
                 </div>
             </div>
             <div class="right-side">
-                <div class="nav-side">
-                    <ul>
-                        <li onclick="tabs(0)" class="user-post active">Permohonan</li>
-                        <li onclick="tabs(1)" class="user-review">Peminjaman</li>
-                        <li onclick="tabs(2)" class="user-setting">Pengembalian</li>
-                    </ul>
-                </div>
                 <div class="profile-body">
-                    <div class="profile-posts tab">
-                        <h4 class="mtext-112 cl2 p-b-27">Daftar Permohonan Pinjaman</h4>
-                        @if(\Session::has('status'))
-                        <div class="alert alert-success alert-dismissible fade show txt-left" role="alert">
-                            <strong>Peringatan !!</strong> {{\Session::get('status')}}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    <div class="profile-setting active p-l-20">
+                        <h4 class="mtext-112 cl2 p-tb-27 text-center">Data Pribadi</h4>
+                        <div class="flex-w w-full p-b-5">
+                            <span class="fs-18 txt-center cl5 p-t-2 size-216">
+                                <span class="lnr lnr-user"></span>
+                            </span>
+
+                            <div class="size-212 p-t-2">
+                                <span class="mtext-110 cl2">
+                                    Nama
+                                </span>
+
+                                <p class="stext-110 cl6 size-213 p-t-8">
+                                    {{ Auth::user()->name }}
+                                </p>
+                            </div>
                         </div>
-                        @endif
-                        <table class="table table-striped table-hover table-bordered" id="example-1">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Keperluan</th>
-                                    <th>Jumlah</th>
-                                    <th>Tanggal</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($permohonan as $data)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td><a href="{{ route('validasi.show', $data->id) }}" style="color: #7280e0;">{{ $data->keperluan }}</a></td>
-                                    <td>{{ count($data->draft) }}</td>
-                                    <td>{{ date('d F', strtotime( $data->tanggal_start )) }} sd. {{ date('d F Y', strtotime( $data->tanggal_finish )) }}</td>
-                                    <td>
-                                        @if( $data->status == 3 )
-                                        <label class="badge badge-danger shadow">Kadaluarsa</label>
-                                        @elseif( $data->validasi_ktu == 1 && $data->validasi_koor == 1 && $data->validasi_bmn == 1 && $data->status == 0 )
-                                        <label class="badge badge-success shadow">Disetujui</label>
-                                        @elseif( $data->validasi_ktu == 1 && $data->validasi_koor == 1 && $data->validasi_bmn == 0 )
-                                        <label class="badge badge-light shadow">Seleksi BMN</label>
-                                        @elseif( $data->validasi_ktu == 1 && $data->validasi_koor == 0 && $data->validasi_bmn == 0 )
-                                        <label class="badge badge-light shadow">Seleksi Koordinator</label>
-                                        @elseif( $data->validasi_ktu == 0 && $data->validasi_koor == 0 && $data->validasi_bmn == 0 )
-                                        <label class="badge badge-light shadow">Seleksi TU</label>
-                                        @elseif( $data->validasi_ktu == 1 && $data->validasi_koor == 1 && $data->validasi_bmn == 2 )
-                                        <label class="badge badge-danger shadow">Tolak BMN</label>
-                                        @elseif( $data->validasi_ktu == 1 && $data->validasi_koor == 2 && $data->validasi_bmn == 0 )
-                                        <label class="badge badge-danger shadow">Tolak Koordionator</label>
-                                        @elseif( $data->validasi_ktu == 2 && $data->validasi_koor == 0 && $data->validasi_bmn == 0 )
-                                        <label class="badge badge-danger shadow">Tolak TU</label>
-                                        @endif
-                                    </td>
-                                    <td class="text-center display-inline">
-                                        @if($data->validasi_ktu == 1 && $data->validasi_koor == 1 && $data->validasi_bmn == 1 && $data->status == 0)
-                                        <form action="/draft/print" method="post" target="_blank" rel="noopener noreferrer">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{$data->id}}">
-                                            <button type="submit" class="btn btn-success btn-sm" data-toggle="tooltip" title="cetak"><i class="fa fa-print" aria-hidden="true"></i></button>
-                                        </form>
-                                        @endif
-                                        @if($data->validasi_ktu == 0)
-                                        <a href="{{ route('validasi.edit', $data->id) }}" class="btn btn-warning btn-sm fa fa-pencil-square-o" data-toggle="tooltip" title="Ubah"></a>
-                                        <form action="{{ route('validasi.destroy', $data->id) }}" method="post" style="display: inline;">
-                                            @csrf
-                                            @method('delete')
-                                            <input type="hidden" name="proposal" value="{{$data->proposal}}">
-                                            <button type="submit" onclick="return confirm('Yakin ingin Hapus ini?')" class="btn btn-danger btn-sm fa fa-trash" data-toggle="tooltip" title="Hapus"><button>
-                                        </form>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="profile-review tab">
-                        <h4 class="mtext-112 cl2 p-b-27">Daftar Peminjaman</h4>
-                        <table class="table table-striped table-hover table-bordered" id="example-2">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Keperluan</th>
-                                    <th>Jumlah</th>
-                                    <th>Tanggal Ambil</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($peminjaman as $data)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td><a href="{{ route('peminjaman.show', $data->id) }}" style="color: #7280e0;">{{ $data->validasi->keperluan }}</a></td>
-                                    <td>{{ count($data->validasi->draft) }}</td>
-                                    <td>{{ date('d F Y', strtotime( $data->date_ambil )) }}</td>
-                                    <td>
-                                        @if($data->status == 0)
-                                        <label class="badge badge-light shadow">Tanggungan</label>
-                                        @elseif($data->status == 1)
-                                        <label class="badge badge-success shadow">Success</label>
-                                        @elseif($data->status == 2)
-                                        <label class="badge badge-danger shadow">Kerusakan</label>
-                                        @endif
-                                    </td>
-                                    <td class="text-center display-inline">
-                                        <form action="/draft/print" method="post" target="_blank" rel="noopener noreferrer">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{$data->validasi_id}}">
-                                            <button type="submit" class="btn btn-success btn-sm" data-toggle="tooltip" title="cetak"><i class="fa fa-print" aria-hidden="true"></i></button>
-                                        </form>
-                                        @if($data->status == 2)
-                                        <a href="storage/surat/SURAT%20PERGANTIAN.docx" class="btn btn-success btn-sm" target="_blank" rel="noopener noreferrer">Unduh</a>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="profile-setting tab">
-                        <h4 class="mtext-112 cl2 p-b-27">Daftar Pengembalian</h4>
-                        <table class="table table-striped table-hover table-bordered" id="example-3">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Keperluan</th>
-                                    <th>Tanggal Ambil</th>
-                                    <th>Tanggal Kembali</th>
-                                    <th>Penilaian</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($pengembalian as $data)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td><a href="{{ route('pengembalian.show', $data->id) }}" style="color: #7280e0;">{{ $data->validasi->keperluan }}</a></td>
-                                    <td>{{ date('d F Y', strtotime( $data->date_ambil )) }}</td>
-                                    <td>{{ date('d F Y', strtotime( $data->date_kembali )) }}</td>
-                                    <td id="rate-rating">
-                                        @if($data->rating->penilaian == 1)
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star-o" aria-hidden="true"></i>
-                                        <i class="fa fa-star-o" aria-hidden="true"></i>
-                                        <i class="fa fa-star-o" aria-hidden="true"></i>
-                                        <i class="fa fa-star-o" aria-hidden="true"></i>
-                                        @elseif($data->rating->penilaian == 2)
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star-o" aria-hidden="true"></i>
-                                        <i class="fa fa-star-o" aria-hidden="true"></i>
-                                        <i class="fa fa-star-o" aria-hidden="true"></i>
-                                        @elseif($data->rating->penilaian == 3)
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star-o" aria-hidden="true"></i>
-                                        <i class="fa fa-star-o" aria-hidden="true"></i>
-                                        @elseif($data->rating->penilaian == 4)
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star-o" aria-hidden="true"></i>
-                                        @elseif($data->rating->penilaian == 5)
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                        <hr>
+                        <div class="flex-w w-full p-b-5">
+                            <span class="fs-18 txt-center cl5 p-t-2 size-216">
+                                <span class="lnr lnr-envelope"></span>
+                            </span>
+
+                            <div class="size-212 p-t-2">
+                                <span class="mtext-110 cl2">
+                                    Email
+                                </span>
+
+                                <p class="stext-110 cl6 size-213 p-t-8">
+                                    {{ Auth::user()->email }}
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="flex-w w-full p-b-5">
+                            <span class="fs-18 txt-center cl5 p-t-2 size-216">
+                                <span class="lnr lnr-license"></span>
+                            </span>
+
+                            <div class="size-212 p-t-2">
+                                <span class="mtext-110 cl2">
+                                    Nim / Nidn
+                                </span>
+
+                                <p class="stext-110 cl6 size-213 p-t-8">
+                                    {{ Auth::user()->nim_nidn }}
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="flex-w w-full p-b-5">
+                            <span class="fs-18 txt-center cl5 p-t-2 size-216">
+                                <span class="lnr lnr-list"></span>
+                            </span>
+
+                            <div class="size-212 p-t-2">
+                                <span class="mtext-110 cl2">
+                                    Role
+                                </span>
+
+                                <p class="stext-110 cl6 size-213 p-t-8">
+                                    {{ Auth::user()->roles }}
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="flex-w w-full p-b-5">
+                            <span class="fs-18 txt-center cl5 p-t-2 size-216">
+                                <span class="lnr lnr-unlink"></span>
+                            </span>
+
+                            <div class="size-212 p-t-2">
+                                <span class="mtext-110 cl2">
+                                    Jenis Kelamin
+                                </span>
+
+                                <p class="stext-110 cl6 size-213 p-t-8">
+                                    {{ Auth::user()->jenis_kelamin }}
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="flex-w w-full p-b-5">
+                            <span class="fs-18 txt-center cl5 p-t-2 size-216">
+                                <span class="lnr lnr-map"></span>
+                            </span>
+
+                            <div class="size-212 p-t-2">
+                                <span class="mtext-110 cl2">
+                                    Alamat
+                                </span>
+
+                                <p class="stext-110 cl6 size-213 p-t-8">
+                                    Rt/Rw : {{ Auth::user()->rt }}/{{ Auth::user()->rt }} <br> Desa : {{ Auth::user()->desa }} <br> Kota : {{ Auth::user()->kota }}
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="flex-w w-full p-b-5">
+                            <span class="fs-18 txt-center cl5 p-t-2 size-216">
+                                <span class="lnr lnr-phone-handset"></span>
+                            </span>
+
+                            <div class="size-212 p-t-2">
+                                <span class="mtext-110 cl2">
+                                    WhatsApp
+                                </span>
+
+                                <p class="stext-110 cl6 size-213 p-t-8">
+                                    {{ Auth::user()->no_telp }}
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
                     </div>
                 </div>
             </div>
@@ -498,65 +435,6 @@
 </div>
 
 <script>
-    $('.nav-side ul li').on('click', function() {
-        $(this).addClass("active").siblings().removeClass("active");
-    });
-
-    const tabBtn = document.querySelectorAll('.nav-side ul li');
-    const tab = document.querySelectorAll('.profile-body .tab');
-
-    function tabs(panelIndex) {
-        tab.forEach(function(node) {
-            node.style.display = "none";
-        });
-        tab[panelIndex].style.display = "block";
-    }
-    tabs(0);
-
-    $(document).ready(function() {
-        $('#example-1').DataTable({
-            "pagingType": "simple_numbers",
-            oLanguage: {
-                oPaginate: {
-                    sNext: '<i class="zmdi zmdi-skip-next" style="font-size: 19px;"></i>',
-                    sPrevious: '<i class="zmdi zmdi-skip-previous" style="font-size: 19px;"></i>'
-                }
-            },
-            "lengthMenu": [
-                [5, 10, 25, 50, -1],
-                [5, 10, 25, 50, "All"]
-            ]
-        });
-        $('#example-2').DataTable({
-            "pagingType": "simple_numbers",
-            oLanguage: {
-                oPaginate: {
-                    sNext: '<i class="zmdi zmdi-skip-next" style="font-size: 19px;"></i>',
-                    sPrevious: '<i class="zmdi zmdi-skip-previous" style="font-size: 19px;"></i>'
-                }
-            },
-            "lengthMenu": [
-                [5, 10, 25, 50, -1],
-                [5, 10, 25, 50, "All"]
-            ]
-        });
-        $('#example-3').DataTable({
-            "pagingType": "simple_numbers",
-            oLanguage: {
-                oPaginate: {
-                    sNext: '<i class="zmdi zmdi-skip-next" style="font-size: 19px;"></i>',
-                    sPrevious: '<i class="zmdi zmdi-skip-previous" style="font-size: 19px;"></i>'
-                }
-            },
-            "lengthMenu": [
-                [5, 10, 25, 50, -1],
-                [5, 10, 25, 50, "All"]
-            ]
-        });
-        $('.dataTables_filter').addClass('pull-right');
-        $('.dataTables_info').addClass('pull-left');
-    });
-
     function previewImage(input) {
         var file = $("input[type=file]").get(0).files[0];
         if (file) {
@@ -792,6 +670,6 @@
         }
     });
 </script>
-<script src="{{ asset('/front') }}/vendor/datatables/jquery.dataTables.min.js"></script>
-<script src="{{ asset('/front') }}/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- <script src="{{ asset('/front') }}/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="{{ asset('/front') }}/vendor/datatables/dataTables.bootstrap4.min.js"></script>  -->
 @endpush
